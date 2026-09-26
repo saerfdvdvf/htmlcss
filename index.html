@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Érase una vez en Disney+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --ink: #13112a;
+    --ink-2: #1c1938;
+    --ink-3: #28244a;
+    --line: #3a3563;
+    --pearl: #f6efe6;
+    --mist: #aaa4cf;
+    --rose: #f4a6c1;
+    --rose-deep: #e0759b;
+    --gold: #e8c27a;
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--pearl);
+    font: 16px/1.55 var(--body);
+    padding-inline: 16px;
+    padding-block: 0 64px;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; }
+
+  /* Hero */
+  header.hero { padding-block: 56px 28px; text-align: left; display: grid; gap: 14px; }
+  .eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+  h1 {
+    font-family: var(--display); font-weight: 600; font-style: italic;
+    font-size: clamp(44px, 9vw, 96px); line-height: .95; margin: 0; text-wrap: balance;
+    background: linear-gradient(100deg, var(--pearl) 20%, var(--rose) 55%, var(--gold) 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .lede { max-width: 60ch; color: var(--mist); font-size: 17px; margin: 0; }
+  .lede em { color: var(--rose); font-style: normal; }
+
+  /* Progress */
+  .progress { display: grid; gap: 8px; max-width: 520px; margin-top: 10px; }
+  .progress-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--mist); font-variant-numeric: tabular-nums; }
+  .progress-row strong { color: var(--pearl); }
+  .bar { height: 8px; border-radius: 99px; background: var(--ink-3); overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; border-radius: inherit;
+    background: linear-gradient(90deg, var(--rose-deep), var(--gold)); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+
+  /* Toolbar */
+  .toolbar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    padding: 12px; margin-block: 18px 30px;
+    background: color-mix(in srgb, var(--ink-2) 88%, transparent);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip, .btn {
+    font: 500 14px/1 var(--body); color: var(--pearl); cursor: pointer;
+    background: var(--ink-3); border: 1px solid transparent; border-radius: 99px;
+    padding: 9px 14px; transition: background .2s, border-color .2s, transform .15s;
+  }
+  .chip:hover, .btn:hover { border-color: var(--line); }
+  .chip[aria-pressed="true"] { background: var(--pearl); color: var(--ink); }
+  .chip .n { opacity: .6; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .btn-magic { background: linear-gradient(95deg, var(--rose-deep), #c9869f 50%, var(--gold)); color: var(--ink); font-weight: 700; }
+  .btn-magic:hover { transform: translateY(-1px); }
+  :is(.chip, .btn, input, button):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .search { flex: 1 1 180px; min-width: 0; }
+  .search input {
+    width: 100%; font: 15px var(--body); color: var(--pearl);
+    background: var(--ink); border: 1px solid var(--line); border-radius: 99px; padding: 9px 14px;
+  }
+  .search input::placeholder { color: var(--mist); }
+  .tools-right { display: flex; gap: 6px; margin-left: auto; }
+
+  /* Timeline */
+  .timeline { position: relative; display: grid; gap: 22px; padding-left: 34px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 11px; top: 6px; bottom: 6px; width: 2px;
+    background: linear-gradient(var(--gold), var(--rose) 50%, var(--line));
+    border-radius: 2px;
+  }
+  .decade {
+    font-family: var(--display); font-style: italic; font-size: 30px; color: var(--gold);
+    margin: 14px 0 -6px; position: relative;
+  }
+  .decade::before {
+    content: ""; position: absolute; left: -29px; top: 50%; width: 12px; height: 12px;
+    transform: translate(0,-50%) rotate(45deg); background: var(--gold);
+    box-shadow: 0 0 14px var(--gold);
+  }
+  .film {
+    position: relative; display: grid; grid-template-columns: 132px 1fr; gap: 18px;
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px; cursor: pointer;
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .25s;
+    animation: rise .5s both;
+  }
+  .film::before {
+    content: ""; position: absolute; left: -28px; top: 34px; width: 10px; height: 10px;
+    border-radius: 50%; background: var(--ink); border: 2px solid var(--rose);
+  }
+  .film.seen::before { background: var(--rose); box-shadow: 0 0 10px var(--rose); }
+  .film:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--c1) 70%, var(--line)); box-shadow: 0 14px 40px -18px var(--c1); }
+  .film.flash { animation: flash 1.6s ease; }
+  @keyframes rise { from { transform: translateY(10px); } }
+  @keyframes flash { 0%,100% { box-shadow: 0 0 0 0 transparent; } 30% { box-shadow: 0 0 0 4px var(--gold), 0 0 60px var(--gold); } }
+
+  .poster {
+    position: relative; aspect-ratio: 2 / 3; max-width: 100%; border-radius: 12px; overflow: hidden;
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--c2) 80%, white) 0, transparent 45%),
+      linear-gradient(160deg, var(--c1), var(--c2));
+    display: grid; place-items: center; isolation: isolate;
+  }
+  .poster::after {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background-image: radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.4px);
+    background-size: 14px 14px; opacity: .25;
+  }
+  .poster .ini { font-family: var(--display); font-style: italic; font-weight: 600; font-size: 64px; color: rgba(255,255,255,.92); text-shadow: 0 4px 20px rgba(0,0,0,.25); line-height: 1; }
+  .poster .yr { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 12px; letter-spacing: .18em; color: rgba(255,255,255,.9); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .poster .ord { position: absolute; top: 8px; left: 10px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,.85); font-variant-numeric: tabular-nums; }
+
+  .film > * { min-width: 0; }
+  .info { display: grid; align-content: start; gap: 6px; min-width: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--mist); }
+  .tag { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; padding: 4px 9px; border-radius: 99px; background: var(--ink-3); color: var(--pearl); }
+  .tag.animada { color: var(--rose); }
+  .tag.secuela { color: var(--mist); }
+  .tag.real { color: var(--gold); }
+  .film h2 { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1.05; margin: 2px 0 0; text-wrap: balance; }
+  .princess { font-size: 14px; color: var(--rose); font-weight: 500; }
+  .syn { margin: 2px 0 0; color: color-mix(in srgb, var(--pearl) 80%, var(--mist)); font-size: 15px; max-width: 62ch; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .act {
+    font: 500 13px/1 var(--body); color: var(--pearl); cursor: pointer;
+    background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 8px 12px;
+    display: inline-flex; gap: 6px; align-items: center; transition: background .2s, color .2s, border-color .2s;
+  }
+  .act:hover { border-color: var(--mist); }
+  .act svg { width: 15px; height: 15px; }
+  .act[aria-pressed="true"].seen-btn { background: var(--rose); color: var(--ink); border-color: var(--rose); }
+  .act[aria-pressed="true"].fav-btn { color: var(--rose); border-color: var(--rose); }
+  .act[aria-pressed="true"].fav-btn svg { fill: currentColor; }
+  .act.pop svg { animation: pop .4s; }
+  @keyframes pop { 50% { transform: scale(1.5); } }
+
+  .empty { color: var(--mist); text-align: center; padding: 40px 0; font-style: italic; font-family: var(--display); font-size: 22px; }
+
+  /* Dialog */
+  dialog {
+    border: 1px solid var(--line); border-radius: 22px; padding: 0; width: min(560px, calc(100% - 32px));
+    background: var(--ink-2); color: var(--pearl); box-shadow: 0 30px 80px -20px #000;
+  }
+  dialog::backdrop { background: rgba(10, 8, 26, .72); backdrop-filter: blur(4px); }
+  .dlg-hero { position: relative; height: 170px; background: linear-gradient(160deg, var(--c1), var(--c2)); display: flex; align-items: flex-end; padding: 18px 22px; overflow: hidden; }
+  .dlg-hero .ini { position: absolute; right: 12px; top: -30px; font-family: var(--display); font-style: italic; font-size: 200px; line-height: 1; color: rgba(255,255,255,.18); }
+  .dlg-hero h3 { font-family: var(--display); font-weight: 600; font-size: 34px; line-height: 1; margin: 0; color: #fff; text-shadow: 0 2px 16px rgba(0,0,0,.3); text-wrap: balance; position: relative; }
+  .dlg-body { padding: 18px 22px 22px; display: grid; gap: 12px; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .facts div { background: var(--ink-3); border-radius: 12px; padding: 10px 12px; }
+  .facts dt { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--mist); }
+  .facts dd { margin: 2px 0 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .dlg-body p { margin: 0; }
+  .dlg-close { position: absolute; top: 12px; right: 12px; z-index: 2; background: rgba(0,0,0,.35); color: #fff; border: 0; width: 34px; height: 34px; border-radius: 50%; font-size: 20px; cursor: pointer; }
+  .watch { display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: 700; color: var(--ink); background: var(--pearl); border-radius: 99px; padding: 12px 18px; }
+  .watch:hover { background: #fff; }
+  .picked { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+
+  footer { margin-top: 48px; color: var(--mist); font-size: 13px; text-align: center; display: grid; gap: 6px; }
+  footer .heart { color: var(--rose); font-family: var(--display); font-style: italic; font-size: 22px; }
+
+  @media (max-width: 560px) {
+    .film { grid-template-columns: 92px 1fr; gap: 14px; padding: 12px; }
+    .poster .ini { font-size: 44px; }
+    .film h2 { font-size: 23px; }
+    .syn { font-size: 14px; }
+    .tools-right { margin-left: 0; width: 100%; }
+    .tools-right .btn { flex: 1; }
+    .facts { grid-template-columns: 1fr 1fr; }
+    header.hero { padding-block: 36px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">Maratón de princesas · Disney+ España</span>
+    <h1>Érase una vez en Disney+</h1>
+    <p class="lede">Todas las películas de princesas que puedes ver en Disney+, de <em>Blancanieves</em> (1937) a <em>Vaiana 2</em> (2024), ordenadas en el tiempo. Marca las que ya hayáis visto, guarda vuestras favoritas y deja que una estrella fugaz elija la de esta noche.</p>
+    <div class="progress" aria-live="polite">
+      <div class="progress-row"><span><strong id="seenCount">0</strong> de <span id="totalCount">0</span> vistas</span><span id="timeLeft"></span></div>
+      <div class="bar"><i id="barFill"></i></div>
+    </div>
+  </header>
+
+  <div class="toolbar" role="toolbar" aria-label="Filtros">
+    <div class="chips" id="chips"></div>
+    <label class="search"><span hidden>Buscar</span><input id="q" type="search" placeholder="Busca película o princesa…" autocomplete="off"></label>
+    <div class="tools-right">
+      <button class="btn" id="sortBtn" type="button" aria-label="Cambiar orden">1937 → 2025</button>
+      <button class="btn btn-magic" id="magicBtn" type="button">✦ ¿Qué vemos hoy?</button>
+    </div>
+  </div>
+
+  <main class="timeline" id="timeline" aria-live="polite"></main>
+
+  <footer>
+    <span class="heart">Para verlas juntos, una a una.</span>
+    <span>El catálogo de Disney+ España puede cambiar. Revisado en septiembre de 2026.</span>
+  </footer>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <button class="dlg-close" type="button" aria-label="Cerrar" id="dlgClose">×</button>
+  <div class="dlg-hero" id="dlgHero"><span class="ini" id="dlgIni"></span><h3 id="dlgTitle"></h3></div>
+  <div class="dlg-body">
+    <span class="picked" id="dlgPicked" hidden>✦ La estrella ha elegido</span>
+    <dl class="facts" id="dlgFacts"></dl>
+    <p id="dlgSyn"></p>
+    <div class="actions" id="dlgActions"></div>
+  </div>
+</dialog>
+
+<script>
+const FILMS = [
+  { id: "blancanieves-1937", t: "Blancanieves y los siete enanitos", y: 1937, d: 83, k: "animada", p: "Blancanieves", c: ["#c0392b", "#f1c40f"],
+    s: "La primera princesa de todas. Huyendo de la Reina Malvada, Blancanieves encuentra refugio en la casita de siete enanitos en el bosque." },
+  { id: "cenicienta-1950", t: "Cenicienta", y: 1950, d: 74, k: "animada", p: "Cenicienta", c: ["#5b8dd6", "#c9dcf5"],
+    s: "Con la ayuda de su Hada Madrina y un par de zapatos de cristal, Cenicienta llega al baile del príncipe. Hasta medianoche." },
+  { id: "bella-durmiente-1959", t: "La bella durmiente", y: 1959, d: 75, k: "animada", p: "Aurora", c: ["#d86ea3", "#6c8fd8"],
+    s: "Maléfica maldice a la princesa Aurora al nacer. Tres hadas la esconden en el bosque hasta su decimosexto cumpleaños." },
+  { id: "sirenita-1989", t: "La sirenita", y: 1989, d: 83, k: "animada", p: "Ariel", c: ["#18a39a", "#e2574c"],
+    s: "Ariel sueña con el mundo de los humanos y cambia su voz por unas piernas en un trato con la bruja del mar Úrsula." },
+  { id: "bella-bestia-1991", t: "La bella y la bestia", y: 1991, d: 84, k: "animada", p: "Bella", c: ["#e6a817", "#7a3e9d"],
+    s: "Bella ocupa el lugar de su padre en el castillo de una Bestia. Una rosa encantada marca el tiempo para romper el hechizo." },
+  { id: "aladdin-1992", t: "Aladdín", y: 1992, d: 90, k: "animada", p: "Jasmín", c: ["#1f9fb5", "#6a3fa0"],
+    s: "Un ladrón de buen corazón, un genio con muchísima personalidad y una princesa que quiere decidir su propio destino en Agrabah." },
+  { id: "jafar-1994", t: "El retorno de Jafar", y: 1994, d: 69, k: "secuela", p: "Jasmín", c: ["#b3263a", "#3b2a7a"],
+    s: "Jafar escapa de su lámpara convertido en genio y busca vengarse de Aladdín, Jasmín y el Genio." },
+  { id: "pocahontas-1995", t: "Pocahontas", y: 1995, d: 81, k: "animada", p: "Pocahontas", c: ["#d17a2c", "#3d7a5a"],
+    s: "Pocahontas se enfrenta a la llegada de colonos ingleses y escucha los colores del viento para unir dos mundos." },
+  { id: "aladdin-ladrones-1996", t: "Aladdín y el rey de los ladrones", y: 1996, d: 81, k: "secuela", p: "Jasmín", c: ["#2c7a8c", "#d7a44a"],
+    s: "La boda de Aladdín y Jasmín se interrumpe cuando aparecen los cuarenta ladrones y una pista sobre el padre de Aladdín." },
+  { id: "bella-navidad-1997", t: "La bella y la bestia: Una Navidad encantada", y: 1997, d: 72, k: "secuela", p: "Bella", c: ["#9c2638", "#2f6b4f"],
+    s: "Dentro del castillo aún hechizado, Bella intenta devolverle a la Bestia y a todos sus habitantes la ilusión por la Navidad." },
+  { id: "mulan-1998", t: "Mulán", y: 1998, d: 88, k: "animada", p: "Mulán", c: ["#c0392b", "#2e4a7a"],
+    s: "Para salvar a su padre, Mulán se disfraza de soldado y se une al ejército imperial. Con Mushu, claro." },
+  { id: "pocahontas2-1998", t: "Pocahontas II: Viaje a un nuevo mundo", y: 1998, d: 72, k: "secuela", p: "Pocahontas", c: ["#8a5a2b", "#4f76a6"],
+    s: "Pocahontas cruza el océano hasta Londres como embajadora de su pueblo para evitar una guerra." },
+  { id: "sirenita2-2000", t: "La sirenita 2: Regreso al mar", y: 2000, d: 75, k: "secuela", p: "Ariel", c: ["#2b8bc4", "#8e5bbf"],
+    s: "Ahora es la hija de Ariel, Melody, la que sueña con el mar. Y la hermana de Úrsula, Morgana, tiene planes para ella." },
+  { id: "cenicienta2-2002", t: "Cenicienta: La magia de los sueños", y: 2002, d: 73, k: "secuela", p: "Cenicienta", c: ["#7fa7e0", "#e9b8cf"],
+    s: "Tres historias sobre la nueva vida de Cenicienta en palacio, con Jaq, Gus y hasta una de las hermanastras." },
+  { id: "mulan2-2004", t: "Mulán II", y: 2004, d: 79, k: "secuela", p: "Mulán", c: ["#a93245", "#d49a3a"],
+    s: "Mulán y Shang escoltan a tres princesas a un matrimonio concertado. Mushu intenta evitar la boda de su propia protegida." },
+  { id: "cenicienta3-2007", t: "La Cenicienta 3: Qué pasaría si…", y: 2007, d: 70, k: "secuela", p: "Cenicienta", c: ["#4f6fc9", "#a8d4e6"],
+    s: "Lady Tremaine roba la varita del Hada Madrina y da marcha atrás en el tiempo. Cenicienta tendrá que recuperar su final feliz." },
+  { id: "encantada-2007", t: "Encantada: La historia de Giselle", y: 2007, d: 107, k: "real", p: "Giselle", c: ["#e98bb0", "#4c7fbf"],
+    s: "Una princesa de dibujos animados cae en el Nueva York de verdad. Mitad animación, mitad acción real, totalmente adorable." },
+  { id: "sirenita3-2008", t: "La sirenita: Los comienzos de Ariel", y: 2008, d: 77, k: "secuela", p: "Ariel", c: ["#1c8a8a", "#e0a53a"],
+    s: "Antes de conocer a Eric: el rey Tritón ha prohibido la música en Atlántica y la joven Ariel descubre un club secreto." },
+  { id: "tiana-2009", t: "Tiana y el sapo", y: 2009, d: 97, k: "animada", p: "Tiana", c: ["#3f8f4a", "#e0b84a"],
+    s: "En Nueva Orleans, Tiana sueña con su propio restaurante. Un beso a un príncipe rana lo complica todo un poquito." },
+  { id: "enredados-2010", t: "Enredados", y: 2010, d: 100, k: "animada", p: "Rapunzel", c: ["#8e5bbf", "#f2c14e"],
+    s: "Rapunzel sale por primera vez de su torre para ver las luces flotantes, con un ladrón encantador como guía." },
+  { id: "brave-2012", t: "Brave (Indomable)", y: 2012, d: 93, k: "animada", p: "Mérida", c: ["#c7461f", "#2f6a5a"],
+    s: "Mérida prefiere el arco al matrimonio. Un deseo mal pedido a una bruja cambia a su madre para siempre." },
+  { id: "frozen-2013", t: "Frozen: El reino del hielo", y: 2013, d: 102, k: "animada", p: "Anna y Elsa", c: ["#5fb3e0", "#b7a3e6"],
+    s: "Elsa huye tras sumir Arendelle en un invierno eterno y Anna sale a buscarla. Libre soy, libre soooy." },
+  { id: "malefica-2014", t: "Maléfica", y: 2014, d: 97, k: "real", p: "Aurora", c: ["#3b2a52", "#6fa04e"],
+    s: "La bella durmiente contada desde el otro lado: por qué Maléfica maldijo a Aurora, y qué pasó después." },
+  { id: "cenicienta-2015", t: "Cenicienta", y: 2015, d: 105, k: "real", p: "Cenicienta", c: ["#6ea0e6", "#dfe9f7"],
+    s: "El clásico en acción real, con un vestido azul que da vueltas como ningún otro. Ten valor y sé amable." },
+  { id: "vaiana-2016", t: "Vaiana", y: 2016, d: 107, k: "animada", p: "Vaiana", c: ["#1fa3a3", "#f08a4b"],
+    s: "El océano elige a Vaiana para devolver el corazón de Te Fiti. Necesitará a Maui, un semidiós con mucho ego." },
+  { id: "bella-bestia-2017", t: "La bella y la bestia", y: 2017, d: 129, k: "real", p: "Bella", c: ["#e0a42a", "#4a2e6e"],
+    s: "Emma Watson es Bella en la versión de acción real, con las canciones de siempre y alguna nueva." },
+  { id: "aladdin-2019", t: "Aladdín", y: 2019, d: 128, k: "real", p: "Jasmín", c: ["#2a8fbf", "#d4943a"],
+    s: "Will Smith como el Genio y una Jasmín que por fin tiene su propia canción: «Sin voz»." },
+  { id: "malefica2-2019", t: "Maléfica: Maestra del mal", y: 2019, d: 119, k: "real", p: "Aurora", c: ["#2a1f3d", "#b04a6a"],
+    s: "La boda de Aurora con el príncipe Felipe enfrenta a Maléfica con la madre del novio, la reina Ingrith." },
+  { id: "frozen2-2019", t: "Frozen II", y: 2019, d: 103, k: "animada", p: "Anna y Elsa", c: ["#6c5bb3", "#e0a15a"],
+    s: "Una voz llama a Elsa desde un bosque encantado. Las hermanas viajan hacia lo desconocido para descubrir el origen de sus poderes." },
+  { id: "mulan-2020", t: "Mulán", y: 2020, d: 115, k: "real", p: "Mulán", c: ["#b3202e", "#e0b04a"],
+    s: "Versión épica en acción real, con más artes marciales y un fénix en lugar de dragón." },
+  { id: "raya-2021", t: "Raya y el último dragón", y: 2021, d: 107, k: "animada", p: "Raya", c: ["#3a6fa8", "#d4a43a"],
+    s: "En el reino de Kumandra, la guerrera Raya busca al último dragón, Sisu, para reunir las piezas de una gema mágica." },
+  { id: "desencantada-2022", t: "Desencantada: Vuelve Giselle", y: 2022, d: 119, k: "real", p: "Giselle", c: ["#c86b9a", "#6a8f5a"],
+    s: "Giselle se muda a las afueras buscando un cuento de hadas y un deseo convierte su nuevo pueblo en uno... con madrastra incluida." },
+  { id: "sirenita-2023", t: "La sirenita", y: 2023, d: 135, k: "real", p: "Ariel", c: ["#0f8a9a", "#c94a3a"],
+    s: "Halle Bailey es Ariel en esta versión de acción real con nuevas canciones de Alan Menken y Lin-Manuel Miranda." },
+  { id: "vaiana2-2024", t: "Vaiana 2", y: 2024, d: 100, k: "animada", p: "Vaiana", c: ["#1a8f9f", "#d95c6a"],
+    s: "Una llamada de sus antepasados lleva a Vaiana a los mares más peligrosos de Oceanía, con Maui y una tripulación nueva." },
+  { id: "blancanieves-2025", t: "Blancanieves", y: 2025, d: 109, k: "real", p: "Blancanieves", c: ["#a8243a", "#3a5a8a"],
+    s: "Rachel Zegler es Blancanieves y Gal Gadot la Reina Malvada en la nueva versión musical en acción real." },
+];
+
+const KINDS = { todas: "Todas", animada: "Clásicos animados", secuela: "Secuelas", real: "Acción real", favs: "Favoritas" };
+const KIND_LABEL = { animada: "Clásico animado", secuela: "Secuela", real: "Acción real" };
+
+const store = {
+  get(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+const seen = new Set(store.get("princesas.seen", []));
+const favs = new Set(store.get("princesas.favs", []));
+const state = { kind: store.get("princesas.kind", "todas"), q: "", asc: true };
+if (!KINDS[state.kind]) state.kind = "todas";
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => s.replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
+const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const fmtDur = (m) => `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")} min`;
+const plusUrl = (f) => `https://www.disneyplus.com/es-es/search?q=${encodeURIComponent(f.t)}`;
+const initial = (f) => f.p.trim()[0];
+
+const ICON_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 5c-2.3 4.6-9.3 9-9.3 9Z"/></svg>';
+
+function renderChips() {
+  const counts = { todas: FILMS.length, favs: favs.size };
+  FILMS.forEach((f) => (counts[f.k] = (counts[f.k] || 0) + 1));
+  $("#chips").innerHTML = Object.entries(KINDS).map(([k, label]) =>
+    `<button class="chip" type="button" data-kind="${k}" aria-pressed="${state.kind === k}">${label}<span class="n">${counts[k] || 0}</span></button>`
+  ).join("");
+}
+
+function visible() {
+  const q = norm(state.q.trim());
+  let list = FILMS.filter((f) => {
+    if (state.kind === "favs" && !favs.has(f.id)) return false;
+    if (!["todas", "favs"].includes(state.kind) && f.k !== state.kind) return false;
+    return !q || norm(`${f.t} ${f.p} ${f.y}`).includes(q);
+  });
+  list.sort((a, b) => (a.y - b.y) || FILMS.indexOf(a) - FILMS.indexOf(b));
+  if (!state.asc) list.reverse();
+  return list;
+}
+
+function actionButtons(f) {
+  return `<button class="act seen-btn" type="button" data-act="seen" data-id="${f.id}" aria-pressed="${seen.has(f.id)}">${ICON_EYE}<span>${seen.has(f.id) ? "Vista" : "Marcar como vista"}</span></button>
+    <button class="act fav-btn" type="button" data-act="fav" data-id="${f.id}" aria-pressed="${favs.has(f.id)}" aria-label="Favorita">${ICON_HEART}<span>Favorita</span></button>`;
+}
+
+function renderList() {
+  const list = visible();
+  const tl = $("#timeline");
+  if (!list.length) {
+    tl.innerHTML = `<p class="empty">${state.kind === "favs" ? "Aún no hay favoritas. Toca el corazón de una película." : "Ninguna película coincide con esa búsqueda."}</p>`;
+    return;
+  }
+  let lastDecade = null, html = "";
+  list.forEach((f, i) => {
+    const dec = Math.floor(f.y / 10) * 10;
+    if (dec !== lastDecade) { html += `<div class="decade">Años ${dec < 2000 ? String(dec).slice(2) : dec}</div>`; lastDecade = dec; }
+    const order = FILMS.indexOf(f) + 1;
+    html += `<article class="film${seen.has(f.id) ? " seen" : ""}" id="${f.id}" data-id="${f.id}" tabindex="0"
+        style="--c1:${f.c[0]};--c2:${f.c[1]};animation-delay:${Math.min(i, 12) * 40}ms" aria-label="${esc(f.t)}, ${f.y}">
+      <div class="poster" aria-hidden="true"><span class="ord">Nº ${String(order).padStart(2, "0")}</span><span class="ini">${initial(f)}</span><span class="yr">${f.y}</span></div>
+      <div class="info">
+        <div class="meta"><span class="tag ${f.k}">${KIND_LABEL[f.k]}</span><span>${f.y} · ${fmtDur(f.d)}</span></div>
+        <h2>${esc(f.t)}</h2>
+        <span class="princess">${esc(f.p)}</span>
+        <p class="syn">${esc(f.s)}</p>
+        <div class="actions">${actionButtons(f)}</div>
+      </div>
+    </article>`;
+  });
+  tl.innerHTML = html;
+}
+
+function renderProgress() {
+  const total = FILMS.length, n = FILMS.filter((f) => seen.has(f.id)).length;
+  $("#seenCount").textContent = n;
+  $("#totalCount").textContent = total;
+  $("#barFill").style.width = `${(n / total) * 100}%`;
+  const left = FILMS.filter((f) => !seen.has(f.id)).reduce((s, f) => s + f.d, 0);
+  $("#timeLeft").textContent = n === total ? "¡Maratón completado!" : `Quedan ${Math.floor(left / 60)} h ${left % 60} min`;
+}
+
+function renderAll() { renderChips(); renderList(); renderProgress(); }
+
+function toggle(set, key, id) {
+  set.has(id) ? set.delete(id) : set.add(id);
+  store.set(key, [...set]);
+}
+
+function refreshAfterToggle(id, act) {
+  renderChips(); renderProgress();
+  if (state.kind === "favs" && act === "fav") { renderList(); return; }
+  const f = FILMS.find((x) => x.id === id);
+  const card = document.getElementById(id);
+  if (card) {
+    card.classList.toggle("seen", seen.has(id));
+    card.querySelector(".actions").innerHTML = actionButtons(f);
+    card.querySelector(`[data-act="${act}"]`)?.classList.add("pop");
+  }
+  if ($("#dlg").open && $("#dlg").dataset.id === id) {
+    $("#dlgActions").innerHTML = actionButtons(f) + `<a class="watch" href="${plusUrl(f)}" target="_blank" rel="noopener">Buscar en Disney+ ↗</a>`;
+    $("#dlgActions").querySelector(`[data-act="${act}"]`)?.classList.add("pop");
+  }
+}
+
+function openFilm(f, picked = false) {
+  const d = $("#dlg");
+  d.dataset.id = f.id;
+  d.style.setProperty("--c1", f.c[0]); d.style.setProperty("--c2", f.c[1]);
+  $("#dlgIni").textContent = initial(f);
+  $("#dlgTitle").textContent = f.t;
+  $("#dlgPicked").hidden = !picked;
+  $("#dlgFacts").innerHTML = `
+    <div><dt>Estreno</dt><dd>${f.y}</dd></div>
+    <div><dt>Duración</dt><dd>${fmtDur(f.d)}</dd></div>
+    <div><dt>Princesa</dt><dd>${esc(f.p)}</dd></div>`;
+  $("#dlgSyn").textContent = f.s;
+  $("#dlgActions").innerHTML = actionButtons(f) + `<a class="watch" href="${plusUrl(f)}" target="_blank" rel="noopener">Buscar en Disney+ ↗</a>`;
+  if (!d.open) d.showModal();
+}
+
+document.addEventListener("click", (e) => {
+  const act = e.target.closest("[data-act]");
+  if (act) {
+    e.stopPropagation();
+    const id = act.dataset.id, kind = act.dataset.act;
+    if (kind === "seen") toggle(seen, "princesas.seen", id);
+    else toggle(favs, "princesas.favs", id);
+    refreshAfterToggle(id, kind);
+    if (kind === "seen" && seen.has(id)) burst(e.clientX, e.clientY);
+    return;
+  }
+  const chip = e.target.closest(".chip");
+  if (chip) { state.kind = chip.dataset.kind; store.set("princesas.kind", state.kind); renderChips(); renderList(); return; }
+  const card = e.target.closest(".film");
+  if (card) openFilm(FILMS.find((f) => f.id === card.dataset.id));
+});
+document.addEventListener("keydown", (e) => {
+  const card = e.target.closest?.(".film");
+  if (card && (e.key === "Enter" || e.key === " ") && e.target === card) { e.preventDefault(); openFilm(FILMS.find((f) => f.id === card.dataset.id)); }
+});
+$("#q").addEventListener("input", (e) => { state.q = e.target.value; renderList(); });
+$("#sortBtn").addEventListener("click", () => {
+  state.asc = !state.asc;
+  $("#sortBtn").textContent = state.asc ? "1937 → 2025" : "2025 → 1937";
+  renderList();
+});
+$("#dlgClose").addEventListener("click", () => $("#dlg").close());
+$("#dlg").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
+
+$("#magicBtn").addEventListener("click", (e) => {
+  const pool = FILMS.filter((f) => !seen.has(f.id));
+  const from = pool.length ? pool : FILMS;
+  const f = from[Math.floor(Math.random() * from.length)];
+  const r = e.currentTarget.getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2, 60);
+  if (!document.getElementById(f.id)) { state.kind = "todas"; state.q = ""; $("#q").value = ""; renderChips(); renderList(); }
+  const card = document.getElementById(f.id);
+  card.scrollIntoView({ behavior: "smooth", block: "center" });
+  card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash");
+  setTimeout(() => openFilm(f, true), 650);
+});
+
+/* Starry sky + sparkle bursts */
+const cv = $("#sky"), ctx = cv.getContext("2d");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let W, H, stars = [], sparks = [], shoot = null, dpr = Math.min(devicePixelRatio || 1, 2);
+function resize() {
+  W = innerWidth; H = innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  stars = Array.from({ length: Math.round((W * H) / 5200) }, () => ({
+    x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.3 + .2,
+    p: Math.random() * Math.PI * 2, s: Math.random() * .02 + .005, g: Math.random() < .15
+  }));
+}
+function burst(x, y, n = 28) {
+  if (reduce) return;
+  const cols = ["#f4a6c1", "#e8c27a", "#f6efe6"];
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, v = Math.random() * 4 + 1.5;
+    sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1.5, life: 1, c: cols[i % 3], r: Math.random() * 2 + 1 });
+  }
+}
+function drawStar(x, y, r, c, a) {
+  ctx.globalAlpha = a; ctx.fillStyle = c;
+  ctx.beginPath(); ctx.moveTo(x, y - r * 3); ctx.lineTo(x + r * .6, y - r * .6); ctx.lineTo(x + r * 3, y);
+  ctx.lineTo(x + r * .6, y + r * .6); ctx.lineTo(x, y + r * 3); ctx.lineTo(x - r * .6, y + r * .6);
+  ctx.lineTo(x - r * 3, y); ctx.lineTo(x - r * .6, y - r * .6); ctx.closePath(); ctx.fill();
+}
+function frame() {
+  ctx.clearRect(0, 0, W, H);
+  const grd = ctx.createRadialGradient(W * .8, -H * .1, 0, W * .8, -H * .1, H * 1.1);
+  grd.addColorStop(0, "rgba(224,117,155,.16)"); grd.addColorStop(1, "rgba(19,17,42,0)");
+  ctx.globalAlpha = 1; ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+  for (const s of stars) {
+    s.p += s.s;
+    const a = .35 + Math.sin(s.p) * .35 + .3;
+    if (s.g) drawStar(s.x, s.y, s.r * .9, "#e8c27a", a * .9);
+    else { ctx.globalAlpha = a; ctx.fillStyle = "#f6efe6"; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill(); }
+  }
+  if (!shoot && Math.random() < .004) shoot = { x: Math.random() * W * .7, y: Math.random() * H * .35, l: 0 };
+  if (shoot) {
+    shoot.l += 1;
+    const x = shoot.x + shoot.l * 9, y = shoot.y + shoot.l * 3.5;
+    const g = ctx.createLinearGradient(x - 120, y - 46, x, y);
+    g.addColorStop(0, "rgba(246,239,230,0)"); g.addColorStop(1, "rgba(246,239,230,.9)");
+    ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(x - 120, y - 46); ctx.lineTo(x, y); ctx.stroke();
+    if (shoot.l > 60) shoot = null;
+  }
+  sparks = sparks.filter((p) => (p.life -= .018) > 0);
+  for (const p of sparks) { p.x += p.vx; p.y += p.vy; p.vy += .08; p.vx *= .98; drawStar(p.x, p.y, p.r, p.c, p.life); }
+  ctx.globalAlpha = 1;
+  if (!reduce) requestAnimationFrame(frame);
+}
+addEventListener("resize", () => { resize(); if (reduce) frame(); });
+resize(); frame();
+
+renderAll();
+</script>
+</body>
+</html>
