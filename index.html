@@ -37,9 +37,11 @@
   }
   #sky { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
   .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; }
+  button { font-family: inherit; }
+  a.tile, a.btn { text-decoration: none; color: var(--pearl); }
 
   /* Hero */
-  header.hero { padding-block: 56px 28px; text-align: left; display: grid; gap: 14px; }
+  header.hero { padding-block: 48px 20px; display: grid; gap: 14px; }
   .eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
   h1 {
     font-family: var(--display); font-weight: 600; font-style: italic;
@@ -49,10 +51,8 @@
   }
   .lede { max-width: 60ch; color: var(--mist); font-size: 17px; margin: 0; }
   .lede em { color: var(--rose); font-style: normal; }
-
-  /* Progress */
-  .progress { display: grid; gap: 8px; max-width: 520px; margin-top: 10px; }
-  .progress-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--mist); font-variant-numeric: tabular-nums; }
+  .progress { display: grid; gap: 8px; max-width: 520px; margin-top: 6px; }
+  .progress-row { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--mist); font-variant-numeric: tabular-nums; }
   .progress-row strong { color: var(--pearl); }
   .bar { height: 8px; border-radius: 99px; background: var(--ink-3); overflow: hidden; }
   .bar > i { display: block; height: 100%; width: 0; border-radius: inherit;
@@ -62,23 +62,26 @@
   .toolbar {
     position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
     display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-    padding: 12px; margin-block: 18px 30px;
+    padding: 12px; margin-block: 14px 28px;
     background: color-mix(in srgb, var(--ink-2) 88%, transparent);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--line); border-radius: var(--radius);
   }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip, .btn {
+  .modes { display: inline-flex; background: var(--ink); border: 1px solid var(--line); border-radius: 99px; padding: 3px; }
+  .seg { font: 500 14px/1 var(--body); color: var(--mist); background: transparent; border: 0; border-radius: 99px; padding: 9px 14px; cursor: pointer; white-space: nowrap; }
+  .seg[aria-pressed="true"] { background: var(--pearl); color: var(--ink); }
+  .seg .n { opacity: .6; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .btn {
     font: 500 14px/1 var(--body); color: var(--pearl); cursor: pointer;
     background: var(--ink-3); border: 1px solid transparent; border-radius: 99px;
-    padding: 9px 14px; transition: background .2s, border-color .2s, transform .15s;
+    padding: 10px 14px; transition: background .2s, border-color .2s, transform .15s;
   }
-  .chip:hover, .btn:hover { border-color: var(--line); }
-  .chip[aria-pressed="true"] { background: var(--pearl); color: var(--ink); }
-  .chip .n { opacity: .6; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .btn:hover { border-color: var(--line); }
   .btn-magic { background: linear-gradient(95deg, var(--rose-deep), #c9869f 50%, var(--gold)); color: var(--ink); font-weight: 700; }
   .btn-magic:hover { transform: translateY(-1px); }
-  :is(.chip, .btn, input, button):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .btn-next { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-color: var(--gold); }
+  .btn-next b { color: var(--gold); font-weight: 700; }
+  :is(.btn, .seg, input, button, a, .tile, .film):focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .search { flex: 1 1 180px; min-width: 0; }
   .search input {
     width: 100%; font: 15px var(--body); color: var(--pearl);
@@ -86,49 +89,8 @@
   }
   .search input::placeholder { color: var(--mist); }
   .tools-right { display: flex; gap: 6px; margin-left: auto; min-width: 0; flex-wrap: wrap; }
-  .modes { display: inline-flex; background: var(--ink); border: 1px solid var(--line); border-radius: 99px; padding: 3px; }
-  .seg { font: 500 13px/1 var(--body); color: var(--mist); background: transparent; border: 0; border-radius: 99px; padding: 8px 12px; cursor: pointer; }
-  .seg[aria-pressed="true"] { background: var(--ink-3); color: var(--pearl); }
-  .btn-next { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-color: var(--gold); }
-  .btn-next b { color: var(--gold); font-weight: 700; }
 
-  /* Timeline */
-  .timeline { position: relative; display: grid; gap: 22px; padding-left: 34px; }
-  .timeline::before {
-    content: ""; position: absolute; left: 11px; top: 6px; bottom: 6px; width: 2px;
-    background: linear-gradient(var(--gold), var(--rose) 50%, var(--line));
-    border-radius: 2px;
-  }
-  .decade {
-    font-family: var(--display); font-style: italic; font-size: 30px; color: var(--gold);
-    margin: 14px 0 -6px; position: relative;
-  }
-  .chapter { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 34px; color: var(--pearl); margin-top: 26px; }
-  .chapter .cap { font-family: var(--body); font-style: normal; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; flex-basis: 100%; }
-  .chapter .cnt { font-family: var(--body); font-style: normal; font-size: 13px; color: var(--mist); font-variant-numeric: tabular-nums; }
-  .chapter::before { top: calc(50% + 8px); }
-  .decade::before {
-    content: ""; position: absolute; left: -29px; top: 50%; width: 12px; height: 12px;
-    transform: translate(0,-50%) rotate(45deg); background: var(--gold);
-    box-shadow: 0 0 14px var(--gold);
-  }
-  .film {
-    position: relative; display: grid; grid-template-columns: 132px 1fr; gap: 18px;
-    background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 14px; cursor: pointer;
-    transition: transform .25s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .25s;
-    animation: rise .5s both;
-  }
-  .film::before {
-    content: ""; position: absolute; left: -28px; top: 34px; width: 10px; height: 10px;
-    border-radius: 50%; background: var(--ink); border: 2px solid var(--rose);
-  }
-  .film.seen::before { background: var(--rose); box-shadow: 0 0 10px var(--rose); }
-  .film:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--c1) 70%, var(--line)); box-shadow: 0 14px 40px -18px var(--c1); }
-  .film.flash { animation: flash 1.6s ease; }
-  @keyframes rise { from { transform: translateY(10px); } }
-  @keyframes flash { 0%,100% { box-shadow: 0 0 0 0 transparent; } 30% { box-shadow: 0 0 0 4px var(--gold), 0 0 60px var(--gold); } }
-
+  /* Posters (foto real encima del degradado de respaldo) */
   .poster {
     position: relative; aspect-ratio: 2 / 3; max-width: 100%; border-radius: 12px; overflow: hidden;
     background:
@@ -142,11 +104,90 @@
     background-size: 14px 14px; opacity: .25;
   }
   .poster .ini { font-family: var(--display); font-style: italic; font-weight: 600; font-size: 64px; color: rgba(255,255,255,.92); text-shadow: 0 4px 20px rgba(0,0,0,.25); line-height: 1; }
-  .poster .yr { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-size: 12px; letter-spacing: .18em; color: rgba(255,255,255,.9); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .poster .ord { position: absolute; top: 8px; left: 10px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,.85); font-variant-numeric: tabular-nums; }
+  .poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s; z-index: 1; }
+  .poster img.ok { opacity: 1; }
+  .poster .yr, .poster .ord { position: absolute; z-index: 2; font-weight: 700; font-variant-numeric: tabular-nums; color: #fff; }
+  .poster .yr { bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 12px; letter-spacing: .14em; padding: 3px 8px; border-radius: 99px; background: rgba(19,17,42,.62); }
+  .poster .ord { top: 8px; left: 8px; font-size: 11px; padding: 3px 7px; border-radius: 99px; background: rgba(19,17,42,.62); }
+  .poster .check { position: absolute; z-index: 2; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: var(--rose); color: var(--ink); display: grid; place-items: center; }
+  .poster .check svg { width: 15px; height: 15px; }
 
+  /* Portada: rejilla de sagas */
+  .grid-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 16px; }
+  .grid-head h2 { font-family: var(--display); font-style: italic; font-weight: 600; font-size: 34px; margin: 0; color: var(--gold); }
+  .grid-head p { margin: 0; color: var(--mist); font-size: 14px; }
+  .sagas { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 22px 16px; }
+  .tile {
+    display: grid; gap: 8px; align-content: start; text-align: left; color: inherit; cursor: pointer;
+    background: none; border: 0; padding: 0; border-radius: 14px; animation: rise .5s both;
+  }
+  .tile .stack { position: relative; }
+  .tile .stack::before, .tile .stack::after {
+    content: ""; position: absolute; inset: 0; border-radius: 12px; background: var(--ink-3); border: 1px solid var(--line);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .tile .stack::before { transform: rotate(-4deg) translate(-4px, 2px); }
+  .tile .stack::after { transform: rotate(3deg) translate(4px, 1px); }
+  .tile.single .stack::before, .tile.single .stack::after { display: none; }
+  .tile .poster { z-index: 1; box-shadow: 0 16px 34px -18px #000; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s; }
+  .tile:hover .poster { transform: translateY(-5px); box-shadow: 0 24px 44px -18px var(--c1); }
+  .tile:hover .stack::before { transform: rotate(-8deg) translate(-10px, 0); }
+  .tile:hover .stack::after { transform: rotate(7deg) translate(10px, 0); }
+  .tile .cap { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-top: 6px; }
+  .tile .name { font-family: var(--display); font-weight: 600; font-size: 25px; line-height: 1.05; text-wrap: balance; }
+  .tile .sub { font-size: 13px; color: var(--mist); font-variant-numeric: tabular-nums; display: flex; justify-content: space-between; gap: 8px; }
+  .tile .bar { height: 4px; }
+  .tile.done .sub span:last-child { color: var(--rose); }
+
+  /* Vista de saga */
+  .saga-head { display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: end; margin-bottom: 30px; }
+  .back { justify-self: start; grid-column: 1 / -1; }
+  .saga-head .poster { box-shadow: 0 24px 50px -20px var(--c1); }
+  .saga-head .cap { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+  .saga-head h2 { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(40px, 7vw, 68px); line-height: 1; margin: 4px 0 10px; text-wrap: balance; }
+  .saga-head .facts-line { color: var(--mist); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .saga-head .bar { max-width: 360px; margin-top: 12px; }
+  .saga-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 34px; }
+  .saga-nav a {
+    display: grid; gap: 2px; padding: 14px 18px; border-radius: var(--radius); text-decoration: none; color: var(--pearl);
+    background: var(--ink-2); border: 1px solid var(--line); transition: border-color .2s;
+  }
+  .saga-nav a:hover { border-color: var(--gold); }
+  .saga-nav a.next { text-align: right; grid-column: 2; }
+  .saga-nav small { color: var(--gold); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
+  .saga-nav span { font-family: var(--display); font-style: italic; font-size: 22px; }
+
+  /* Lista de películas */
+  .timeline { position: relative; display: grid; gap: 22px; padding-left: 34px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 11px; top: 6px; bottom: 6px; width: 2px;
+    background: linear-gradient(var(--gold), var(--rose) 50%, var(--line)); border-radius: 2px;
+  }
+  .decade { font-family: var(--display); font-style: italic; font-size: 30px; color: var(--gold); margin: 14px 0 -6px; position: relative; }
+  .decade::before {
+    content: ""; position: absolute; left: -29px; top: 50%; width: 12px; height: 12px;
+    transform: translate(0,-50%) rotate(45deg); background: var(--gold); box-shadow: 0 0 14px var(--gold);
+  }
+  .film {
+    position: relative; display: grid; grid-template-columns: 140px 1fr; gap: 18px;
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px; cursor: pointer;
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), border-color .25s, box-shadow .25s;
+    animation: rise .5s both;
+  }
   .film > * { min-width: 0; }
-  .info { display: grid; align-content: start; gap: 6px; min-width: 0; }
+  .film::before {
+    content: ""; position: absolute; left: -28px; top: 34px; width: 10px; height: 10px;
+    border-radius: 50%; background: var(--ink); border: 2px solid var(--rose);
+  }
+  .film.seen::before { background: var(--rose); box-shadow: 0 0 10px var(--rose); }
+  .film.next { border-color: color-mix(in srgb, var(--gold) 60%, var(--line)); }
+  .film:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--c1) 70%, var(--line)); box-shadow: 0 14px 40px -18px var(--c1); }
+  .film.flash { animation: flash 1.6s ease; }
+  @keyframes rise { from { transform: translateY(10px); } }
+  @keyframes flash { 0%,100% { box-shadow: 0 0 0 0 transparent; } 30% { box-shadow: 0 0 0 4px var(--gold), 0 0 60px var(--gold); } }
+
+  .info { display: grid; align-content: start; gap: 6px; }
   .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--mist); }
   .tag { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; padding: 4px 9px; border-radius: 99px; background: var(--ink-3); color: var(--pearl); }
   .tag.animada { color: var(--rose); }
@@ -154,11 +195,11 @@
   .tag.real { color: var(--gold); }
   .tag.corto { color: #9fd3e6; }
   .tag.toca { background: var(--gold); color: var(--ink); }
-  .film.next { border-color: color-mix(in srgb, var(--gold) 60%, var(--line)); }
-  .note { margin: 2px 0 0; font-family: var(--display); font-style: italic; font-size: 17px; color: var(--gold); max-width: 62ch; }
-  .film h2 { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1.05; margin: 2px 0 0; text-wrap: balance; }
+  .tag.saga { background: transparent; border: 1px solid var(--line); color: var(--mist); }
+  .film h3 { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1.05; margin: 2px 0 0; text-wrap: balance; }
   .princess { font-size: 14px; color: var(--rose); font-weight: 500; }
   .syn { margin: 2px 0 0; color: color-mix(in srgb, var(--pearl) 80%, var(--mist)); font-size: 15px; max-width: 62ch; }
+  .note { margin: 2px 0 0; font-family: var(--display); font-style: italic; font-size: 17px; color: var(--gold); max-width: 62ch; }
   .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   .act {
     font: 500 13px/1 var(--body); color: var(--pearl); cursor: pointer;
@@ -172,25 +213,24 @@
   .act[aria-pressed="true"].fav-btn svg { fill: currentColor; }
   .act.pop svg { animation: pop .4s; }
   @keyframes pop { 50% { transform: scale(1.5); } }
-
   .empty { color: var(--mist); text-align: center; padding: 40px 0; font-style: italic; font-family: var(--display); font-size: 22px; }
 
-  /* Dialog */
+  /* Ficha */
   dialog {
-    border: 1px solid var(--line); border-radius: 22px; padding: 0; width: min(560px, calc(100% - 32px));
+    border: 1px solid var(--line); border-radius: 22px; padding: 0; width: min(600px, calc(100% - 32px));
     background: var(--ink-2); color: var(--pearl); box-shadow: 0 30px 80px -20px #000;
   }
   dialog::backdrop { background: rgba(10, 8, 26, .72); backdrop-filter: blur(4px); }
-  .dlg-hero { position: relative; height: 170px; background: linear-gradient(160deg, var(--c1), var(--c2)); display: flex; align-items: flex-end; padding: 18px 22px; overflow: hidden; }
-  .dlg-hero .ini { position: absolute; right: 12px; top: -30px; font-family: var(--display); font-style: italic; font-size: 200px; line-height: 1; color: rgba(255,255,255,.18); }
-  .dlg-hero h3 { font-family: var(--display); font-weight: 600; font-size: 34px; line-height: 1; margin: 0; color: #fff; text-shadow: 0 2px 16px rgba(0,0,0,.3); text-wrap: balance; position: relative; }
+  .dlg-top { display: grid; grid-template-columns: 150px 1fr; gap: 18px; padding: 22px 22px 0; align-items: end;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--c1) 45%, transparent), transparent); }
+  .dlg-top h3 { font-family: var(--display); font-weight: 600; font-size: 32px; line-height: 1.02; margin: 0; text-wrap: balance; }
   .dlg-body { padding: 18px 22px 22px; display: grid; gap: 12px; }
-  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; }
   .facts div { background: var(--ink-3); border-radius: 12px; padding: 10px 12px; }
   .facts dt { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--mist); }
   .facts dd { margin: 2px 0 0; font-weight: 700; font-variant-numeric: tabular-nums; }
   .dlg-body p { margin: 0; }
-  .dlg-close { position: absolute; top: 12px; right: 12px; z-index: 2; background: rgba(0,0,0,.35); color: #fff; border: 0; width: 34px; height: 34px; border-radius: 50%; font-size: 20px; cursor: pointer; }
+  .dlg-close { position: absolute; top: 12px; right: 12px; z-index: 3; background: rgba(0,0,0,.35); color: #fff; border: 0; width: 34px; height: 34px; border-radius: 50%; font-size: 20px; cursor: pointer; }
   .watch { display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-weight: 700; color: var(--ink); background: var(--pearl); border-radius: 99px; padding: 12px 18px; }
   .watch:hover { background: #fff; }
   .picked { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 700; }
@@ -198,17 +238,24 @@
   footer { margin-top: 48px; color: var(--mist); font-size: 13px; text-align: center; display: grid; gap: 6px; }
   footer .heart { color: var(--rose); font-family: var(--display); font-style: italic; font-size: 22px; }
 
-  @media (max-width: 560px) {
-    .film { grid-template-columns: 92px 1fr; gap: 14px; padding: 12px; }
+  @media (max-width: 600px) {
+    .sagas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; }
+    .tile .name { font-size: 21px; }
+    .film { grid-template-columns: 96px 1fr; gap: 14px; padding: 12px; }
     .poster .ini { font-size: 44px; }
-    .film h2 { font-size: 23px; }
+    .film h3 { font-size: 23px; }
     .syn { font-size: 14px; }
-    .tools-right, .modes { margin-left: 0; width: 100%; }
-    .seg { flex: 1; }
+    .modes, .tools-right { width: 100%; margin-left: 0; }
+    .seg { flex: 1; padding-inline: 8px; }
     .tools-right .btn { flex: 1 1 auto; }
     .btn-next { max-width: 100%; }
+    .saga-head { grid-template-columns: 110px 1fr; gap: 16px; }
+    .saga-nav { grid-template-columns: 1fr; }
+    .saga-nav a.next { grid-column: 1; }
+    .dlg-top { grid-template-columns: 100px 1fr; }
+    .dlg-top h3 { font-size: 26px; }
     .facts { grid-template-columns: 1fr 1fr; }
-    header.hero { padding-block: 36px 16px; }
+    header.hero { padding-block: 32px 12px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -223,39 +270,45 @@
   <header class="hero">
     <span class="eyebrow">El maratón de princesas · Disney+ España</span>
     <h1>Érase una vez en Disney+</h1>
-    <p class="lede">Todas las películas de princesas de Disney+: los clásicos animados, sus secuelas y precuelas, las versiones en acción real, <em>Maléfica</em>, <em>Descendientes</em>, los cortos de <em>Frozen</em> y el gran final con <em>Ralph rompe Internet</em>. Van en el orden en que conviene verlas: saga a saga, cada una con sus precuelas y continuaciones en su sitio.</p>
+    <p class="lede">Todas las películas de princesas de Disney+, separadas por sagas: <em>Cenicienta</em>, <em>Maléfica</em>, <em>Frozen</em>, <em>Descendientes</em>… Entra en una saga para ver todas sus películas en el orden en que conviene verlas.</p>
     <div class="progress" aria-live="polite">
       <div class="progress-row"><span><strong id="seenCount">0</strong> de <span id="totalCount">0</span> vistas</span><span id="timeLeft"></span></div>
       <div class="bar"><i id="barFill"></i></div>
     </div>
   </header>
 
-  <div class="toolbar" role="toolbar" aria-label="Filtros">
-    <div class="chips" id="chips"></div>
-    <label class="search"><span hidden>Buscar</span><input id="q" type="search" placeholder="Busca película o princesa…" autocomplete="off"></label>
-    <div class="modes" id="modes" role="group" aria-label="Orden">
-      <button class="seg" type="button" data-mode="saga">Orden para verlas</button>
-      <button class="seg" type="button" data-mode="year">Año de estreno</button>
+  <div class="toolbar" role="toolbar" aria-label="Navegación">
+    <div class="modes" id="modes" role="group" aria-label="Vista">
+      <button class="seg" type="button" data-go="">Sagas</button>
+      <button class="seg" type="button" data-go="estrenos">Por año</button>
+      <button class="seg" type="button" data-go="favoritas">Favoritas<span class="n" id="favN">0</span></button>
     </div>
+    <label class="search"><span hidden>Buscar</span><input id="q" type="search" placeholder="Busca película o princesa…" autocomplete="off"></label>
     <div class="tools-right">
       <button class="btn btn-next" id="nextBtn" type="button"></button>
       <button class="btn btn-magic" id="magicBtn" type="button">✦ Al azar</button>
     </div>
   </div>
 
-  <main class="timeline" id="timeline" aria-live="polite"></main>
+  <main id="view" aria-live="polite"></main>
 
   <footer>
     <span class="heart">Para verlas juntos, una a una.</span>
-    <span>El catálogo de Disney+ España puede cambiar. Revisado en septiembre de 2026. Las secuelas y cortos llevan una nota con el porqué de su posición.</span>
+    <span>El catálogo de Disney+ España puede cambiar. Revisado en septiembre de 2026. Pósteres cargados desde Wikipedia.</span>
   </footer>
 </div>
 
 <dialog id="dlg" aria-labelledby="dlgTitle">
   <button class="dlg-close" type="button" aria-label="Cerrar" id="dlgClose">×</button>
-  <div class="dlg-hero" id="dlgHero"><span class="ini" id="dlgIni"></span><h3 id="dlgTitle"></h3></div>
+  <div class="dlg-top">
+    <div id="dlgPoster"></div>
+    <div style="display:grid;gap:6px">
+      <span class="picked" id="dlgPicked" hidden></span>
+      <span class="tag saga" id="dlgSaga" style="justify-self:start"></span>
+      <h3 id="dlgTitle"></h3>
+    </div>
+  </div>
   <div class="dlg-body">
-    <span class="picked" id="dlgPicked" hidden></span>
     <dl class="facts" id="dlgFacts"></dl>
     <p id="dlgSyn"></p>
     <p class="note" id="dlgNote"></p>
@@ -446,10 +499,42 @@ const SAGAS = [
   ]},
 ];
 
-const FILMS = [];
-SAGAS.forEach((sg, i) => sg.films.forEach((f) => { f.saga = i; f.order = FILMS.length + 1; FILMS.push(f); }));
 
-const KINDS = { todas: "Todas", animada: "Animadas", secuela: "Secuelas y precuelas", real: "Acción real", corto: "Cortos y TV", favs: "Favoritas" };
+/* Título del artículo en la Wikipedia inglesa, de donde sale el póster */
+const WIKI = {
+  "blancanieves-1937": "Snow White and the Seven Dwarfs (1937 film)", "blancanieves-2025": "Snow White (2025 film)",
+  "cenicienta-1950": "Cinderella (1950 film)", "cenicienta2-2002": "Cinderella II: Dreams Come True",
+  "cenicienta3-2007": "Cinderella III: A Twist in Time", "cenicienta-2015": "Cinderella (2015 Disney film)",
+  "bella-durmiente-1959": "Sleeping Beauty (1959 film)", "malefica-2014": "Maleficent (film)", "malefica2-2019": "Maleficent: Mistress of Evil",
+  "sirenita3-2008": "The Little Mermaid: Ariel's Beginning", "sirenita-1989": "The Little Mermaid (1989 film)",
+  "sirenita2-2000": "The Little Mermaid II: Return to the Sea", "sirenita-2023": "The Little Mermaid (2023 film)",
+  "bella-bestia-1991": "Beauty and the Beast (1991 film)", "bella-navidad-1997": "Beauty and the Beast: The Enchanted Christmas",
+  "bella-bestia-2017": "Beauty and the Beast (2017 film)",
+  "aladdin-1992": "Aladdin (1992 Disney film)", "jafar-1994": "The Return of Jafar", "aladdin-ladrones-1996": "Aladdin and the King of Thieves",
+  "aladdin-2019": "Aladdin (2019 film)",
+  "pocahontas-1995": "Pocahontas (1995 film)", "pocahontas2-1998": "Pocahontas II: Journey to a New World",
+  "mulan-1998": "Mulan (1998 film)", "mulan2-2004": "Mulan II", "mulan-2020": "Mulan (2020 film)",
+  "princesa-sorpresa-2001": "The Princess Diaries (film)", "princesa-sorpresa2-2004": "The Princess Diaries 2: Royal Engagement",
+  "encantada-2007": "Enchanted (film)", "desencantada-2022": "Disenchanted (film)",
+  "tiana-2009": "The Princess and the Frog",
+  "enredados-2010": "Tangled", "enredados-siempre-2012": "Tangled Ever After", "enredados-otra-vez-2017": "Tangled: Before Ever After",
+  "brave-2012": "Brave (2012 film)", "sofia-2012": "Sofia the First: Once Upon a Princess",
+  "frozen-2013": "Frozen (2013 film)", "muneco-nieve-2020": "Once Upon a Snowman", "frozen-fever-2015": "Frozen Fever",
+  "olaf-2017": "Olaf's Frozen Adventure", "frozen2-2019": "Frozen II",
+  "vaiana-2016": "Moana (2016 film)", "vaiana2-2024": "Moana 2",
+  "cascanueces-2018": "The Nutcracker and the Four Realms", "raya-2021": "Raya and the Last Dragon", "wish-2023": "Wish (2023 film)",
+  "into-woods-2014": "Into the Woods (film)", "descendientes-2015": "Descendants (2015 film)", "descendientes2-2017": "Descendants 2",
+  "descendientes3-2019": "Descendants 3", "descendientes-red-2024": "Descendants: The Rise of Red", "ralph-2018": "Ralph Breaks the Internet",
+};
+
+const FILMS = [];
+SAGAS.forEach((sg, i) => {
+  sg.i = i;
+  sg.slug = sg.name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  sg.films.forEach((f) => { f.saga = i; f.order = FILMS.length + 1; FILMS.push(f); });
+});
+const byId = (id) => FILMS.find((f) => f.id === id);
+
 const KIND_LABEL = { animada: "Animada", secuela: "Secuela animada", real: "Acción real", corto: "Corto / TV" };
 const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
 
@@ -459,84 +544,163 @@ const store = {
 };
 const seen = new Set(store.get("princesas.seen", []));
 const favs = new Set(store.get("princesas.favs", []));
-const state = { kind: store.get("princesas.kind", "todas"), q: "", mode: store.get("princesas.mode", "saga") };
-if (!KINDS[state.kind]) state.kind = "todas";
-if (!["saga", "year"].includes(state.mode)) state.mode = "saga";
+const state = { q: "" };
 
 const $ = (s) => document.querySelector(s);
-const esc = (s) => s.replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
+const esc = (s) => String(s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
 const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const fmtDur = (m) => m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")} min`;
 const plusUrl = (f) => `https://www.disneyplus.com/es-es/search?q=${encodeURIComponent(f.t)}`;
 const initial = (f) => f.p.trim()[0];
 const nextFilm = () => FILMS.find((f) => !seen.has(f.id));
+const route = () => decodeURIComponent(location.hash.slice(1));
 
-const ICON_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 5c-2.3 4.6-9.3 9-9.3 9Z"/></svg>';
 
-function renderChips() {
-  const counts = { todas: FILMS.length, favs: favs.size };
-  FILMS.forEach((f) => (counts[f.k] = (counts[f.k] || 0) + 1));
-  $("#chips").innerHTML = Object.entries(KINDS).map(([k, label]) =>
-    `<button class="chip" type="button" data-kind="${k}" aria-pressed="${state.kind === k}">${label}<span class="n">${counts[k] || 0}</span></button>`
-  ).join("");
-  document.querySelectorAll("#modes .seg").forEach((b) => b.setAttribute("aria-pressed", b.dataset.mode === state.mode));
-  const nx = nextFilm();
-  $("#nextBtn").hidden = !nx;
-  if (nx) $("#nextBtn").innerHTML = `Siguiente: <b>${esc(nx.t)}</b>`;
+/* ---------- Pósteres ---------- */
+const posterCache = store.get("princesas.posters", {});
+const pending = {};
+function posterUrl(f) {
+  if (posterCache[f.id] !== undefined) return Promise.resolve(posterCache[f.id]);
+  if (pending[f.id]) return pending[f.id];
+  const title = WIKI[f.id];
+  if (!title) return Promise.resolve(null);
+  pending[f.id] = fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, "_"))}`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((j) => {
+      const url = j?.thumbnail?.source || j?.originalimage?.source || null;
+      posterCache[f.id] = url;
+      store.set("princesas.posters", posterCache);
+      return url;
+    })
+    .catch(() => null);
+  return pending[f.id];
 }
-
-function visible() {
-  const q = norm(state.q.trim());
-  const list = FILMS.filter((f) => {
-    if (state.kind === "favs" && !favs.has(f.id)) return false;
-    if (!["todas", "favs"].includes(state.kind) && f.k !== state.kind) return false;
-    return !q || norm(`${f.t} ${f.p} ${f.y} ${SAGAS[f.saga].name}`).includes(q);
+function posterHTML(f, { ord = true, yr = true, check = true } = {}) {
+  return `<div class="poster" data-pid="${f.id}" style="--c1:${f.c[0]};--c2:${f.c[1]}" aria-hidden="true">
+    <span class="ini">${initial(f)}</span>
+    ${ord ? `<span class="ord">Nº ${String(f.order).padStart(2, "0")}</span>` : ""}
+    ${check && seen.has(f.id) ? `<span class="check">${ICON_CHECK}</span>` : ""}
+    ${yr ? `<span class="yr">${f.y}</span>` : ""}
+  </div>`;
+}
+function hydratePosters(root = document) {
+  root.querySelectorAll(".poster[data-pid]:not([data-done])").forEach((el) => {
+    el.dataset.done = "1";
+    posterUrl(byId(el.dataset.pid)).then((url) => {
+      if (!url) return;
+      const img = new Image();
+      img.alt = "";
+      img.decoding = "async";
+      img.onload = () => img.classList.add("ok");
+      img.src = url;
+      el.prepend(img);
+    });
   });
-  if (state.mode === "year") list.sort((a, b) => a.y - b.y || a.order - b.order);
-  return list;
 }
 
+/* ---------- Piezas ---------- */
 function actionButtons(f) {
-  return `<button class="act seen-btn" type="button" data-act="seen" data-id="${f.id}" aria-pressed="${seen.has(f.id)}">${ICON_EYE}<span>${seen.has(f.id) ? "Vista" : "Marcar como vista"}</span></button>
+  return `<button class="act seen-btn" type="button" data-act="seen" data-id="${f.id}" aria-pressed="${seen.has(f.id)}">${ICON_CHECK}<span>${seen.has(f.id) ? "Vista" : "Marcar como vista"}</span></button>
     <button class="act fav-btn" type="button" data-act="fav" data-id="${f.id}" aria-pressed="${favs.has(f.id)}" aria-label="Favorita">${ICON_HEART}<span>Favorita</span></button>`;
 }
-
-function renderList() {
-  const list = visible();
-  const tl = $("#timeline");
-  if (!list.length) {
-    tl.innerHTML = `<p class="empty">${state.kind === "favs" ? "Aún no hay favoritas. Toca el corazón de una película." : "Ninguna película coincide con esa búsqueda."}</p>`;
-    return;
-  }
+function filmCard(f, i, showSaga) {
   const nx = nextFilm();
+  return `<article class="film${seen.has(f.id) ? " seen" : ""}${nx === f ? " next" : ""}" id="${f.id}" data-id="${f.id}" tabindex="0"
+      style="--c1:${f.c[0]};--c2:${f.c[1]};animation-delay:${Math.min(i, 12) * 40}ms" aria-label="${esc(f.t)}, ${f.y}">
+    ${posterHTML(f)}
+    <div class="info">
+      <div class="meta">${nx === f ? '<span class="tag toca">Os toca</span>' : ""}<span class="tag ${f.k}">${KIND_LABEL[f.k]}</span>${showSaga ? `<span class="tag saga">${esc(SAGAS[f.saga].name)}</span>` : ""}<span>${f.y} · ${fmtDur(f.d)}</span></div>
+      <h3>${esc(f.t)}</h3>
+      <span class="princess">${esc(f.p)}</span>
+      <p class="syn">${esc(f.s)}</p>
+      ${f.n ? `<p class="note">${esc(f.n)}</p>` : ""}
+      <div class="actions">${actionButtons(f)}</div>
+    </div>
+  </article>`;
+}
+const sagaLabel = (sg) => (sg.finale ? "Gran final" : `Capítulo ${ROMAN[sg.i]}`);
+const sagaStats = (sg) => ({
+  n: sg.films.length,
+  seen: sg.films.filter((f) => seen.has(f.id)).length,
+  mins: sg.films.reduce((s, f) => s + f.d, 0),
+});
+
+/* ---------- Vistas ---------- */
+function viewHome() {
+  const tiles = SAGAS.map((sg, i) => {
+    const st = sagaStats(sg), cover = sg.films.find((f) => f.k === "animada") || sg.films[0];
+    return `<a class="tile${st.n === 1 ? " single" : ""}${st.seen === st.n ? " done" : ""}" href="#${sg.slug}" style="--c1:${cover.c[0]};animation-delay:${Math.min(i, 12) * 35}ms">
+      <div class="stack">${posterHTML(cover, { ord: false, yr: false, check: false })}</div>
+      <span class="cap">${sagaLabel(sg)}</span>
+      <span class="name">${esc(sg.name)}</span>
+      <span class="sub"><span>${st.n} ${st.n === 1 ? "película" : "películas"}</span><span>${st.seen === st.n ? "Completa" : `${st.seen}/${st.n}`}</span></span>
+      <div class="bar"><i style="width:${(st.seen / st.n) * 100}%"></i></div>
+    </a>`;
+  }).join("");
+  return `<div class="grid-head"><h2>Elige una saga</h2><p>${SAGAS.length} sagas, en el orden en que conviene verlas</p></div>
+    <div class="sagas">${tiles}</div>`;
+}
+
+function viewSaga(sg) {
+  const st = sagaStats(sg), cover = sg.films.find((f) => f.k === "animada") || sg.films[0];
+  const prev = SAGAS[sg.i - 1], next = SAGAS[sg.i + 1];
+  return `<div class="saga-head" style="--c1:${cover.c[0]}">
+      <a class="btn back" href="#">← Todas las sagas</a>
+      ${posterHTML(cover, { ord: false, yr: false, check: false })}
+      <div>
+        <span class="cap">${sagaLabel(sg)}</span>
+        <h2>${esc(sg.name)}</h2>
+        <div class="facts-line">${st.n} ${st.n === 1 ? "película" : "películas"} · ${fmtDur(st.mins)} · ${st.seen} de ${st.n} vistas</div>
+        <div class="bar"><i style="width:${(st.seen / st.n) * 100}%"></i></div>
+      </div>
+    </div>
+    <div class="timeline">${sg.films.map((f, i) => filmCard(f, i, false)).join("")}</div>
+    <nav class="saga-nav" aria-label="Otras sagas">
+      ${prev ? `<a href="#${prev.slug}"><small>← Anterior</small><span>${esc(prev.name)}</span></a>` : ""}
+      ${next ? `<a class="next" href="#${next.slug}"><small>Siguiente saga →</small><span>${esc(next.name)}</span></a>` : ""}
+    </nav>`;
+}
+
+function viewList(list, { decades = false, empty = "" } = {}) {
+  if (!list.length) return `<p class="empty">${empty}</p>`;
   let last = null, html = "";
   list.forEach((f, i) => {
-    if (state.mode === "saga") {
-      if (f.saga !== last) {
-        const sg = SAGAS[f.saga];
-        const inSaga = sg.films.length, seenSaga = sg.films.filter((x) => seen.has(x.id)).length;
-        html += `<div class="decade chapter"><span class="cap">${sg.finale ? "Gran final" : `Capítulo ${ROMAN[f.saga]}`}</span>${esc(sg.name)}<span class="cnt">${seenSaga}/${inSaga}</span></div>`;
-        last = f.saga;
-      }
-    } else {
+    if (decades) {
       const dec = Math.floor(f.y / 10) * 10;
       if (dec !== last) { html += `<div class="decade">Años ${dec < 2000 ? String(dec).slice(2) : dec}</div>`; last = dec; }
     }
-    html += `<article class="film${seen.has(f.id) ? " seen" : ""}${nx === f ? " next" : ""}" id="${f.id}" data-id="${f.id}" tabindex="0"
-        style="--c1:${f.c[0]};--c2:${f.c[1]};animation-delay:${Math.min(i, 12) * 40}ms" aria-label="${esc(f.t)}, ${f.y}">
-      <div class="poster" aria-hidden="true"><span class="ord">Nº ${String(f.order).padStart(2, "0")}</span><span class="ini">${initial(f)}</span><span class="yr">${f.y}</span></div>
-      <div class="info">
-        <div class="meta">${nx === f ? '<span class="tag toca">Os toca</span>' : ""}<span class="tag ${f.k}">${KIND_LABEL[f.k]}</span><span>${f.y} · ${fmtDur(f.d)}</span></div>
-        <h2>${esc(f.t)}</h2>
-        <span class="princess">${esc(f.p)}</span>
-        <p class="syn">${esc(f.s)}</p>
-        ${f.n ? `<p class="note">${esc(f.n)}</p>` : ""}
-        <div class="actions">${actionButtons(f)}</div>
-      </div>
-    </article>`;
+    html += filmCard(f, i, true);
   });
-  tl.innerHTML = html;
+  return `<div class="timeline">${html}</div>`;
+}
+
+function render({ keepScroll = false } = {}) {
+  const r = route(), q = norm(state.q.trim());
+  const sg = SAGAS.find((s) => s.slug === r);
+  let html, active = "";
+  if (q) {
+    html = `<div class="grid-head"><h2>Resultados</h2><p>Para «${esc(state.q.trim())}»</p></div>` +
+      viewList(FILMS.filter((f) => norm(`${f.t} ${f.p} ${f.y} ${SAGAS[f.saga].name}`).includes(q)), { empty: "Ninguna película coincide con esa búsqueda." });
+  } else if (sg) {
+    html = viewSaga(sg);
+  } else if (r === "estrenos") {
+    active = "estrenos";
+    html = viewList(FILMS.slice().sort((a, b) => a.y - b.y || a.order - b.order), { decades: true });
+  } else if (r === "favoritas") {
+    active = "favoritas";
+    html = `<div class="grid-head"><h2>Vuestras favoritas</h2><p>En orden de maratón</p></div>` +
+      viewList(FILMS.filter((f) => favs.has(f.id)), { empty: "Aún no hay favoritas. Toca el corazón de una película." });
+  } else {
+    html = viewHome();
+  }
+  document.querySelectorAll("#modes .seg").forEach((b) => b.setAttribute("aria-pressed", !q && b.dataset.go === active && !sg));
+  const y = scrollY;
+  $("#view").innerHTML = html;
+  hydratePosters($("#view"));
+  if (keepScroll) scrollTo({ top: y, behavior: "instant" });
+  renderProgress();
 }
 
 function renderProgress() {
@@ -546,21 +710,21 @@ function renderProgress() {
   $("#barFill").style.width = `${(n / total) * 100}%`;
   const left = FILMS.filter((f) => !seen.has(f.id)).reduce((s, f) => s + f.d, 0);
   $("#timeLeft").textContent = n === total ? "¡Maratón completado!" : `Quedan ${Math.floor(left / 60)} h ${left % 60} min`;
+  $("#favN").textContent = favs.size;
+  const nx = nextFilm();
+  $("#nextBtn").hidden = !nx;
+  if (nx) $("#nextBtn").innerHTML = `Siguiente: <b>${esc(nx.t)}</b>`;
 }
 
-function renderAll() { renderChips(); renderList(); renderProgress(); }
-
-function toggle(set, key, id) {
-  set.has(id) ? set.delete(id) : set.add(id);
-  store.set(key, [...set]);
-}
-
+/* ---------- Ficha ---------- */
 function openFilm(f, picked = false) {
   const d = $("#dlg");
   d.dataset.id = f.id;
-  d.style.setProperty("--c1", f.c[0]); d.style.setProperty("--c2", f.c[1]);
-  $("#dlgIni").textContent = initial(f);
+  d.style.setProperty("--c1", f.c[0]);
+  $("#dlgPoster").innerHTML = posterHTML(f, { ord: false });
+  hydratePosters($("#dlgPoster"));
   $("#dlgTitle").textContent = f.t;
+  $("#dlgSaga").textContent = SAGAS[f.saga].name;
   $("#dlgPicked").hidden = !picked;
   $("#dlgPicked").textContent = picked === "next" ? "✦ Siguiente en el maratón" : "✦ La estrella ha elegido";
   $("#dlgFacts").innerHTML = `
@@ -578,39 +742,52 @@ function renderDlgActions(f, act) {
   if (act) $("#dlgActions").querySelector(`[data-act="${act}"]`)?.classList.add("pop");
 }
 
+/* Lleva a la saga de la película, la resalta y abre su ficha */
 function goTo(f, picked) {
-  if (!document.getElementById(f.id)) { state.kind = "todas"; state.q = ""; $("#q").value = ""; renderChips(); renderList(); }
+  state.q = ""; $("#q").value = "";
+  const slug = SAGAS[f.saga].slug;
+  if (route() !== slug) history.pushState(null, "", `#${slug}`);
+  render();
   const card = document.getElementById(f.id);
+  if (!card) return;
   card.scrollIntoView({ behavior: "smooth", block: "center" });
   card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash");
   setTimeout(() => openFilm(f, picked), 650);
 }
 
+/* ---------- Eventos ---------- */
 document.addEventListener("click", (e) => {
   const act = e.target.closest("[data-act]");
   if (act) {
     e.stopPropagation();
     const id = act.dataset.id, kind = act.dataset.act;
-    if (kind === "seen") toggle(seen, "princesas.seen", id);
-    else toggle(favs, "princesas.favs", id);
-    renderAll();
+    if (kind === "seen") { seen.has(id) ? seen.delete(id) : seen.add(id); store.set("princesas.seen", [...seen]); }
+    else { favs.has(id) ? favs.delete(id) : favs.add(id); store.set("princesas.favs", [...favs]); }
+    render({ keepScroll: true });
     document.getElementById(id)?.querySelector(`[data-act="${kind}"]`)?.classList.add("pop");
-    if ($("#dlg").open && $("#dlg").dataset.id === id) renderDlgActions(FILMS.find((f) => f.id === id), kind);
+    if ($("#dlg").open && $("#dlg").dataset.id === id) renderDlgActions(byId(id), kind);
     if (kind === "seen" && seen.has(id)) burst(e.clientX, e.clientY);
     return;
   }
-  const chip = e.target.closest(".chip");
-  if (chip) { state.kind = chip.dataset.kind; store.set("princesas.kind", state.kind); renderChips(); renderList(); return; }
   const seg = e.target.closest(".seg");
-  if (seg) { state.mode = seg.dataset.mode; store.set("princesas.mode", state.mode); renderChips(); renderList(); return; }
+  if (seg) {
+    state.q = ""; $("#q").value = "";
+    if (route() === seg.dataset.go) render(); else location.hash = seg.dataset.go;
+    return;
+  }
   const card = e.target.closest(".film");
-  if (card) openFilm(FILMS.find((f) => f.id === card.dataset.id));
+  if (card) openFilm(byId(card.dataset.id));
 });
 document.addEventListener("keydown", (e) => {
   const card = e.target.closest?.(".film");
-  if (card && (e.key === "Enter" || e.key === " ") && e.target === card) { e.preventDefault(); openFilm(FILMS.find((f) => f.id === card.dataset.id)); }
+  if (card && (e.key === "Enter" || e.key === " ") && e.target === card) { e.preventDefault(); openFilm(byId(card.dataset.id)); }
 });
-$("#q").addEventListener("input", (e) => { state.q = e.target.value; renderList(); });
+addEventListener("hashchange", () => {
+  render();
+  const top = document.querySelector(".toolbar").offsetTop - 8;
+  if (scrollY > top) scrollTo({ top, behavior: "instant" });
+});
+$("#q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
 $("#dlgClose").addEventListener("click", () => $("#dlg").close());
 $("#dlg").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 $("#nextBtn").addEventListener("click", () => { const f = nextFilm(); if (f) goTo(f, "next"); });
@@ -678,7 +855,7 @@ function frame() {
 addEventListener("resize", () => { resize(); if (reduce) frame(); });
 resize(); frame();
 
-renderAll();
+render();
 </script>
 </body>
 </html>
