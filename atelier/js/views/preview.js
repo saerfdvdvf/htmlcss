@@ -5,7 +5,7 @@ import { store, outfitItemIds } from '../store.js';
 import { CAT } from '../constants.js';
 import { icon } from '../icons.js';
 import { esc, todayISO } from '../util.js';
-import { openSheet, outfitCard, toast, empty, confirmDialog } from '../ui.js';
+import { openSheet, outfitCard, toast, empty, confirmDialog, saveFile } from '../ui.js';
 import { compress, fileToDataURL, loadImage } from '../analyzer.js';
 import { navigate, setHash } from '../router.js';
 
@@ -191,10 +191,7 @@ export default {
         g.drawImage(li, -w / 2, 0, w, h);
         g.restore();
       }
-      const url = c.toDataURL('image/jpeg', 0.92);
-      const a = document.createElement('a');
-      a.href = url; a.download = `atelier-pruebatelo-${todayISO()}.jpg`;
-      document.body.appendChild(a); a.click(); a.remove();
+      saveFile(`atelier-pruebatelo-${todayISO()}.jpg`, 'image/jpeg', c.toDataURL('image/jpeg', 0.92));
     }
 
     async function aiRender() {

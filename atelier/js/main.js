@@ -2,7 +2,7 @@
 import { store } from './store.js';
 import { register, startRouter, onRoute, navigate } from './router.js';
 import { icon } from './icons.js';
-import { openSheet, chip, bindChips, chipValues, toast, $, closeAllSheets } from './ui.js';
+import { openSheet, chip, bindChips, chipValues, toast, $, closeAllSheets, handleBack, inAndroidApp } from './ui.js';
 import { STYLES } from './constants.js';
 import { demoItems } from './demo.js';
 import { loadWeather } from './context.js';
@@ -46,6 +46,8 @@ function applyTheme() {
   else document.documentElement.setAttribute('data-theme', t);
   const dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
   document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#0f0e0d' : '#f6f3ee');
+  // En la app de Android, la barra de estado sigue el tema.
+  try { window.AtelierAndroid?.setBars(dark ? '#0f0e0d' : '#f6f3ee', !dark); } catch {}
 }
 
 function shell() {
@@ -136,7 +138,8 @@ async function boot() {
   });
   loadWeather();
   onboarding();
-  if ('serviceWorker' in navigator && location.protocol !== 'file:' && !location.hostname.match(/^(localhost|127\.)/)) {
+  window.atelierBack = handleBack;
+  if (!inAndroidApp() && 'serviceWorker' in navigator && location.protocol !== 'file:' && !location.hostname.match(/^(localhost|127\.)/)) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
   document.body.classList.add('ready');

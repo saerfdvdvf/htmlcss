@@ -1,7 +1,0 @@
-{
-  "appId": "app.atelier.stylist",
-  "appName": "Atelier",
-  "webDir": "www",
-  "server": { "androidScheme": "https" },
-  "android": { "backgroundColor": "#f6f3ee" }
-}

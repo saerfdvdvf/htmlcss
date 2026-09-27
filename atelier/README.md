@@ -40,7 +40,7 @@ atelier/              ← la app web (también el contenido de la APK)
   tests/              tests en Node del motor y los planificadores
   tools/              genera Atelier.html (versión de un solo archivo)
   Atelier.html        la app entera en un archivo: se abre con doble clic
-mobile/               proyecto de Capacitor que empaqueta atelier/ como APK
+mobile/               app de Android (WebView nativa) y script que genera la APK
 .github/workflows/android-apk.yml   compila la APK en cada push
 ```
 
@@ -78,21 +78,18 @@ cd atelier && npm test
 
 Sube la carpeta `atelier/` a cualquier hosting estático, como GitHub Pages, Netlify, Vercel o Cloudflare Pages. Si este repositorio se publica con GitHub Pages, la app estará en `/atelier/`. Se necesita HTTPS para instalar la app y usar la cámara y la ubicación.
 
-## Compilar la APK de Android
+## La APK de Android
 
-**Automáticamente.** Cada push que toque `atelier/` o `mobile/` lanza **Build Android APK** en GitHub Actions. Descarga `Atelier.apk` desde los artefactos de la ejecución. Si subes una etiqueta como `v1.0.0`, la APK también se adjunta a una GitHub Release.
+La APK ya compilada está en `mobile/Atelier.apk`. Cópiala al móvil, ábrela y acepta instalar apps de origen desconocido. Requiere Android 7.0 o superior.
 
-**En local** (necesitas Node 20 o superior, JDK 21 y el SDK de Android):
+Para volver a compilarla (sin Gradle ni Android Studio):
 
 ```bash
-cd mobile
-npm install
-npm run android:init     # la primera vez: genera android/ y añade permisos de cámara y ubicación
-npx @capacitor/assets generate --android --iconBackgroundColor '#161513' --splashBackgroundColor '#f6f3ee'
-npm run apk              # → android/app/build/outputs/apk/debug/app-debug.apk
+sudo apt-get install aapt apksigner dalvik-exchange android-sdk-platform-23 zipalign
+./mobile/build-apk.sh      # → mobile/Atelier.apk
 ```
 
-El workflow compila una APK de depuración, firmada con una clave de depuración, que se puede instalar directamente. Para publicarla en Google Play, crea un keystore y ejecuta `npm run apk:release` con la firma configurada en `android/app/build.gradle`.
+GitHub Actions también la compila en cada push (**Build Android APK**) y, si subes una etiqueta como `v1.0.0`, la adjunta a una GitHub Release. Más detalles en `mobile/README.md`.
 
 ## Sin cuenta: todo en local
 

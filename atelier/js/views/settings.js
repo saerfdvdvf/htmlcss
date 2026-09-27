@@ -4,7 +4,7 @@ import { STYLES, OCCASIONS } from '../constants.js';
 import { NAMED_COLORS, colorLabel } from '../color.js';
 import { icon } from '../icons.js';
 import { esc, debounce } from '../util.js';
-import { chip, bindChips, toast, confirmDialog, swatch } from '../ui.js';
+import { chip, bindChips, toast, confirmDialog, swatch, saveFile, inAndroidApp } from '../ui.js';
 import { geocode, currentPosition } from '../weather.js';
 import { loadWeather } from '../context.js';
 import { demoItems } from '../demo.js';
@@ -117,11 +117,7 @@ export default {
         <button class="btn ghost danger-text" data-wipe>${icon('trash', 16)} Borrar todos los datos de este dispositivo</button>`;
       b.querySelector('[data-export]').onclick = () => {
         const blob = new Blob([JSON.stringify(store.exportJSON())], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `atelier-copia-${new Date().toISOString().slice(0, 10)}.json`;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        saveFile(`atelier-copia-${new Date().toISOString().slice(0, 10)}.json`, 'application/json', blob);
       };
       b.querySelector('[data-import]').onchange = async (e) => {
         try { await store.importJSON(JSON.parse(await e.target.files[0].text())); toast('Copia de seguridad restaurada'); draw(); }
@@ -145,7 +141,7 @@ export default {
         <p class="muted">Los outfits se generan en tu dispositivo con un motor de estilismo que puntúa la armonía de color, el estilo, la ocasión, las proporciones y el tiempo. Datos meteorológicos de <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>.</p>
         <h3>Consigue la app</h3>
         <p class="muted small">Atelier funciona en cualquier navegador, sin cuenta y sin conexión, y se puede instalar como una app. También existe <code>Atelier.html</code>, un único archivo que se abre con doble clic, y la APK de Android se compila con el mismo código: consulta el README del proyecto.</p>
-        ${installEvt ? `<button class="btn primary" data-install>${icon('download', 16)} Instalar Atelier</button>` : '<p class="muted small">En el móvil, usa el menú del navegador → «Añadir a pantalla de inicio».</p>'}`;
+        ${inAndroidApp() ? '<p class="muted small">Estás usando la app de Android. Las copias de seguridad se guardan en Descargas/Atelier.</p>' : installEvt ? `<button class="btn primary" data-install>${icon('download', 16)} Instalar Atelier</button>` : '<p class="muted small">En el móvil, usa el menú del navegador → «Añadir a pantalla de inicio».</p>'}`;
       b.querySelector('[data-install]')?.addEventListener('click', async () => { installEvt.prompt(); installEvt = null; });
     }
 

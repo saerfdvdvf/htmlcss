@@ -1,8 +1,18 @@
 # Atelier para Android
 
-Esta carpeta empaqueta la app web de `../atelier` como app nativa de Android con [Capacitor](https://capacitorjs.com). La app y la web comparten el mismo código. No hay cuentas: los datos se guardan en el propio teléfono.
+App nativa ligera que abre la app web de `../atelier` dentro de una WebView. No usa Gradle ni Android Studio, y no tiene cuentas: todo se guarda en el propio teléfono.
 
-- CI: `.github/workflows/android-apk.yml` compila `Atelier.apk` en cada push. Descárgala desde los artefactos de la ejecución del workflow.
-- Compilación local: consulta «Compilar la APK de Android» en `../atelier/README.md`.
+- **Descargar:** `Atelier.apk` (en esta carpeta). En el móvil, ábrela y permite «instalar apps de origen desconocido» cuando Android lo pida. Requiere Android 7.0 o superior.
+- **Compilar:** `./build-apk.sh` (necesita en Ubuntu/Debian `sudo apt-get install aapt apksigner dalvik-exchange android-sdk-platform-23 zipalign`, más JDK 17+ y Node 18+). GitHub Actions la compila también en cada push (`.github/workflows/android-apk.yml`).
 
-`android/` y `www/` se generan automáticamente y están en `.gitignore`. `scripts/build-web.mjs` copia la app web en `www/`. `scripts/patch-android.mjs` añade los permisos de cámara y ubicación.
+## Cómo funciona
+
+- `src/.../MainActivity.java` sirve la app desde `assets/www/index.html` (la versión de un solo archivo, `Atelier.html`) en el origen `https://appassets.androidplatform.net`, así que el almacenamiento (IndexedDB) funciona igual que en un navegador.
+- Subir fotos abre la galería o la cámara (las fotos de la cámara se guardan en Imágenes/Atelier).
+- Las copias de seguridad se guardan en Descargas/Atelier y las imágenes de «Pruébatelo» en Imágenes/Atelier.
+- El botón «atrás» cierra la ventana abierta o vuelve a la pantalla anterior; en Inicio, sale de la app.
+- La ubicación (para el tiempo) se pide solo si la usas en Ajustes.
+
+## Firma
+
+La APK se firma con `keystore/atelier.jks` (contraseña `atelier-app`). Está en el repositorio para que cada versión nueva se instale encima de la anterior sin perder datos. Si vas a publicarla en Google Play, crea tu propia clave y pásala con las variables `KEYSTORE` y `KS_PASS`.

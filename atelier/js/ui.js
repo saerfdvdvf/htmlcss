@@ -57,6 +57,41 @@ export function openSheet({ title = '', body = '', onMount, wide = false, classN
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheetStack.length) sheetStack[sheetStack.length - 1](); });
 export const closeAllSheets = () => [...sheetStack].reverse().forEach((c) => c());
+// Botón «atrás» de Android: cierra la hoja abierta o vuelve a la pantalla anterior.
+export function handleBack() {
+  if (sheetStack.length) { sheetStack[sheetStack.length - 1](); return true; }
+  const route = location.hash.replace(/^#\/?/, '').split('?')[0] || 'home';
+  if (route !== 'home') { history.length > 1 ? history.back() : (location.hash = '#/home'); return true; }
+  return false;
+}
+
+// Dentro de la app de Android existe el puente nativo AtelierAndroid.
+export const inAndroidApp = () => typeof window !== 'undefined' && !!window.AtelierAndroid;
+
+// Guarda un archivo (Blob o data URL): en la app de Android va a Descargas/Imágenes; en el navegador, descarga normal.
+export async function saveFile(name, mime, data) {
+  if (inAndroidApp()) {
+    let dataUrl = data;
+    if (data instanceof Blob) {
+      dataUrl = await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = () => reject(r.error);
+        r.readAsDataURL(data);
+      });
+    }
+    return window.AtelierAndroid.saveFile(name, mime, String(dataUrl).split(',')[1] || '');
+  }
+  const href = data instanceof Blob ? URL.createObjectURL(data) : data;
+  const a = document.createElement('a');
+  a.href = href;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  if (data instanceof Blob) setTimeout(() => URL.revokeObjectURL(href), 1000);
+  return true;
+}
 
 export function confirmDialog(message, { ok = 'Confirmar', danger = false } = {}) {
   return openSheet({
