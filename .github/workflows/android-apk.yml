@@ -1,0 +1,41 @@
+name: Build Android APK
+
+on:
+  push:
+    paths:
+      - 'atelier/**'
+      - 'mobile/**'
+      - '.github/workflows/android-apk.yml'
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Android build tools (Ubuntu packages, no Gradle needed)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq aapt apksigner dalvik-exchange android-sdk-platform-23 zipalign
+
+      - name: Build APK
+        run: ./mobile/build-apk.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Unreal-Outfits-apk
+          path: mobile/Unreal-Outfits.apk
+
+      - name: Attach APK to release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mobile/Unreal-Outfits.apk

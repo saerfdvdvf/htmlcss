@@ -1,0 +1,15 @@
+{
+  "name": "atelier",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Unreal Outfits by Sawel: estilista personal con IA que funciona en local, sin cuenta.",
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "standalone": "node tools/build-standalone.mjs",
+    "test": "node tests/engine.test.mjs && node tests/planning.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
