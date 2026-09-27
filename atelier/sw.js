@@ -1,9 +1,9 @@
 // Offline support: app shell is precached; same-origin files are served stale-while-revalidate.
-const VERSION = 'atelier-v2';
+const VERSION = 'atelier-v3';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
-  './js/main.js', './js/config.js', './js/util.js', './js/constants.js', './js/color.js', './js/engine.js', './js/garments.js',
-  './js/demo.js', './js/db.js', './js/store.js', './js/sync.js', './js/weather.js', './js/analyzer.js', './js/planning.js',
+  './js/main.js', './js/util.js', './js/constants.js', './js/color.js', './js/engine.js', './js/garments.js',
+  './js/demo.js', './js/db.js', './js/store.js', './js/weather.js', './js/analyzer.js', './js/planning.js',
   './js/icons.js', './js/ui.js', './js/context.js', './js/studio.js', './js/router.js',
   './js/views/home.js', './js/views/wardrobe.js', './js/views/item-editor.js', './js/views/create.js', './js/views/outfit.js',
   './js/views/planner.js', './js/views/calendar.js', './js/views/favorites.js', './js/views/stats.js', './js/views/laundry.js',
@@ -20,7 +20,7 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-const RUNTIME = /fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net|www\.gstatic\.com\/firebasejs/;
+const RUNTIME = /fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net/;
 
 self.addEventListener('fetch', (e) => {
   const req = e.request;

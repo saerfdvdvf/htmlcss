@@ -1,6 +1,6 @@
 # Atelier para Android
 
-Esta carpeta empaqueta la app web de `../atelier` como app nativa de Android con [Capacitor](https://capacitorjs.com). La app y la web comparten el mismo código y, si configuras la sincronización, la misma cuenta.
+Esta carpeta empaqueta la app web de `../atelier` como app nativa de Android con [Capacitor](https://capacitorjs.com). La app y la web comparten el mismo código. No hay cuentas: los datos se guardan en el propio teléfono.
 
 - CI: `.github/workflows/android-apk.yml` compila `Atelier.apk` en cada push. Descárgala desde los artefactos de la ejecución del workflow.
 - Compilación local: consulta «Compilar la APK de Android» en `../atelier/README.md`.

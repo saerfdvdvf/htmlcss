@@ -1,4 +1,4 @@
-// Settings: profile & style preferences, account/sync, preview, data.
+// Ajustes: perfil y estilo, Pruébatelo, datos (todo se guarda en local, sin cuentas).
 import { store } from '../store.js';
 import { STYLES, OCCASIONS } from '../constants.js';
 import { NAMED_COLORS, colorLabel } from '../color.js';
@@ -7,13 +7,11 @@ import { esc, debounce } from '../util.js';
 import { chip, bindChips, toast, confirmDialog, swatch } from '../ui.js';
 import { geocode, currentPosition } from '../weather.js';
 import { loadWeather } from '../context.js';
-import { sync, onSync, getConfig, saveConfig, parseConfig, initSync, signIn, signUp, signOut, resetPassword } from '../sync.js';
 import { demoItems } from '../demo.js';
 import { setHash } from '../router.js';
 
 const TABS = [
   ['profile', 'Perfil y estilo', 'user'],
-  ['account', 'Cuenta y sincronización', 'cloudSync'],
   ['preview', 'Pruébatelo', 'eye'],
   ['data', 'Datos', 'download'],
   ['about', 'Acerca de', 'info'],
@@ -33,7 +31,7 @@ export default {
           <div class="settings-body card" data-body></div>
         </div>`;
       const body = el.querySelector('[data-body]');
-      ({ profile, account, preview, data, about })[tab](body);
+      ({ profile, preview, data, about })[tab](body);
     };
 
     function profile(b) {
@@ -82,73 +80,6 @@ export default {
       b.querySelector('[data-clearloc]')?.addEventListener('click', () => store.setSettings({ location: null }).then(draw));
     }
 
-    function account(b) {
-      const cfg = getConfig();
-      if (!cfg) {
-        b.innerHTML = `
-          <h3>${icon('cloudSync', 20)} Sincroniza la app y la web</h3>
-          <p class="muted">Ahora mismo tu armario solo está en este dispositivo. Conecta una vez un proyecto gratuito de Firebase e inicia sesión con el mismo correo en la app de Android y en la web: prendas, outfits, planes y ajustes se sincronizan en tiempo real.</p>
-          <ol class="steps">
-            <li>Crea un proyecto en <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> y añade una <b>app web</b>.</li>
-            <li>Activa <b>Authentication → Correo electrónico/contraseña</b> y crea una <b>base de datos de Firestore</b>.</li>
-            <li>Publica las reglas de seguridad de <code>atelier/firestore.rules</code>.</li>
-            <li>Pega abajo el fragmento <code>firebaseConfig</code> (o ponlo en <code>js/config.js</code> antes de compilar la APK).</li>
-          </ol>
-          <label class="field"><span>Configuración de Firebase</span><textarea rows="7" data-cfg placeholder='{ "apiKey": "…", "authDomain": "…", "projectId": "…", "appId": "…" }'></textarea></label>
-          <button class="btn primary" data-savecfg>${icon('check', 16)} Conectar</button>`;
-        b.querySelector('[data-savecfg]').onclick = async () => {
-          try {
-            saveConfig(parseConfig(b.querySelector('[data-cfg]').value));
-            await initSync();
-            toast(sync.status === 'error' ? sync.error : 'Conectado: ahora crea una cuenta o inicia sesión');
-            draw();
-          }
-          catch (e) { toast(e.message); }
-        };
-        return;
-      }
-      if (sync.user) {
-        b.innerHTML = `
-          <div class="acct"><span class="avatar">${esc(sync.user.email[0].toUpperCase())}</span><div><b>${esc(sync.user.email)}</b>
-          <div class="muted small">${sync.status === 'synced' ? `${icon('cloudSync', 14)} Sincronizado${sync.lastSync ? ' · ' + new Date(sync.lastSync).toLocaleTimeString('es-ES') : ''}` : sync.status === 'error' ? `${icon('info', 14)} ${esc(sync.error)}` : 'Sincronizando…'}</div></div></div>
-          <p class="muted">Inicia sesión con este correo en la app de Android o en la web para ver el mismo armario en todas partes. Los cambios se sincronizan al instante y funcionan sin conexión.</p>
-          <div class="row gap-s wrap"><button class="btn ghost" data-signout>${icon('logout', 16)} Cerrar sesión</button><button class="btn ghost danger-text" data-rmcfg>Desconectar sincronización</button></div>`;
-        b.querySelector('[data-signout]').onclick = async () => { await signOut(); toast('Sesión cerrada: tus datos se quedan en este dispositivo'); draw(); };
-      } else {
-        b.innerHTML = `
-          <h3>Inicia sesión para sincronizar</h3>
-          <p class="muted">Usa la misma cuenta en el móvil y en el ordenador. Lo que ya tengas en este dispositivo se sube al iniciar sesión.</p>
-          ${sync.status === 'error' ? `<p class="error">${esc(sync.error)}</p>` : ''}
-          <form class="auth" novalidate>
-            <label class="field"><span>Correo electrónico</span><input type="email" name="email" autocomplete="email" required></label>
-            <label class="field"><span>Contraseña</span><input type="password" name="pw" autocomplete="current-password" minlength="6" required></label>
-            <div class="row gap-s wrap"><button class="btn primary" data-mode="in">Iniciar sesión</button><button class="btn ghost" data-mode="up">Crear cuenta</button><button type="button" class="link" data-reset>¿Has olvidado la contraseña?</button></div>
-          </form>
-          <p class="small"><button class="link danger-text" data-rmcfg>Desconectar el proyecto de Firebase</button></p>`;
-        const f = b.querySelector('form');
-        f.addEventListener('click', async (e) => {
-          const m = e.target.closest('[data-mode]')?.dataset.mode;
-          if (!m) return;
-          e.preventDefault();
-          const email = f.email.value.trim(), pw = f.pw.value;
-          if (!email || pw.length < 6) return toast('Escribe tu correo y una contraseña de al menos 6 caracteres');
-          try { await (m === 'in' ? signIn : signUp)(email, pw); toast(m === 'in' ? 'Sesión iniciada: sincronizando' : 'Cuenta creada: sincronizando'); }
-          catch (err) { toast(err.message); }
-        });
-        b.querySelector('[data-reset]').onclick = async () => {
-          const email = f.email.value.trim();
-          if (!email) return toast('Primero escribe tu correo');
-          try { await resetPassword(email); toast('Te hemos enviado un correo para restablecer la contraseña'); } catch (err) { toast(err.message); }
-        };
-      }
-      b.querySelector('[data-rmcfg]')?.addEventListener('click', async () => {
-        if (!(await confirmDialog('¿Desconectar la sincronización en este dispositivo? Tus datos locales se mantienen.', { ok: 'Desconectar' }))) return;
-        try { await signOut(); } catch {}
-        saveConfig(null);
-        location.reload();
-      });
-    }
-
     function preview(b) {
       const s = store.settings;
       b.innerHTML = `
@@ -173,8 +104,10 @@ export default {
     function data(b) {
       const demo = store.all('items').filter((i) => i.demo).length;
       b.innerHTML = `
+        <h3>${icon('check', 18)} Todo se guarda en este dispositivo</h3>
+        <p class="muted small">Atelier funciona sin cuenta ni inicio de sesión: tu armario, tus outfits, planes, viajes y ajustes se guardan solo en este navegador o en esta app, y funcionan sin conexión.</p>
         <h3>Copia de seguridad</h3>
-        <p class="muted small">Descarga todo (armario con fotos, outfits, planes, viajes y ajustes) en un solo archivo, o restaura una copia de seguridad.</p>
+        <p class="muted small">Descarga todo (armario con fotos, outfits, planes, viajes y ajustes) en un solo archivo, o restaura una copia. También sirve para pasar tu armario del ordenador al móvil o al revés: exporta en uno e importa en el otro.</p>
         <div class="row gap-s wrap"><button class="btn soft" data-export>${icon('download', 16)} Exportar copia</button>
           <label class="btn soft">${icon('upload', 16)} Importar copia<input type="file" accept="application/json,.json" hidden data-import></label></div>
         <h3>Armario de ejemplo</h3>
@@ -211,7 +144,7 @@ export default {
         <div class="about-brand"><span class="brand-mark lg">A</span><div><h3>Atelier</h3><p class="muted small">Tu estilista personal con IA · v1.0</p></div></div>
         <p class="muted">Los outfits se generan en tu dispositivo con un motor de estilismo que puntúa la armonía de color, el estilo, la ocasión, las proporciones y el tiempo. Datos meteorológicos de <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>.</p>
         <h3>Consigue la app</h3>
-        <p class="muted small">Atelier funciona en cualquier navegador y se instala como una app. La APK de Android se compila con el mismo código: consulta el README del proyecto.</p>
+        <p class="muted small">Atelier funciona en cualquier navegador, sin cuenta y sin conexión, y se puede instalar como una app. También existe <code>Atelier.html</code>, un único archivo que se abre con doble clic, y la APK de Android se compila con el mismo código: consulta el README del proyecto.</p>
         ${installEvt ? `<button class="btn primary" data-install>${icon('download', 16)} Instalar Atelier</button>` : '<p class="muted small">En el móvil, usa el menú del navegador → «Añadir a pantalla de inicio».</p>'}`;
       b.querySelector('[data-install]')?.addEventListener('click', async () => { installEvt.prompt(); installEvt = null; });
     }
@@ -221,7 +154,5 @@ export default {
       const t = e.target.closest('[data-tab]');
       if (t) { tab = t.dataset.tab; setHash('settings', { tab }); draw(); }
     });
-    const off = onSync(() => tab === 'account' && draw());
-    return off;
   },
 };

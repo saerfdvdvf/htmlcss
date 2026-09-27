@@ -117,8 +117,7 @@ code { font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-r
 .sync-pill { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); text-decoration: none; font-size: 13px; }
 .sync-pill span { display: flex; flex-direction: column; min-width: 0; }
 .sync-pill small { color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sync-pill.synced .ic { color: var(--good); }
-.sync-pill.error .ic { color: var(--bad); }
+.sync-pill.local .ic { color: var(--good); }
 
 .app { margin-left: var(--side); min-height: 100vh; }
 .topbar { display: none; }
@@ -693,7 +692,9 @@ input[type=range] { width: 100%; accent-color: var(--ink); }
 
 /* ---------- Settings ---------- */
 .settings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 18px; align-items: start; }
-@media (max-width: 800px) { .settings-layout { grid-template-columns: 1fr; } }
+@media (max-width: 800px) { .settings-layout { grid-template-columns: minmax(0, 1fr); } }
+.settings-layout > * { min-width: 0; }
+.settings-body .btn { white-space: normal; height: auto; min-height: 42px; padding-block: 8px; text-align: center; }
 .settings-tabs { display: flex; flex-direction: column; gap: 2px; }
 @media (max-width: 800px) { .settings-tabs { flex-direction: row; overflow-x: auto; scrollbar-width: none; } }
 .settings-tabs button { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; background: none; border-radius: 12px; font-weight: 700; color: var(--ink-2); text-align: left; white-space: nowrap; }

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = join(root, '..', 'atelier');
 const out = join(root, 'www');
-const SKIP = ['tests', 'server', 'README.md', 'firestore.rules'];
+const SKIP = ['tests', 'server', 'tools', 'node_modules', 'package.json', 'package-lock.json', 'README.md', 'Atelier.html'];
 
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });

@@ -1,8 +1,7 @@
-// Local-first state: in-memory cache backed by IndexedDB, with change events and a sync hook.
+// Estado local: caché en memoria respaldada por IndexedDB, con eventos de cambio. Sin cuentas ni nube.
 import * as db from './db.js';
 import { uid } from './util.js';
 
-export const SYNCED = ['items', 'outfits', 'plans', 'wears', 'trips', 'settings'];
 const COLLS = ['items', 'outfits', 'plans', 'wears', 'trips'];
 const HISTORY_LIMIT = 400;
 
@@ -30,7 +29,6 @@ const state = Object.fromEntries(COLLS.map((c) => [c, new Map()]));
 let settings = { ...DEFAULT_SETTINGS };
 const meta = new Map();
 const listeners = new Set();
-let syncer = null;
 let pending = new Set();
 let flushQueued = false;
 
@@ -74,7 +72,6 @@ export const store = {
     state[coll].set(d.id, d);
     emit(coll);
     await db.put(coll, d);
-    syncer?.(coll, d);
     if (coll === 'outfits') trimHistory();
     return d;
   },
@@ -84,7 +81,6 @@ export const store = {
     out.forEach((d) => state[coll].set(d.id, d));
     emit(coll);
     await db.putMany(coll, out);
-    out.forEach((d) => syncer?.(coll, d));
     return out;
   },
   async patch(coll, id, patch) {
@@ -97,7 +93,6 @@ export const store = {
     state[coll].set(id, tomb);
     emit(coll);
     await db.put(coll, tomb);
-    syncer?.(coll, tomb);
   },
   async removeMany(coll, ids) {
     const now = Date.now();
@@ -105,7 +100,6 @@ export const store = {
     tombs.forEach((t) => state[coll].set(t.id, t));
     emit(coll);
     await db.putMany(coll, tombs);
-    tombs.forEach((t) => syncer?.(coll, t));
   },
 
   get settings() { return settings; },
@@ -113,43 +107,15 @@ export const store = {
     settings = { ...settings, ...patch, id: 'settings', updatedAt: Date.now() };
     emit('settings');
     await db.put('meta', settings);
-    syncer?.('settings', settings);
     return settings;
   },
 
-  // Device-local values (never synced): try-on photo, sync config, UI state...
+  // Valores del dispositivo: foto de Pruébatelo, estado de la interfaz…
   getMeta(key, fallback = null) { return meta.has(key) ? meta.get(key) : fallback; },
   async setMeta(key, value) {
     meta.set(key, value);
     emit('meta');
     await db.put('meta', { id: key, value });
-  },
-
-  setSyncer(fn) { syncer = fn; },
-
-  // Merge documents that came from the cloud (last-write-wins on updatedAt).
-  async applyRemote(coll, docs) {
-    const changed = [];
-    if (coll === 'settings') {
-      const d = docs[0];
-      if (d && (d.updatedAt || 0) > (settings.updatedAt || 0)) {
-        settings = { ...DEFAULT_SETTINGS, ...d, id: 'settings' };
-        await db.put('meta', settings);
-        emit('settings');
-      }
-      return;
-    }
-    for (const d of docs) {
-      const cur = state[coll].get(d.id);
-      if (!cur || (d.updatedAt || 0) > (cur.updatedAt || 0)) {
-        state[coll].set(d.id, d);
-        changed.push(d);
-      }
-    }
-    if (changed.length) {
-      await db.putMany(coll, changed);
-      emit(coll);
-    }
   },
 
   async wipe() {

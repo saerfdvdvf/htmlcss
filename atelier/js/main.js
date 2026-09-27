@@ -1,13 +1,11 @@
-// App shell: navigation, theme, onboarding, sync + service worker bootstrap.
+// Estructura de la app: navegación, tema, bienvenida y service worker. Todo funciona en local.
 import { store } from './store.js';
 import { register, startRouter, onRoute, navigate } from './router.js';
 import { icon } from './icons.js';
 import { openSheet, chip, bindChips, chipValues, toast, $, closeAllSheets } from './ui.js';
 import { STYLES } from './constants.js';
 import { demoItems } from './demo.js';
-import { initSync, onSync, sync } from './sync.js';
 import { loadWeather } from './context.js';
-import { esc } from './util.js';
 
 import home from './views/home.js';
 import wardrobe from './views/wardrobe.js';
@@ -55,7 +53,7 @@ function shell() {
   side.innerHTML = `
     <a class="brand" href="#/home" aria-label="Inicio de Atelier"><span class="brand-mark">A</span><span class="brand-word">Atelier</span></a>
     <nav>${NAV.filter((n) => n.id !== 'preview' || store.settings.tryOn).map((n) => `<a href="#/${n.id}" data-nav="${n.id}">${icon(n.icon, 19)}<span>${n.label}</span></a>`).join('')}</nav>
-    <div class="side-foot" id="syncBadge"></div>`;
+    <div class="side-foot" id="localBadge"></div>`;
   const bottom = $('#bottomnav');
   bottom.innerHTML = MOBILE.map((id) => {
     const n = NAV.find((x) => x.id === id);
@@ -67,7 +65,7 @@ function shell() {
   const createEl = bottom.querySelector('.bn-create');
   bottom.insertBefore(createEl, bottom.children[2]);
   $('#moreBtn').onclick = openMore;
-  syncBadge();
+  localBadge();
 }
 
 function openMore() {
@@ -79,18 +77,10 @@ function openMore() {
   });
 }
 
-function syncBadge() {
-  const el = $('#syncBadge');
+function localBadge() {
+  const el = $('#localBadge');
   if (!el) return;
-  const map = {
-    off: ['cloud', 'Solo en este dispositivo', 'Activa la sincronización en Ajustes'],
-    'signed-out': ['user', 'Sin iniciar sesión', 'Inicia sesión para sincronizar'],
-    connecting: ['refresh', 'Sincronizando…', ''],
-    synced: ['cloudSync', 'Sincronizado', sync.user?.email || ''],
-    error: ['info', 'Problema de sincronización', sync.error || ''],
-  };
-  const [ic, label, sub] = map[sync.status] || map.off;
-  el.innerHTML = `<a href="#/settings?tab=account" class="sync-pill ${sync.status}">${icon(ic, 16)}<span><b>${label}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span></a>`;
+  el.innerHTML = `<a href="#/settings?tab=data" class="sync-pill local">${icon('check', 16)}<span><b>Guardado en este dispositivo</b><small>Sin cuenta · funciona sin conexión</small></span></a>`;
 }
 
 function highlight(route) {
@@ -144,8 +134,6 @@ async function boot() {
   store.on((colls) => {
     if (colls.has('settings')) { applyTheme(); shell(); highlight({ name: location.hash.replace(/^#\/?/, '').split('?')[0] || 'home' }); }
   });
-  onSync(syncBadge);
-  initSync();
   loadWeather();
   onboarding();
   if ('serviceWorker' in navigator && location.protocol !== 'file:' && !location.hostname.match(/^(localhost|127\.)/)) {
