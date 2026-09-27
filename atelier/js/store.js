@@ -132,7 +132,7 @@ export const store = {
     return out;
   },
   async importJSON(data) {
-    if (data?.app !== 'atelier') throw new Error('Este archivo no es una copia de seguridad de Atelier.');
+    if (data?.app !== 'atelier') throw new Error('Este archivo no es una copia de seguridad de Unreal Outfits.');
     for (const c of COLLS) if (Array.isArray(data[c])) await store.putMany(c, data[c]);
     if (data.settings) await store.setSettings({ ...data.settings });
   },

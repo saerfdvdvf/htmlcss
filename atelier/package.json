@@ -2,7 +2,7 @@
   "name": "atelier",
   "version": "1.0.0",
   "private": true,
-  "description": "Atelier: estilista personal con IA que funciona en local, sin cuenta.",
+  "description": "Unreal Outfits by Sawel: estilista personal con IA que funciona en local, sin cuenta.",
   "type": "module",
   "scripts": {
     "start": "npx --yes serve .",

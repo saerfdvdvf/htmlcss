@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Compila Atelier.apk sin Gradle ni Android Studio.
+# Compila Unreal-Outfits.apk sin Gradle ni Android Studio.
 # Requisitos (Ubuntu/Debian): sudo apt-get install aapt apksigner dalvik-exchange android-sdk-platform-23 zipalign
 #                             + JDK 17 o superior y Node 18 o superior.
 set -euo pipefail
@@ -7,8 +7,8 @@ cd "$(dirname "$0")"
 
 ANDROID_JAR="${ANDROID_JAR:-/usr/lib/android-sdk/platforms/android-23/android.jar}"
 BUILD_TOOLS="${BUILD_TOOLS:-/usr/lib/android-sdk/build-tools/debian}"
-VERSION_NAME="${VERSION_NAME:-1.0}"
-VERSION_CODE="${VERSION_CODE:-$(date -u +%y%m%d%H)}"
+VERSION_NAME="${VERSION_NAME:-1.1}"
+VERSION_CODE="${VERSION_CODE:-$(( $(date -u +%s) / 60 ))}"  # minutos desde 1970: siempre crece
 KEYSTORE="${KEYSTORE:-keystore/atelier.jks}"
 KS_PASS="${KS_PASS:-atelier-app}"
 OUT=build
@@ -24,7 +24,7 @@ mkdir -p "$OUT/assets/www" "$OUT/gen" "$OUT/classes" "$OUT/dex"
 
 echo "1/6  App web en un solo archivo"
 ( cd ../atelier && { [ -d node_modules ] || npm ci --no-audit --no-fund --silent; } && npm run --silent standalone )
-cp ../atelier/Atelier.html "$OUT/assets/www/index.html"
+cp ../atelier/Unreal-Outfits.html "$OUT/assets/www/index.html"
 
 echo "2/6  Recursos"
 aapt2 compile --dir res -o "$OUT/res.zip"
@@ -47,7 +47,7 @@ zipalign -f -p 4 "$OUT/app.apk" "$OUT/aligned.apk"
 
 echo "6/6  Firma"
 apksigner sign --ks "$KEYSTORE" --ks-pass "pass:$KS_PASS" --key-pass "pass:$KS_PASS" \
-  --out Atelier.apk "$OUT/aligned.apk"
-apksigner verify Atelier.apk
-rm -f Atelier.apk.idsig
-echo "Listo: $(pwd)/Atelier.apk ($(du -h Atelier.apk | cut -f1), versión $VERSION_NAME / $VERSION_CODE)"
+  --out Unreal-Outfits.apk "$OUT/aligned.apk"
+apksigner verify Unreal-Outfits.apk
+rm -f Unreal-Outfits.apk.idsig
+echo "Listo: $(pwd)/Unreal-Outfits.apk ($(du -h Unreal-Outfits.apk | cut -f1), versión $VERSION_NAME / $VERSION_CODE)"

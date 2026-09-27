@@ -1,6 +1,8 @@
-# Atelier: tu estilista personal con IA
+# Unreal Outfits · by Sawel
 
-Atelier es una app de moda que funciona como **web (PWA instalable)** y como **APK de Android** a partir del mismo código. Sube tu ropa y Atelier crea outfits completos y con los colores bien combinados para hoy, para toda la semana o para un viaje. Cada outfit incluye una puntuación y una explicación de por qué funciona.
+Tu estilista personal con IA.
+
+Unreal Outfits es una app de moda que funciona como **web (PWA instalable)** y como **APK de Android** a partir del mismo código. Sube tu ropa y Unreal Outfits crea outfits completos y con los colores bien combinados para hoy, para toda la semana o para un viaje. Cada outfit incluye una puntuación y una explicación de por qué funciona.
 
 ## Funciones
 
@@ -18,7 +20,7 @@ Atelier es una app de moda que funciona como **web (PWA instalable)** y como **A
 | **Calendario** | Vista mensual con miniaturas. Puedes asignar a cualquier día un favorito, un outfit del historial o uno nuevo, cambiarlo o quitarlo, y marcarlo como puesto. |
 | **Lavandería** | Marca prendas como Disponible, Lavando o No disponible. Las que se están lavando o no están disponibles **se excluyen de toda la generación**. Hay un botón de «colada terminada» y, tras *Me lo pongo hoy*, puedes mandar a lavar las prendas usadas con un toque. |
 | **Estadísticas** | Prendas más y menos usadas, colores que tienes y que más usas, categorías, outfits creados, favoritos, combinaciones más frecuentes, mezcla de estilos, qué parte del armario has usado en los últimos 30 días y consejos escritos. |
-| **Viajes** | Indica el destino (el tiempo sale de la previsión, de las mismas fechas del año pasado si el viaje es más adelante, o lo pones tú), los días, el tipo de viaje y las ocasiones, y las prendas que quieres llevar o dejar en casa. Atelier elige una **selección mínima de prendas**, planifica cada día y crea una **lista de maleta automática** con los imprescindibles. |
+| **Viajes** | Indica el destino (el tiempo sale de la previsión, de las mismas fechas del año pasado si el viaje es más adelante, o lo pones tú), los días, el tipo de viaje y las ocasiones, y las prendas que quieres llevar o dejar en casa. Unreal Outfits elige una **selección mínima de prendas**, planifica cada día y crea una **lista de maleta automática** con los imprescindibles. |
 | **Compras** | Revisa el equilibrio del armario y busca huecos. Simula miles de combinaciones para encontrar las prendas que **desbloquearían más outfits nuevos con buena puntuación** o que darían pareja a prendas difíciles de combinar. Descarta todo lo que se parezca demasiado a lo que ya tienes. |
 | **Pruébatelo** | Se puede activar o desactivar. Superpone los recortes de las prendas del outfit sobre tu foto **sin modificarla**, puede colocarlos automáticamente detectando tu postura y te deja arrastrar, redimensionar y girar cada prenda. Puedes comparar con la foto original y exportar la imagen. Para un resultado fotorrealista, conecta el servicio opcional de prueba virtual con IA descrito más abajo. |
 | **Sin cuenta** | No hay inicio de sesión. Todo se guarda en el propio dispositivo y funciona sin conexión. Con **Exportar / Importar copia** puedes guardar tu armario en un archivo o pasarlo a otro dispositivo. |
@@ -38,8 +40,8 @@ atelier/              ← la app web (también el contenido de la APK)
   sw.js, manifest     funcionamiento sin conexión e instalación
   server/tryon-worker.js   backend opcional de prueba virtual con IA (Cloudflare Worker)
   tests/              tests en Node del motor y los planificadores
-  tools/              genera Atelier.html (versión de un solo archivo)
-  Atelier.html        la app entera en un archivo: se abre con doble clic
+  tools/              genera Unreal-Outfits.html (versión de un solo archivo)
+  Unreal-Outfits.html        la app entera en un archivo: se abre con doble clic
 mobile/               app de Android (WebView nativa) y script que genera la APK
 .github/workflows/android-apk.yml   compila la APK en cada push
 ```
@@ -48,14 +50,14 @@ No hay paso de compilación: la web son módulos ES normales.
 
 ## Abrir la app en local
 
-**La forma más fácil:** descarga `atelier/Atelier.html` y ábrelo con doble clic en tu navegador (probado en Chrome; Edge usa el mismo motor). No necesita servidor, instalación ni cuenta, y tus datos se quedan en ese navegador.
+**La forma más fácil:** descarga `atelier/Unreal-Outfits.html` y ábrelo con doble clic en tu navegador (probado en Chrome; Edge usa el mismo motor). No necesita servidor, instalación ni cuenta, y tus datos se quedan en ese navegador.
 
 Si cambias el código, vuelve a generar el archivo:
 
 ```bash
 cd atelier
 npm install
-npm run standalone     # → Atelier.html
+npm run standalone     # → Unreal-Outfits.html
 ```
 
 **Con un servidor local** (para desarrollar, o para poder instalarla como app):
@@ -80,20 +82,20 @@ Sube la carpeta `atelier/` a cualquier hosting estático, como GitHub Pages, Net
 
 ## La APK de Android
 
-La APK ya compilada está en `mobile/Atelier.apk`. Cópiala al móvil, ábrela y acepta instalar apps de origen desconocido. Requiere Android 7.0 o superior.
+La APK ya compilada está en `mobile/Unreal-Outfits.apk`. Cópiala al móvil, ábrela y acepta instalar apps de origen desconocido. Requiere Android 7.0 o superior.
 
 Para volver a compilarla (sin Gradle ni Android Studio):
 
 ```bash
 sudo apt-get install aapt apksigner dalvik-exchange android-sdk-platform-23 zipalign
-./mobile/build-apk.sh      # → mobile/Atelier.apk
+./mobile/build-apk.sh      # → mobile/Unreal-Outfits.apk
 ```
 
 GitHub Actions también la compila en cada push (**Build Android APK**) y, si subes una etiqueta como `v1.0.0`, la adjunta a una GitHub Release. Más detalles en `mobile/README.md`.
 
 ## Sin cuenta: todo en local
 
-Atelier no tiene inicio de sesión ni guarda nada en la nube. El armario, los outfits, los planes, los viajes y los ajustes se guardan solo en el navegador o en la app del dispositivo (IndexedDB), y todo funciona sin conexión.
+Unreal Outfits no tiene inicio de sesión ni guarda nada en la nube. El armario, los outfits, los planes, los viajes y los ajustes se guardan solo en el navegador o en la app del dispositivo (IndexedDB), y todo funciona sin conexión.
 
 Para pasar tu armario de un dispositivo a otro (por ejemplo, del ordenador al móvil), ve a **Ajustes → Datos**, pulsa **Exportar copia** en uno e **Importar copia** en el otro.
 

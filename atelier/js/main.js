@@ -53,7 +53,7 @@ function applyTheme() {
 function shell() {
   const side = $('#sidenav');
   side.innerHTML = `
-    <a class="brand" href="#/home" aria-label="Inicio de Atelier"><span class="brand-mark">A</span><span class="brand-word">Atelier</span></a>
+    <a class="brand" href="#/home" aria-label="Inicio de Unreal Outfits"><span class="brand-mark">U</span><span class="brand-word">Unreal Outfits<small>by Sawel</small></span></a>
     <nav>${NAV.filter((n) => n.id !== 'preview' || store.settings.tryOn).map((n) => `<a href="#/${n.id}" data-nav="${n.id}">${icon(n.icon, 19)}<span>${n.label}</span></a>`).join('')}</nav>
     <div class="side-foot" id="localBadge"></div>`;
   const bottom = $('#bottomnav');
@@ -72,7 +72,7 @@ function shell() {
 
 function openMore() {
   openSheet({
-    title: 'Atelier',
+    title: 'Unreal Outfits',
     body: `<div class="more-grid">${NAV.filter((n) => !MOBILE.includes(n.id) && (n.id !== 'preview' || store.settings.tryOn))
       .map((n) => `<a href="#/${n.id}" class="more-tile">${icon(n.icon, 24)}<span>${n.label}</span></a>`).join('')}</div>`,
     onMount: (b, close) => b.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => close())),
@@ -92,22 +92,22 @@ function highlight(route) {
     if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
   const n = NAV.find((x) => x.id === route.name);
-  document.title = n && n.id !== 'home' ? `${n.label} · Atelier` : 'Atelier · tu estilista con IA';
-  $('#topTitle').textContent = n ? n.label : route.name === 'outfit' ? 'Outfit' : 'Atelier';
+  document.title = n && n.id !== 'home' ? `${n.label} · Unreal Outfits` : 'Unreal Outfits · by Sawel';
+  $('#topTitle').textContent = n ? n.label : route.name === 'outfit' ? 'Outfit' : 'Unreal Outfits';
 }
 
 function onboarding() {
   if (store.settings.onboarded || store.all('items').length) return;
   openSheet({
-    title: 'Te damos la bienvenida a Atelier',
+    title: 'Te damos la bienvenida a Unreal Outfits',
     className: 'onboard',
     body: `
-      <p class="lede">Tu estilista personal con IA. Sube tu ropa y Atelier crea outfits completos y con los colores bien combinados para cada día, cada semana y cada viaje.</p>
+      <p class="lede">Tu estilista personal con IA. Sube tu ropa y Unreal Outfits crea outfits completos y con los colores bien combinados para cada día, cada semana y cada viaje.</p>
       <label class="field"><span>¿Cómo te llamamos?</span><input id="obName" placeholder="Tu nombre" autocomplete="given-name"></label>
       <div class="field"><span>Tus estilos favoritos</span><div class="chips">${STYLES.map((s) => chip(s.label, { value: s.id, name: 'obStyle', active: s.id === 'casual' })).join('')}</div></div>
       <div class="ob-choices">
         <button class="ob-choice" data-start="demo">${icon('sparkles', 22)}<b>Explorar con un armario de ejemplo</b><small>34 prendas para probar todas las funciones ya. Puedes quitarlas cuando quieras.</small></button>
-        <button class="ob-choice" data-start="empty">${icon('camera', 22)}<b>Empezar con mi propia ropa</b><small>Fotografía o sube tus prendas: Atelier detecta la categoría y los colores.</small></button>
+        <button class="ob-choice" data-start="empty">${icon('camera', 22)}<b>Empezar con mi propia ropa</b><small>Fotografía o sube tus prendas: Unreal Outfits detecta la categoría y los colores.</small></button>
       </div>`,
     onMount(b, close) {
       bindChips(b, 'obStyle', { multi: true });

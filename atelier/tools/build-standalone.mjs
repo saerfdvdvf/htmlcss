@@ -1,4 +1,4 @@
-// Genera Atelier.html: la app completa en un único archivo que se abre con doble clic,
+// Genera Unreal-Outfits.html: la app completa en un único archivo que se abre con doble clic,
 // sin servidor, sin instalación y sin cuenta. Los datos se guardan en el navegador.
 import { build } from 'esbuild';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -32,6 +32,6 @@ swap('  <link rel="apple-touch-icon" href="assets/icon-192.png">\n', '');
 swap('<link rel="stylesheet" href="css/app.css">', `<style>\n${css}\n</style>`);
 swap('<script type="module" src="js/main.js"></script>', `<script>\n${js}\n</script>`);
 
-const out = join(root, 'Atelier.html');
+const out = join(root, 'Unreal-Outfits.html');
 writeFileSync(out, html);
-console.log(`Atelier.html generado (${(html.length / 1024).toFixed(0)} KB)`);
+console.log(`Unreal-Outfits.html generado (${(html.length / 1024).toFixed(0)} KB)`);

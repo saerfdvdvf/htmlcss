@@ -36,7 +36,7 @@ export default {
     const items = store.all('items');
     if (!items.length) {
       el.innerHTML = `<header class="page-head"><div><div class="eyebrow">Estilista</div><h1 class="display">Crear outfit</h1></div></header>
-        <div class="card">${empty('hanger', 'Primero añade ropa', 'Atelier necesita al menos una parte de arriba, un pantalón y unas zapatillas para vestirte.', `<a class="btn primary" href="#/wardrobe?add=1">${icon('camera', 18)} Añadir ropa</a>`)}</div>`;
+        <div class="card">${empty('hanger', 'Primero añade ropa', 'Unreal Outfits necesita al menos una parte de arriba, un pantalón y unas zapatillas para vestirte.', `<a class="btn primary" href="#/wardrobe?add=1">${icon('camera', 18)} Añadir ropa</a>`)}</div>`;
       return;
     }
 
@@ -66,7 +66,7 @@ export default {
             <button class="mode-card" data-mode="${m.id}">${icon(m.icon, 26)}<b>${m.title}</b><small>${m.text}</small>${icon('right', 18, 'go')}</button>`).join('')}</div>`;
       } else if (S.step === 'style') {
         el.innerHTML = header('Elige tu estilo', S.mode === 'surprise' ? '' : 'Todo lo demás es opcional.') + selectedItemBanner() + `
-          <div class="style-grid">${[...STYLES, { id: 'any', label: 'Cualquier estilo', blurb: 'Que decida Atelier' }].map((s) => `
+          <div class="style-grid">${[...STYLES, { id: 'any', label: 'Cualquier estilo', blurb: 'Que decida Unreal Outfits' }].map((s) => `
             <button class="style-card ${S.style === s.id ? 'on' : ''}" data-style="${s.id}"><span class="st-ic">${icon(STYLE_ICON[s.id], 22)}</span><b>${s.label}</b><small>${s.blurb}</small></button>`).join('')}</div>`;
       } else if (S.step === 'filters') {
         const w = weatherFor(todayISO());

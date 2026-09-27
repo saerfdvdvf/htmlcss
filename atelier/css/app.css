@@ -113,7 +113,8 @@ code { font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-r
   font: italic 500 21px/1 var(--display);
 }
 .brand-mark.lg { width: 56px; height: 56px; font-size: 32px; border-radius: 16px; }
-.brand-word { font: 500 24px/1 var(--display); letter-spacing: -.02em; }
+.brand-word { font: 500 22px/1 var(--display); letter-spacing: -.02em; display: flex; flex-direction: column; gap: 3px; }
+.brand-word small { font: 700 10px/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
 .sync-pill { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); text-decoration: none; font-size: 13px; }
 .sync-pill span { display: flex; flex-direction: column; min-width: 0; }
 .sync-pill small { color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

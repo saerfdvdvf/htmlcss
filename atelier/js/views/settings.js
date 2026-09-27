@@ -88,7 +88,7 @@ export default {
           <div class="row gap-s">${store.getMeta('photo') ? `<img class="thumb-sm" src="${store.getMeta('photo')}" alt=""><button class="btn ghost danger-text" data-rmphoto>${icon('trash', 16)} Eliminar foto</button>` : '<span class="muted small">Aún no hay foto: añádela desde Pruébatelo.</span>'}</div>
           <small class="muted">Solo se guarda en este dispositivo. Nunca se sube ni se sincroniza.</small></div>
         <h3>Servicio de prueba virtual con IA (opcional)</h3>
-        <p class="muted small">Para obtener resultados fotorrealistas, conecta Atelier a un servicio de prueba virtual. Recibe <code>{ person, garments[] }</code> como data URLs y devuelve <code>{ image }</code>. En <code>atelier/server/tryon-worker.js</code> tienes un Cloudflare Worker listo que usa IDM-VTON en Replicate.</p>
+        <p class="muted small">Para obtener resultados fotorrealistas, conecta Unreal Outfits a un servicio de prueba virtual. Recibe <code>{ person, garments[] }</code> como data URLs y devuelve <code>{ image }</code>. En <code>atelier/server/tryon-worker.js</code> tienes un Cloudflare Worker listo que usa IDM-VTON en Replicate.</p>
         <label class="field"><span>URL del endpoint</span><input data-ep type="url" placeholder="https://your-worker.workers.dev/tryon" value="${esc(store.getMeta('tryonEndpoint') || '')}"></label>
         <label class="field"><span>Clave de acceso (opcional)</span><input data-key type="password" value="${esc(store.getMeta('tryonKey') || '')}"></label>
         <button class="btn primary" data-saveep>${icon('check', 16)} Guardar</button>`;
@@ -105,7 +105,7 @@ export default {
       const demo = store.all('items').filter((i) => i.demo).length;
       b.innerHTML = `
         <h3>${icon('check', 18)} Todo se guarda en este dispositivo</h3>
-        <p class="muted small">Atelier funciona sin cuenta ni inicio de sesión: tu armario, tus outfits, planes, viajes y ajustes se guardan solo en este navegador o en esta app, y funcionan sin conexión.</p>
+        <p class="muted small">Unreal Outfits funciona sin cuenta ni inicio de sesión: tu armario, tus outfits, planes, viajes y ajustes se guardan solo en este navegador o en esta app, y funcionan sin conexión.</p>
         <h3>Copia de seguridad</h3>
         <p class="muted small">Descarga todo (armario con fotos, outfits, planes, viajes y ajustes) en un solo archivo, o restaura una copia. También sirve para pasar tu armario del ordenador al móvil o al revés: exporta en uno e importa en el otro.</p>
         <div class="row gap-s wrap"><button class="btn soft" data-export>${icon('download', 16)} Exportar copia</button>
@@ -117,7 +117,7 @@ export default {
         <button class="btn ghost danger-text" data-wipe>${icon('trash', 16)} Borrar todos los datos de este dispositivo</button>`;
       b.querySelector('[data-export]').onclick = () => {
         const blob = new Blob([JSON.stringify(store.exportJSON())], { type: 'application/json' });
-        saveFile(`atelier-copia-${new Date().toISOString().slice(0, 10)}.json`, 'application/json', blob);
+        saveFile(`unreal-outfits-copia-${new Date().toISOString().slice(0, 10)}.json`, 'application/json', blob);
       };
       b.querySelector('[data-import]').onchange = async (e) => {
         try { await store.importJSON(JSON.parse(await e.target.files[0].text())); toast('Copia de seguridad restaurada'); draw(); }
@@ -137,11 +137,11 @@ export default {
 
     function about(b) {
       b.innerHTML = `
-        <div class="about-brand"><span class="brand-mark lg">A</span><div><h3>Atelier</h3><p class="muted small">Tu estilista personal con IA · v1.0</p></div></div>
+        <div class="about-brand"><span class="brand-mark lg">U</span><div><h3>Unreal Outfits</h3><p class="muted small">by Sawel · tu estilista personal con IA · v1.0</p></div></div>
         <p class="muted">Los outfits se generan en tu dispositivo con un motor de estilismo que puntúa la armonía de color, el estilo, la ocasión, las proporciones y el tiempo. Datos meteorológicos de <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>.</p>
         <h3>Consigue la app</h3>
-        <p class="muted small">Atelier funciona en cualquier navegador, sin cuenta y sin conexión, y se puede instalar como una app. También existe <code>Atelier.html</code>, un único archivo que se abre con doble clic, y la APK de Android se compila con el mismo código: consulta el README del proyecto.</p>
-        ${inAndroidApp() ? '<p class="muted small">Estás usando la app de Android. Las copias de seguridad se guardan en Descargas/Atelier.</p>' : installEvt ? `<button class="btn primary" data-install>${icon('download', 16)} Instalar Atelier</button>` : '<p class="muted small">En el móvil, usa el menú del navegador → «Añadir a pantalla de inicio».</p>'}`;
+        <p class="muted small">Unreal Outfits funciona en cualquier navegador, sin cuenta y sin conexión, y se puede instalar como una app. También existe <code>Unreal-Outfits.html</code>, un único archivo que se abre con doble clic, y la APK de Android se compila con el mismo código: consulta el README del proyecto.</p>
+        ${inAndroidApp() ? '<p class="muted small">Estás usando la app de Android. Las copias de seguridad se guardan en Descargas/Unreal Outfits.</p>' : installEvt ? `<button class="btn primary" data-install>${icon('download', 16)} Instalar Unreal Outfits</button>` : '<p class="muted small">En el móvil, usa el menú del navegador → «Añadir a pantalla de inicio».</p>'}`;
       b.querySelector('[data-install]')?.addEventListener('click', async () => { installEvt.prompt(); installEvt = null; });
     }
 

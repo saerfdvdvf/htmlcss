@@ -208,7 +208,7 @@ export function pickItem({ title = 'Elige una prenda', category = null, filter =
       <div class="search"><span>${icon('search', 18)}</span><input type="search" placeholder="Busca en tu armario" aria-label="Buscar"></div>
       ${category ? '' : `<div class="chips scroll">${chip('Todo', { value: 'all', name: 'pcat', active: true })}${CATEGORIES.map((c) => chip(c.plural, { value: c.id, name: 'pcat' })).join('')}</div>`}
       <div class="grid items-grid" data-list></div>
-      ${allowNone ? '<button class="btn ghost block" data-none>Que elija Atelier</button>' : ''}
+      ${allowNone ? '<button class="btn ghost block" data-none>Que elija Unreal Outfits</button>' : ''}
     </div>`,
     onMount(b, close) {
       const list = b.querySelector('[data-list]');

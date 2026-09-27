@@ -1,15 +1,15 @@
-# Atelier para Android
+# Unreal Outfits (by Sawel) para Android
 
 App nativa ligera que abre la app web de `../atelier` dentro de una WebView. No usa Gradle ni Android Studio, y no tiene cuentas: todo se guarda en el propio teléfono.
 
-- **Descargar:** `Atelier.apk` (en esta carpeta). En el móvil, ábrela y permite «instalar apps de origen desconocido» cuando Android lo pida. Requiere Android 7.0 o superior.
+- **Descargar:** `Unreal-Outfits.apk` (en esta carpeta). En el móvil, ábrela y permite «instalar apps de origen desconocido» cuando Android lo pida. Requiere Android 7.0 o superior.
 - **Compilar:** `./build-apk.sh` (necesita en Ubuntu/Debian `sudo apt-get install aapt apksigner dalvik-exchange android-sdk-platform-23 zipalign`, más JDK 17+ y Node 18+). GitHub Actions la compila también en cada push (`.github/workflows/android-apk.yml`).
 
 ## Cómo funciona
 
-- `src/.../MainActivity.java` sirve la app desde `assets/www/index.html` (la versión de un solo archivo, `Atelier.html`) en el origen `https://appassets.androidplatform.net`, así que el almacenamiento (IndexedDB) funciona igual que en un navegador.
-- Subir fotos abre la galería o la cámara (las fotos de la cámara se guardan en Imágenes/Atelier).
-- Las copias de seguridad se guardan en Descargas/Atelier y las imágenes de «Pruébatelo» en Imágenes/Atelier.
+- `src/.../MainActivity.java` sirve la app desde `assets/www/index.html` (la versión de un solo archivo, `Unreal-Outfits.html`) en el origen `https://appassets.androidplatform.net`, así que el almacenamiento (IndexedDB) funciona igual que en un navegador.
+- Subir fotos abre la galería o la cámara (las fotos de la cámara se guardan en Imágenes/Unreal Outfits).
+- Las copias de seguridad se guardan en Descargas/Unreal Outfits y las imágenes de «Pruébatelo» en Imágenes/Unreal Outfits.
 - El botón «atrás» cierra la ventana abierta o vuelve a la pantalla anterior; en Inicio, sale de la app.
 - La ubicación (para el tiempo) se pide solo si la usas en Ajustes.
 

@@ -191,7 +191,7 @@ export default {
         g.drawImage(li, -w / 2, 0, w, h);
         g.restore();
       }
-      saveFile(`atelier-pruebatelo-${todayISO()}.jpg`, 'image/jpeg', c.toDataURL('image/jpeg', 0.92));
+      saveFile(`unreal-outfits-pruebatelo-${todayISO()}.jpg`, 'image/jpeg', c.toDataURL('image/jpeg', 0.92));
     }
 
     async function aiRender() {

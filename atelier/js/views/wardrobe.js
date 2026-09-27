@@ -147,7 +147,7 @@ export default {
         ? items.map((i) => itemCard(i, { selectable: state.select, selected: state.selected.has(i.id), meta: state.sort === 'most' || state.sort === 'least' ? `Usada ${wc.get(i.id) || 0} ${wc.get(i.id) === 1 ? 'vez' : 'veces'}` : '' })).join('')
         : store.all('items').length
           ? empty('search', 'Sin resultados', 'Prueba otra búsqueda o quita los filtros.')
-          : empty('hanger', 'Empieza tu armario digital', 'Añade sudaderas, camisetas, pantalones, zapatillas y accesorios. Atelier detecta la categoría y los colores por ti.', `<button class="btn primary" data-add>${icon('camera', 18)} Añade tu primera prenda</button>`);
+          : empty('hanger', 'Empieza tu armario digital', 'Añade sudaderas, camisetas, pantalones, zapatillas y accesorios. Unreal Outfits detecta la categoría y los colores por ti.', `<button class="btn primary" data-add>${icon('camera', 18)} Añade tu primera prenda</button>`);
     };
     draw();
 

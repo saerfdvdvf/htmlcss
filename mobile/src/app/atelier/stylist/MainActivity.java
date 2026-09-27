@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Atelier para Android: una WebView que sirve la app web (assets/www) desde un origen https local.
+ * Unreal Outfits (by Sawel) para Android: una WebView que sirve la app web (assets/www) desde un origen https local.
  * No hay cuentas ni servidor: todo se guarda en el propio teléfono (IndexedDB de la WebView).
  */
 public class MainActivity extends Activity {
@@ -186,15 +186,15 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** Intent de cámara que guarda la foto en Imágenes/Atelier (no necesita permiso de cámara). */
+    /** Intent de cámara que guarda la foto en Imágenes/Unreal Outfits (no necesita permiso de cámara). */
     private Intent cameraIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) == null) return null;
         if (Build.VERSION.SDK_INT < 29 && !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) return null;
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, "atelier_" + System.currentTimeMillis() + ".jpg");
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, "unreal_outfits_" + System.currentTimeMillis() + ".jpg");
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        if (Build.VERSION.SDK_INT >= 29) values.put("relative_path", "Pictures/Atelier");
+        if (Build.VERSION.SDK_INT >= 29) values.put("relative_path", "Pictures/Unreal Outfits");
         try {
             cameraUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         } catch (Exception e) {
@@ -273,7 +273,7 @@ public class MainActivity extends Activity {
     // ---------------------------------------------------------------- puente JavaScript
 
     private class Bridge {
-        /** Guarda un archivo en Descargas/Atelier (o en Imágenes/Atelier si es una imagen). */
+        /** Guarda un archivo en Descargas/Unreal Outfits (o en Imágenes/Unreal Outfits si es una imagen). */
         @JavascriptInterface
         public boolean saveFile(String name, String mime, String base64) {
             try {
@@ -283,7 +283,7 @@ public class MainActivity extends Activity {
                     ContentValues values = new ContentValues();
                     values.put("_display_name", name);
                     values.put("mime_type", mime);
-                    values.put("relative_path", image ? "Pictures/Atelier" : "Download/Atelier");
+                    values.put("relative_path", image ? "Pictures/Unreal Outfits" : "Download/Unreal Outfits");
                     Uri collection = Uri.parse(image ? "content://media/external/images/media" : "content://media/external/downloads");
                     Uri uri = getContentResolver().insert(collection, values);
                     if (uri == null) throw new IOException("No se pudo crear el archivo");
@@ -302,13 +302,13 @@ public class MainActivity extends Activity {
                         return false;
                     }
                     File dir = new File(Environment.getExternalStoragePublicDirectory(
-                            image ? Environment.DIRECTORY_PICTURES : Environment.DIRECTORY_DOWNLOADS), "Atelier");
+                            image ? Environment.DIRECTORY_PICTURES : Environment.DIRECTORY_DOWNLOADS), "Unreal Outfits");
                     if (!dir.exists() && !dir.mkdirs()) throw new IOException("No se pudo crear la carpeta");
                     FileOutputStream os = new FileOutputStream(new File(dir, name));
                     os.write(bytes);
                     os.close();
                 }
-                toast((image ? "Guardado en Imágenes/Atelier: " : "Guardado en Descargas/Atelier: ") + name);
+                toast((image ? "Guardado en Imágenes/Unreal Outfits: " : "Guardado en Descargas/Unreal Outfits: ") + name);
                 return true;
             } catch (Exception e) {
                 toast("No se ha podido guardar: " + e.getMessage());
