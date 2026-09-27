@@ -25,17 +25,17 @@ async function getJSON(url, ttl = 60 * 60 * 1000) {
 
 export const WMO = (code) => {
   if (code == null) return { label: '—', icon: 'cloud' };
-  if (code === 0) return { label: 'Clear', icon: 'sun' };
-  if (code <= 2) return { label: 'Partly cloudy', icon: 'sun' };
-  if (code === 3) return { label: 'Overcast', icon: 'cloud' };
-  if (code <= 48) return { label: 'Fog', icon: 'cloud' };
-  if (code <= 67 || (code >= 80 && code <= 82)) return { label: 'Rain', icon: 'rain' };
-  if (code <= 77 || code === 85 || code === 86) return { label: 'Snow', icon: 'snow' };
-  return { label: 'Storms', icon: 'rain' };
+  if (code === 0) return { label: 'Despejado', icon: 'sun' };
+  if (code <= 2) return { label: 'Parcialmente nuboso', icon: 'sun' };
+  if (code === 3) return { label: 'Cubierto', icon: 'cloud' };
+  if (code <= 48) return { label: 'Niebla', icon: 'cloud' };
+  if (code <= 67 || (code >= 80 && code <= 82)) return { label: 'Lluvia', icon: 'rain' };
+  if (code <= 77 || code === 85 || code === 86) return { label: 'Nieve', icon: 'snow' };
+  return { label: 'Tormentas', icon: 'rain' };
 };
 
 export async function geocode(q) {
-  const d = await getJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=en&format=json`, 24 * 3600e3);
+  const d = await getJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=es&format=json`, 24 * 3600e3);
   return (d.results || []).map((r) => ({
     name: [r.name, r.admin1, r.country].filter(Boolean).join(', '), short: r.name, lat: r.latitude, lon: r.longitude,
   }));
@@ -43,10 +43,10 @@ export async function geocode(q) {
 
 export function currentPosition() {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error('Geolocation is not available.'));
+    if (!navigator.geolocation) return reject(new Error('La geolocalización no está disponible.'));
     navigator.geolocation.getCurrentPosition(
-      (p) => resolve({ lat: +p.coords.latitude.toFixed(3), lon: +p.coords.longitude.toFixed(3), name: 'My location' }),
-      () => reject(new Error('Location permission was denied.')),
+      (p) => resolve({ lat: +p.coords.latitude.toFixed(3), lon: +p.coords.longitude.toFixed(3), name: 'Mi ubicación' }),
+      () => reject(new Error('Se ha denegado el permiso de ubicación.')),
       { timeout: 10000, maximumAge: 3600e3 },
     );
   });

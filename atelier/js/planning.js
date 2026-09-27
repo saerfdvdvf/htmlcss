@@ -1,7 +1,7 @@
 // Higher-level planners built on the engine: travel capsule, shopping gaps, wardrobe statistics.
 import { feat, generateSeries, scoreOutfit, availablePool } from './engine.js';
 import { STYLE_AFFINITY, CAT, STYLES, CORE_SLOTS } from './constants.js';
-import { pairHarmony, deltaE, NAMED, nameColor } from './color.js';
+import { pairHarmony, deltaE, NAMED, nameColor, colorLabel } from './color.js';
 import { rng, shuffle, clamp, countBy, round } from './util.js';
 
 // ---------------------------------------------------------------------------
@@ -73,18 +73,18 @@ export function planTrip(items, { dayList, style = 'any', include = [], exclude 
 
 export function tripExtras({ days, rain, hot, cold, beach, sports, business }) {
   const x = [
-    { label: 'Underwear', qty: days + 1 },
-    { label: 'Socks', qty: days + 1 },
-    { label: 'Sleepwear', qty: 1 },
-    { label: 'Toiletries bag', qty: 1 },
-    { label: 'Phone charger', qty: 1 },
+    { label: 'Ropa interior', qty: days + 1 },
+    { label: 'Calcetines', qty: days + 1 },
+    { label: 'Pijama', qty: 1 },
+    { label: 'Neceser', qty: 1 },
+    { label: 'Cargador del móvil', qty: 1 },
   ];
-  if (rain) x.push({ label: 'Rain jacket or umbrella', qty: 1 });
-  if (hot) x.push({ label: 'Sunscreen', qty: 1 });
-  if (cold) x.push({ label: 'Warm coat / gloves', qty: 1 });
-  if (beach) x.push({ label: 'Swimwear', qty: 2 }, { label: 'Sandals / slides', qty: 1 });
-  if (sports) x.push({ label: 'Gym kit', qty: Math.ceil(days / 3) });
-  if (business) x.push({ label: 'Laptop & documents', qty: 1 });
+  if (rain) x.push({ label: 'Chubasquero o paraguas', qty: 1 });
+  if (hot) x.push({ label: 'Crema solar', qty: 1 });
+  if (cold) x.push({ label: 'Abrigo / guantes', qty: 1 });
+  if (beach) x.push({ label: 'Bañador', qty: 2 }, { label: 'Chanclas / sandalias', qty: 1 });
+  if (sports) x.push({ label: 'Ropa de deporte', qty: Math.ceil(days / 3) });
+  if (business) x.push({ label: 'Portátil y documentos', qty: 1 });
   return x.map((e, i) => ({ ...e, id: 'x' + i, packed: false }));
 }
 
@@ -144,11 +144,11 @@ export function shoppingSuggestions(items, { seed = 'shop', limit = 8 } = {}) {
         const isAcc = cat === 'accessory';
         let score = ratio * 40 + Math.log2(1 + good) * 6;
         const reasons = [];
-        if (!by[cat].length) { score += 40; reasons.push(`You don't own any ${CAT[cat].plural.toLowerCase()} yet.`); }
+        if (!by[cat].length) { score += 40; reasons.push(`Todavía no tienes ${CAT[cat].plural.toLowerCase()}.`); }
         const newStyles = cand.styles.filter((s) => CORE_SLOTS.includes(cat) && !styleCoverage[cat]?.has(s));
         if (newStyles.length) {
           score += newStyles.length * 8;
-          reasons.push(`Adds ${newStyles.map((s) => STYLES.find((x) => x.id === s).label.toLowerCase()).join(' & ')} options to your ${CAT[cat].plural.toLowerCase()}.`);
+          reasons.push(`Añade opciones de estilo ${newStyles.map((s) => STYLES.find((x) => x.id === s).label.toLowerCase()).join(' y ')} a tus ${CAT[cat].plural.toLowerCase()}.`);
         }
         let rescued = 0;
         for (const o of orphans) {
@@ -156,10 +156,10 @@ export function shoppingSuggestions(items, { seed = 'shop', limit = 8 } = {}) {
           const h = pairHarmony(o.primary, cand.primary).h;
           if (h > 0.84) rescued++;
         }
-        if (rescued) { score += rescued * 3; reasons.push(`Gives ${rescued} hard-to-match piece${rescued > 1 ? 's' : ''} a partner.`); }
+        if (rescued) { score += rescued * 3; reasons.push(rescued > 1 ? `Da pareja a ${rescued} prendas difíciles de combinar.` : 'Da pareja a una prenda difícil de combinar.'); }
         if (cand.primary.neutral) score += 2;
-        if (isAcc) { score *= 0.6; if (ratio > 0.2) reasons.unshift(`Finishes about ${Math.round(ratio * 100)}% of the outfits you can already make.`); }
-        else if (good) reasons.unshift(`Unlocks about ${good} new high-scoring outfit${good > 1 ? 's' : ''}.`);
+        if (isAcc) { score *= 0.6; if (ratio > 0.2) reasons.unshift(`Completa cerca del ${Math.round(ratio * 100)} % de los outfits que ya puedes crear.`); }
+        else if (good) reasons.unshift(good > 1 ? `Desbloquea unos ${good} outfits nuevos con puntuación alta.` : 'Desbloquea un outfit nuevo con puntuación alta.');
         const top = [...partners.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id]) => id);
         if (score > 8 && reasons.length) out.push({ id: cand.id, category: cat, subtype, colorName: cname, hex, score: Math.round(score), good, ratio, reasons, partners: top, styles: cand.styles });
       }
@@ -239,13 +239,13 @@ export function wardrobeStats({ items, outfits, wears: logged, plans = [], now =
   const avgScore = outfits.length ? round(outfits.reduce((a, o) => a + (o.score?.total || 0), 0) / outfits.length) : 0;
 
   const insights = [];
-  if (neverWorn && logged.length) insights.push(`${neverWorn} piece${neverWorn > 1 ? 's have' : ' has'} never been logged as worn — try building an outfit around one.`);
-  if (most[0] && wears.length >= 5 && most[0].count / wears.length > 0.4) insights.push(`Your ${most[0].item.name || 'favourite piece'} appears in ${Math.round((most[0].count / wears.length) * 100)}% of your outfits. A similar alternative would share the load.`);
-  if (ownedColors[0] && live.length >= 8 && ownedColors[0][1] / live.length > 0.35) insights.push(`${ownedColors[0][0]} makes up ${Math.round((ownedColors[0][1] / live.length) * 100)}% of your wardrobe — a great base; add one or two accent colours for range.`);
+  if (neverWorn && logged.length) insights.push(neverWorn > 1 ? `Hay ${neverWorn} prendas que nunca has registrado como puestas: prueba a crear un outfit alrededor de una.` : 'Hay una prenda que nunca has registrado como puesta: prueba a crear un outfit alrededor de ella.');
+  if (most[0] && wears.length >= 5 && most[0].count / wears.length > 0.4) insights.push(`«${most[0].item.name || 'Tu prenda favorita'}» aparece en el ${Math.round((most[0].count / wears.length) * 100)} % de tus outfits. Una alternativa parecida repartiría el uso.`);
+  if (ownedColors[0] && live.length >= 8 && ownedColors[0][1] / live.length > 0.35) insights.push(`El ${colorLabel(ownedColors[0][0]).toLowerCase()} supone el ${Math.round((ownedColors[0][1] / live.length) * 100)} % de tu armario: una gran base; añade uno o dos colores de acento para ganar variedad.`);
   const mix = cats.map((c) => ({ ...c, share: live.length ? c.owned / live.length : 0 }));
   const low = mix.filter((c) => c.owned === 0 || c.share < IDEAL_MIX[c.id] * 0.5);
-  if (live.length >= 6 && low.length) insights.push(`You're light on ${low.map((c) => CAT[c.id].plural.toLowerCase()).join(' and ')} — check Shopping for targeted ideas.`);
-  if (utilization && utilization < 40 && wears.length >= 7) insights.push(`Only ${utilization}% of your wardrobe was worn in the last 30 days. "Prefer least-worn pieces" in Create can help rotate.`);
+  if (live.length >= 6 && low.length) insights.push(`Tienes pocas prendas en: ${low.map((c) => CAT[c.id].plural.toLowerCase()).join(' y ')}. Mira Compras para ver ideas concretas.`);
+  if (utilization && utilization < 40 && wears.length >= 7) insights.push(`Solo te has puesto el ${utilization} % de tu armario en los últimos 30 días. La opción «Priorizar las prendas menos usadas» de Crear outfit te ayudará a rotar.`);
 
   return {
     totals: { items: live.length, outfits: outfits.length, favorites: favs.length, wears: logged.length, utilization, neverWorn, avgScore }, basis,

@@ -38,7 +38,7 @@ export function startOfWeek(iso) {
 }
 export const daysBetween = (a, b) => Math.round((parseISO(b) - parseISO(a)) / 86400000);
 export const fmtDate = (iso, opts = { weekday: 'short', day: 'numeric', month: 'short' }) =>
-  parseISO(iso).toLocaleDateString(undefined, opts);
+  parseISO(iso).toLocaleDateString('es-ES', opts);
 export const isWeekend = (iso) => [0, 6].includes(parseISO(iso).getDay());
 
 // ---------- Seeded randomness ----------

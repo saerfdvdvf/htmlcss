@@ -11,12 +11,12 @@ import { chip, bindChips, pickItem, outfitBoard, scoreRing, saveGenerated, toast
 import { navigate } from '../router.js';
 
 const TRIP_TYPES = [
-  { id: 'city', label: 'City break', occ: ['everyday', 'going-out'] },
-  { id: 'beach', label: 'Beach', occ: ['everyday', 'going-out'] },
-  { id: 'business', label: 'Business', occ: ['work', 'everyday'] },
-  { id: 'outdoor', label: 'Outdoor', occ: ['sports', 'everyday'] },
-  { id: 'cold', label: 'Ski / cold', occ: ['everyday', 'sports'] },
-  { id: 'party', label: 'Festival / party', occ: ['party', 'going-out'] },
+  { id: 'city', label: 'Escapada urbana', occ: ['everyday', 'going-out'] },
+  { id: 'beach', label: 'Playa', occ: ['everyday', 'going-out'] },
+  { id: 'business', label: 'Trabajo', occ: ['work', 'everyday'] },
+  { id: 'outdoor', label: 'Naturaleza', occ: ['sports', 'everyday'] },
+  { id: 'cold', label: 'Nieve / frío', occ: ['everyday', 'sports'] },
+  { id: 'party', label: 'Festival / fiesta', occ: ['party', 'going-out'] },
 ];
 
 async function weatherForTrip(loc, start, n, manual) {
@@ -88,42 +88,42 @@ function tripView(el, trip) {
   const byCat = Object.keys(CAT).map((c) => [c, trip.packing.filter((p) => store.get('items', p.itemId)?.category === c)]).filter(([, l]) => l.length);
   el.innerHTML = `
     <header class="page-head">
-      <div><button class="back" data-back>${icon('left', 18)} All trips</button>
-        <h1 class="display">${esc(trip.destination || 'Trip')}</h1>
-        <p class="muted">${fmtDate(trip.start, { day: 'numeric', month: 'short' })} – ${fmtDate(addDays(trip.start, trip.days.length - 1), { day: 'numeric', month: 'short', year: 'numeric' })} · ${trip.days.length} days
-        ${temps.length ? ` · ${Math.round(Math.min(...temps)) === Math.round(Math.max(...temps)) ? `around ${Math.round(temps[0])}°` : `${Math.round(Math.min(...temps))}–${Math.round(Math.max(...temps))}°`} (${esc(trip.weatherSource === 'seasonal' ? 'seasonal estimate' : trip.weatherSource)})` : ''}</p></div>
-      <button class="btn ghost danger-text" data-del>${icon('trash', 16)} Delete trip</button>
+      <div><button class="back" data-back>${icon('left', 18)} Todos los viajes</button>
+        <h1 class="display">${esc(trip.destination || 'Viaje')}</h1>
+        <p class="muted">${fmtDate(trip.start, { day: 'numeric', month: 'short' })} – ${fmtDate(addDays(trip.start, trip.days.length - 1), { day: 'numeric', month: 'short', year: 'numeric' })} · ${trip.days.length} días
+        ${temps.length ? ` · ${Math.round(Math.min(...temps)) === Math.round(Math.max(...temps)) ? `unos ${Math.round(temps[0])}°` : `${Math.round(Math.min(...temps))}–${Math.round(Math.max(...temps))}°`} (${esc({ seasonal: 'estimación por temporada', forecast: 'previsión', 'last year': 'mismas fechas del año pasado', manual: 'indicado por ti' }[trip.weatherSource] || trip.weatherSource)})` : ''}</p></div>
+      <button class="btn ghost danger-text" data-del>${icon('trash', 16)} Eliminar viaje</button>
     </header>
     <div class="tiles small">
-      <div class="tile"><span>Clothing pieces</span><b>${capsule.length}</b></div>
+      <div class="tile"><span>Prendas</span><b>${capsule.length}</b></div>
       <div class="tile"><span>Outfits</span><b>${trip.days.length}</b></div>
-      <div class="tile" title="Compared with packing a separate top, trousers and sneakers for every day"><span>Pieces saved</span><b>${Math.max(0, trip.days.length * 3 - capsule.filter((i) => i.category !== 'accessory').length)}</b></div>
-      <div class="tile"><span>Packed</span><b>${packedN}<small>/${totalN}</small></b></div>
+      <div class="tile" title="Comparado con llevar una parte de arriba, un pantalón y unas zapatillas distintos para cada día"><span>Prendas ahorradas</span><b>${Math.max(0, trip.days.length * 3 - capsule.filter((i) => i.category !== 'accessory').length)}</b></div>
+      <div class="tile"><span>En la maleta</span><b>${packedN}<small>/${totalN}</small></b></div>
     </div>
     <div class="trip-layout">
       <section>
-        <div class="section-head"><h2>Daily outfits</h2></div>
+        <div class="section-head"><h2>Outfits por día</h2></div>
         <div class="trip-days">${trip.days.map((d, i) => {
           const o = store.get('outfits', d.outfitId);
           return `<article class="card trip-day" data-i="${i}">
-            <header><div><b>Day ${i + 1}</b> <span class="muted small">${fmtDate(d.date)}</span></div>
+            <header><div><b>Día ${i + 1}</b> <span class="muted small">${fmtDate(d.date)}</span></div>
             <span class="pill">${esc(OCCASION[d.occasion]?.label || '')}</span>
             <span class="pill">${icon(d.weather?.rain ? 'rain' : ['hot', 'warm'].includes(d.weather?.band) ? 'sun' : 'cloud', 13)} ${d.weather?.temp != null ? Math.round(d.weather.temp) + '°' : ''}</span></header>
             ${o ? outfitBoard(o.items, { size: 'sm' }) : ''}
             <footer>${o ? scoreRing(o.score?.total, 34) : ''}<span class="grow"></span>
-              <button class="btn soft sm" data-regen>${icon('refresh', 14)} Regenerate</button>
-              <button class="icon-btn" data-open aria-label="Open outfit">${icon('eye', 18)}</button></footer>
+              <button class="btn soft sm" data-regen>${icon('refresh', 14)} Regenerar</button>
+              <button class="icon-btn" data-open aria-label="Abrir outfit">${icon('eye', 18)}</button></footer>
           </article>`;
         }).join('')}</div>
       </section>
       <aside class="card packing">
-        <div class="section-head"><h2>Packing list</h2><span class="muted small">${packedN}/${totalN}</span></div>
+        <div class="section-head"><h2>Lista de la maleta</h2><span class="muted small">${packedN}/${totalN}</span></div>
         <div class="progress"><i style="width:${totalN ? (packedN / totalN) * 100 : 0}%"></i></div>
         ${byCat.map(([c, list]) => `<h4 class="sub-h">${CAT[c].plural} <small>${list.length}</small></h4>
           ${list.map((p) => { const it = store.get('items', p.itemId); return `<label class="pack-row ${p.packed ? 'done' : ''}"><input type="checkbox" data-pack="${esc(p.itemId)}" ${p.packed ? 'checked' : ''}><img src="${esc(it.image)}" alt=""><span>${esc(it.name)}</span></label>`; }).join('')}`).join('')}
-        <h4 class="sub-h">Essentials</h4>
+        <h4 class="sub-h">Imprescindibles</h4>
         ${trip.extras.map((x) => `<label class="pack-row ${x.packed ? 'done' : ''}"><input type="checkbox" data-extra="${esc(x.id)}" ${x.packed ? 'checked' : ''}><span class="qty">${x.qty}×</span><span>${esc(x.label)}</span></label>`).join('')}
-        <button class="btn ghost sm" data-add-piece>${icon('plus', 14)} Add a piece</button>
+        <button class="btn ghost sm" data-add-piece>${icon('plus', 14)} Añadir una prenda</button>
       </aside>
     </div>`;
 }
@@ -142,32 +142,32 @@ export default {
       const trips = store.all('trips').sort((a, b) => b.createdAt - a.createdAt);
       const items = store.all('items');
       el.innerHTML = `
-        <header class="page-head"><div><div class="eyebrow">Automatic suitcase</div><h1 class="display">Travel</h1><p class="muted">Tell us where you're going — we'll plan every outfit and pack the fewest pieces possible.</p></div></header>
-        ${trips.length ? `<div class="trip-list">${trips.map((t) => `<button class="card trip-chip" data-trip="${esc(t.id)}">${icon('suitcase', 22)}<span><b>${esc(t.destination || 'Trip')}</b><small>${fmtDate(t.start, { day: 'numeric', month: 'short' })} · ${t.days.length} days · ${t.packing.length} pieces</small></span>${icon('right', 16)}</button>`).join('')}</div>` : ''}
-        ${!items.length ? `<div class="card">${empty('hanger', 'Add clothes first', '', '<a class="btn primary" href="#/wardrobe?add=1">Add clothes</a>')}</div>` : `
+        <header class="page-head"><div><div class="eyebrow">Maleta automática</div><h1 class="display">Viajes</h1><p class="muted">Dinos adónde vas: planificamos cada outfit y metemos en la maleta el menor número de prendas posible.</p></div></header>
+        ${trips.length ? `<div class="trip-list">${trips.map((t) => `<button class="card trip-chip" data-trip="${esc(t.id)}">${icon('suitcase', 22)}<span><b>${esc(t.destination || 'Viaje')}</b><small>${fmtDate(t.start, { day: 'numeric', month: 'short' })} · ${t.days.length} días · ${t.packing.length} prendas</small></span>${icon('right', 16)}</button>`).join('')}</div>` : ''}
+        ${!items.length ? `<div class="card">${empty('hanger', 'Primero añade ropa', '', '<a class="btn primary" href="#/wardrobe?add=1">Añadir ropa</a>')}</div>` : `
         <form class="card trip-form" novalidate>
-          <h2>Plan a new trip</h2>
+          <h2>Planificar un viaje nuevo</h2>
           <div class="grid2">
-            <label class="field dest"><span>${icon('pin', 15)} Destination</span><input name="dest" placeholder="e.g. Lisbon" autocomplete="off" value="${esc(form.destination)}"><div class="suggest" data-suggest></div></label>
+            <label class="field dest"><span>${icon('pin', 15)} Destino</span><input name="dest" placeholder="p. ej. Lisboa" autocomplete="off" value="${esc(form.destination)}"><div class="suggest" data-suggest></div></label>
             <div class="grid2">
-              <label class="field"><span>Start date</span><input type="date" name="start" value="${form.start}"></label>
-              <label class="field"><span>Days</span><input type="number" name="days" min="1" max="21" value="${form.days}"></label>
+              <label class="field"><span>Fecha de inicio</span><input type="date" name="start" value="${form.start}"></label>
+              <label class="field"><span>Días</span><input type="number" name="days" min="1" max="21" value="${form.days}"></label>
             </div>
           </div>
-          <div class="field"><span>Type of trip</span><div class="chips">${TRIP_TYPES.map((t) => chip(t.label, { value: t.id, name: 'type', active: form.type === t.id })).join('')}</div></div>
-          <div class="field"><span>Style</span><div class="chips">${[...STYLES, { id: 'any', label: 'Any' }].map((s) => chip(s.label, { value: s.id, name: 'tstyle', active: form.style === s.id })).join('')}</div></div>
-          <div class="field"><span>Occasions (optional)</span><div class="chips">${OCCASIONS.filter((o) => o.id !== 'home').map((o) => chip(o.label, { value: o.id, name: 'tocc', active: form.occasions.includes(o.id) })).join('')}</div></div>
-          <details class="field" ${form.manual ? 'open' : ''}><summary>${icon('thermo', 15)} Weather — automatic from forecast, or set it yourself</summary>
+          <div class="field"><span>Tipo de viaje</span><div class="chips">${TRIP_TYPES.map((t) => chip(t.label, { value: t.id, name: 'type', active: form.type === t.id })).join('')}</div></div>
+          <div class="field"><span>Estilo</span><div class="chips">${[...STYLES, { id: 'any', label: 'Cualquiera' }].map((s) => chip(s.label, { value: s.id, name: 'tstyle', active: form.style === s.id })).join('')}</div></div>
+          <div class="field"><span>Ocasiones (opcional)</span><div class="chips">${OCCASIONS.filter((o) => o.id !== 'home').map((o) => chip(o.label, { value: o.id, name: 'tocc', active: form.occasions.includes(o.id) })).join('')}</div></div>
+          <details class="field" ${form.manual ? 'open' : ''}><summary>${icon('thermo', 15)} Tiempo: automático según la previsión, o indícalo tú</summary>
             <div class="grid3">
-              <label class="field"><span>Min °C</span><input type="number" name="tmin" placeholder="auto" value="${form.manual?.min ?? ''}"></label>
-              <label class="field"><span>Max °C</span><input type="number" name="tmax" placeholder="auto" value="${form.manual?.max ?? ''}"></label>
-              <label class="switch-row"><input type="checkbox" name="rain" ${form.manual?.rain ? 'checked' : ''}><span class="switch"></span><span>Rain expected</span></label>
+              <label class="field"><span>Mín. °C</span><input type="number" name="tmin" placeholder="auto" value="${form.manual?.min ?? ''}"></label>
+              <label class="field"><span>Máx. °C</span><input type="number" name="tmax" placeholder="auto" value="${form.manual?.max ?? ''}"></label>
+              <label class="switch-row"><input type="checkbox" name="rain" ${form.manual?.rain ? 'checked' : ''}><span class="switch"></span><span>Se espera lluvia</span></label>
             </div></details>
           <div class="grid2">
-            <div class="field"><span>Must take</span><div class="chips" data-list="include">${form.include.map((id) => pill(id, 'include')).join('')}<button type="button" class="chip" data-addto="include">${icon('plus', 14)} Add</button></div></div>
-            <div class="field"><span>Leave at home</span><div class="chips" data-list="exclude">${form.exclude.map((id) => pill(id, 'exclude')).join('')}<button type="button" class="chip" data-addto="exclude">${icon('plus', 14)} Add</button></div></div>
+            <div class="field"><span>Llevar sí o sí</span><div class="chips" data-list="include">${form.include.map((id) => pill(id, 'include')).join('')}<button type="button" class="chip" data-addto="include">${icon('plus', 14)} Añadir</button></div></div>
+            <div class="field"><span>Dejar en casa</span><div class="chips" data-list="exclude">${form.exclude.map((id) => pill(id, 'exclude')).join('')}<button type="button" class="chip" data-addto="exclude">${icon('plus', 14)} Añadir</button></div></div>
           </div>
-          <button class="btn primary lg" type="submit">${icon('suitcase', 20)} Plan outfits & packing list</button>
+          <button class="btn primary lg" type="submit">${icon('suitcase', 20)} Planificar outfits y maleta</button>
         </form>`}`;
       bindChips(el, 'type', { onChange: (v) => (form.type = v) });
       bindChips(el, 'tstyle', { onChange: (v) => (form.style = v) });
@@ -195,7 +195,7 @@ export default {
     };
     const pill = (id, list) => {
       const it = store.get('items', id);
-      return it ? `<span class="chip on must"><img src="${esc(it.image)}" alt="">${esc(it.name)}<button type="button" data-rm="${list}:${esc(id)}" aria-label="Remove">${icon('x', 12)}</button></span>` : '';
+      return it ? `<span class="chip on must"><img src="${esc(it.image)}" alt="">${esc(it.name)}<button type="button" data-rm="${list}:${esc(id)}" aria-label="Quitar">${icon('x', 12)}</button></span>` : '';
     };
     const readForm = () => {
       const f = el.querySelector('form');
@@ -213,13 +213,13 @@ export default {
       readForm();
       const btn = e.target.querySelector('[type=submit]');
       btn.disabled = true;
-      btn.innerHTML = `<span class="spinner sm"></span> Planning your trip…`;
+      btn.innerHTML = `<span class="spinner sm"></span> Planificando tu viaje…`;
       try {
         const trip = await buildTrip(form);
         navigate('travel', { trip: trip.id });
       } catch (err) {
         console.error(err);
-        toast('Could not plan this trip: ' + err.message);
+        toast('No se ha podido planificar el viaje: ' + err.message);
         btn.disabled = false;
       }
     });
@@ -228,7 +228,7 @@ export default {
       const add = t.closest('[data-addto]')?.dataset.addto;
       if (add) {
         readForm();
-        const it = await pickItem({ title: add === 'include' ? 'Must take…' : 'Leave at home…' });
+        const it = await pickItem({ title: add === 'include' ? 'Llevar sí o sí…' : 'Dejar en casa…' });
         if (it && !form[add].includes(it.id)) form[add].push(it.id);
         return draw();
       }
@@ -240,7 +240,7 @@ export default {
       const trip = params.trip && store.get('trips', params.trip);
       if (!trip) return;
       if (t.closest('[data-del]')) {
-        if (!(await confirmDialog('Delete this trip and its packing list?', { ok: 'Delete', danger: true }))) return;
+        if (!(await confirmDialog('¿Eliminar este viaje y su lista de maleta?', { ok: 'Eliminar', danger: true }))) return;
         await store.remove('trips', trip.id);
         return navigate('travel');
       }
@@ -258,7 +258,7 @@ export default {
         return store.put('trips', { ...trip, days });
       }
       if (t.closest('[data-add-piece]')) {
-        const it = await pickItem({ title: 'Add to suitcase', filter: (i) => !trip.packing.some((p) => p.itemId === i.id) });
+        const it = await pickItem({ title: 'Añadir a la maleta', filter: (i) => !trip.packing.some((p) => p.itemId === i.id) });
         if (it) await store.put('trips', { ...trip, packing: [...trip.packing, { itemId: it.id, packed: false }] });
       }
     });

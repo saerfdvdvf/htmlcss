@@ -1,7 +1,8 @@
 // On-device image analysis for new clothing photos:
 // background removal, dominant colours, pattern, silhouette-based category guess,
 // and (when reachable) a MobileNet classifier for a second opinion.
-import { rgbToLab, deltaE, rgbToHex, nameColor, colorInfo } from './color.js';
+import { rgbToLab, deltaE, rgbToHex, nameColor, colorInfo, colorLabel } from './color.js';
+import { CAT, subLabel } from './constants.js';
 import { guessStyles, guessFit, guessSeasons, itemWarmth, itemFormality } from './engine.js';
 import { rng } from './util.js';
 
@@ -12,7 +13,7 @@ export function loadImage(src) {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('Could not read that image.'));
+    img.onerror = () => reject(new Error('No se ha podido leer esa imagen.'));
     img.src = src;
   });
 }
@@ -184,11 +185,11 @@ function guessFromShape(s) {
 }
 
 const NAME_HINTS = [
-  [/hood|sweat|crewneck|zip/i, 'hoodie'],
-  [/tee|t-?shirt|shirt|polo|tank|henley|top/i, 'tshirt'],
-  [/jean|pant|trouser|chino|cargo|jogger|short|denim/i, 'trousers'],
-  [/sneaker|shoe|trainer|runner|jordan|dunk|air ?max|yeezy|converse|vans/i, 'sneakers'],
-  [/cap|hat|watch|bag|belt|glass|chain|necklace|beanie|scarf|ring|bracelet|tote/i, 'accessory'],
+  [/hood|sweat|crewneck|zip|sudadera|capucha/i, 'hoodie'],
+  [/tee|t-?shirt|shirt|polo|tank|henley|top|camiseta|tirantes/i, 'tshirt'],
+  [/jean|pant|trouser|chino|cargo|jogger|short|denim|vaquero|pantal/i, 'trousers'],
+  [/sneaker|shoe|trainer|runner|jordan|dunk|air ?max|yeezy|converse|vans|zapatill|deportiva/i, 'sneakers'],
+  [/cap|hat|watch|bag|belt|glass|chain|necklace|beanie|scarf|ring|bracelet|tote|gorr|reloj|bolso|cintur|gafas|cadena|collar|bufanda|anillo|pulsera/i, 'accessory'],
 ];
 const SUB_HINTS = [
   [/zip/i, 'zip-up'], [/crew/i, 'crewneck sweatshirt'], [/oversiz/i, 'oversized'],
@@ -315,17 +316,17 @@ export async function analyzeImage(src, { fileName = '', smart = true } = {}) {
 
   // Category: filename → ML → silhouette.
   let category = null, confidence = 0, subtype = '', source = '';
-  for (const [re, cat] of NAME_HINTS) if (re.test(fileName)) { category = cat; confidence = 0.7; source = 'file name'; break; }
+  for (const [re, cat] of NAME_HINTS) if (re.test(fileName)) { category = cat; confidence = 0.7; source = 'el nombre del archivo'; break; }
   for (const [re, st] of SUB_HINTS) if (re.test(fileName)) { subtype = st; break; }
   let ml = null;
   if (smart) { try { ml = await classify(out); } catch (e) { console.info(e); } }
-  if (ml && ml.confidence > confidence) { category = ml.category; confidence = ml.confidence; source = 'visual recognition'; if (ml.subtype && !subtype) subtype = ml.subtype; }
+  if (ml && ml.confidence > confidence) { category = ml.category; confidence = ml.confidence; source = 'reconocimiento visual'; if (ml.subtype && !subtype) subtype = ml.subtype; }
   const sh = guessFromShape(shape);
   if (sh) {
-    if (!category) { category = sh.category; confidence = sh.confidence; source = 'silhouette'; }
+    if (!category) { category = sh.category; confidence = sh.confidence; source = 'la silueta'; }
     else if (sh.category === category) confidence = Math.min(0.97, confidence + 0.15);
   }
-  if (!category) { category = 'tshirt'; confidence = 0.2; source = 'default'; }
+  if (!category) { category = 'tshirt'; confidence = 0.2; source = 'valor por defecto'; }
   if (subtype && !CATSUB[category]?.includes(subtype)) subtype = '';
   if (!subtype) subtype = CATSUB_DEFAULT[category];
 
@@ -343,7 +344,7 @@ export async function analyzeImage(src, { fileName = '', smart = true } = {}) {
     seasons: guessSeasons(category, subtype, warmth),
     fit: guessFit(category, subtype),
     warmth, formality: itemFormality(base),
-    name: `${nameColor(hex)} ${subtype && subtype !== CATSUB_DEFAULT[category] ? subtype : LABEL[category]}`,
+    name: `${subtype && subtype !== CATSUB_DEFAULT[category] ? `${CAT[category].label} ${subLabel(subtype).toLowerCase()}` : CAT[category].label} ${colorLabel(nameColor(hex)).toLowerCase()}`,
   };
 }
 
@@ -355,4 +356,3 @@ const CATSUB = {
   accessory: ['cap', 'beanie', 'watch', 'bag', 'sunglasses', 'belt', 'chain', 'scarf', 'bracelet', 'ring'],
 };
 const CATSUB_DEFAULT = { hoodie: 'pullover', tshirt: 'tee', trousers: 'jeans', sneakers: 'low-top', accessory: 'cap' };
-const LABEL = { hoodie: 'hoodie', tshirt: 'tee', trousers: 'trousers', sneakers: 'sneakers', accessory: 'accessory' };

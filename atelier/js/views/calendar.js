@@ -12,10 +12,10 @@ function chooseOutfit(date) {
   const favs = store.all('outfits').filter((o) => o.favorite).sort((a, b) => b.updatedAt - a.updatedAt);
   const hist = store.all('outfits').filter((o) => !o.favorite).sort((a, b) => b.createdAt - a.createdAt).slice(0, 30);
   return openSheet({
-    title: `Outfit for ${fmtDate(date, { weekday: 'long', day: 'numeric', month: 'long' })}`, wide: true,
-    body: `<button class="btn primary block" data-new>${icon('sparkles', 18)} Generate a new outfit</button>
-      <h4 class="sub-h">Favourites</h4><div class="grid outfits-grid sm">${favs.map((o) => outfitCard(o, { showDate: false })).join('') || '<p class="muted small">No favourites yet.</p>'}</div>
-      <h4 class="sub-h">Recent</h4><div class="grid outfits-grid sm">${hist.map((o) => outfitCard(o)).join('') || '<p class="muted small">No history yet.</p>'}</div>`,
+    title: `Outfit para el ${fmtDate(date, { weekday: 'long', day: 'numeric', month: 'long' })}`, wide: true,
+    body: `<button class="btn primary block" data-new>${icon('sparkles', 18)} Generar un outfit nuevo</button>
+      <h4 class="sub-h">Favoritos</h4><div class="grid outfits-grid sm">${favs.map((o) => outfitCard(o, { showDate: false })).join('') || '<p class="muted small">Aún no tienes favoritos.</p>'}</div>
+      <h4 class="sub-h">Recientes</h4><div class="grid outfits-grid sm">${hist.map((o) => outfitCard(o)).join('') || '<p class="muted small">Aún no hay historial.</p>'}</div>`,
     onMount(b, close) {
       b.querySelector('[data-new]').onclick = () => close('new');
       b.addEventListener('click', (e) => {
@@ -38,7 +38,7 @@ export async function assign(date, choice) {
   }
   const p = store.get('plans', date);
   await store.put('plans', { ...(p || {}), id: date, date, outfitId, worn: false });
-  toast(`Planned for ${fmtDate(date)}`);
+  toast(`Planificado para el ${fmtDate(date)}`);
 }
 
 export default {
@@ -60,40 +60,40 @@ export default {
       const planned = store.all('plans').filter((x) => x.date.startsWith(month) && store.get('outfits', x.outfitId)).length;
       el.innerHTML = `
         <header class="page-head">
-          <div><div class="eyebrow">${planned} outfit${planned === 1 ? '' : 's'} planned</div><h1 class="display">${first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</h1></div>
+          <div><div class="eyebrow">${planned === 1 ? '1 outfit planificado' : `${planned} outfits planificados`}</div><h1 class="display cap-first">${first.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}</h1></div>
           <div class="row gap-s">
-            <button class="icon-btn bordered" data-m="${prevM}" aria-label="Previous month">${icon('left')}</button>
-            <button class="btn ghost sm" data-m="${today.slice(0, 7)}" data-today>Today</button>
-            <button class="icon-btn bordered" data-m="${nextM}" aria-label="Next month">${icon('right')}</button>
+            <button class="icon-btn bordered" data-m="${prevM}" aria-label="Mes anterior">${icon('left')}</button>
+            <button class="btn ghost sm" data-m="${today.slice(0, 7)}" data-today>Hoy</button>
+            <button class="icon-btn bordered" data-m="${nextM}" aria-label="Mes siguiente">${icon('right')}</button>
           </div>
         </header>
         <div class="cal-layout">
           <div class="card cal">
-            <div class="cal-head">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => `<span>${d}</span>`).join('')}</div>
+            <div class="cal-head">${['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((d) => `<span>${d}</span>`).join('')}</div>
             <div class="cal-grid">${cells.map((d) => {
               const pl = store.get('plans', d);
               const oo = pl && store.get('outfits', pl.outfitId);
               const top = oo && store.get('items', oo.items.hoodie || oo.items.tshirt);
-              return `<button class="cal-cell ${d.slice(0, 7) !== month ? 'out' : ''} ${d === today ? 'today' : ''} ${d === sel ? 'sel' : ''}" data-d="${d}" aria-label="${fmtDate(d, { weekday: 'long', day: 'numeric', month: 'long' })}${oo ? ', outfit planned' : ''}">
+              return `<button class="cal-cell ${d.slice(0, 7) !== month ? 'out' : ''} ${d === today ? 'today' : ''} ${d === sel ? 'sel' : ''}" data-d="${d}" aria-label="${fmtDate(d, { weekday: 'long', day: 'numeric', month: 'long' })}${oo ? ', con outfit planificado' : ''}">
                 <span class="cal-num">${+d.slice(8)}</span>
                 ${top ? `<img src="${esc(top.image)}" alt="">` : ''}
                 ${pl?.worn ? `<i class="cal-worn">${icon('check', 10)}</i>` : ''}</button>`;
             }).join('')}</div>
           </div>
           <aside class="card cal-day">
-            <div class="eyebrow">${sel === today ? 'Today' : fmtDate(sel, { weekday: 'long' })}</div>
+            <div class="eyebrow">${sel === today ? 'Hoy' : fmtDate(sel, { weekday: 'long' })}</div>
             <h3>${fmtDate(sel, { day: 'numeric', month: 'long', year: 'numeric' })}</h3>
             ${o ? `
               ${outfitBoard(o.items, { size: 'md' })}
               <div class="row gap-s cal-score">${scoreRing(o.score?.total, 44)}<div><b>${esc(o.score?.verdict || '')}</b><div class="muted small">${esc(STYLE[o.style]?.label || '')}${o.occasion ? ' · ' + esc(OCCASION[o.occasion]?.label) : ''}</div></div></div>
               <div class="row gap-s wrap">
-                <button class="btn primary sm" data-open>${icon('eye', 15)} Open</button>
-                <button class="btn soft sm" data-change>${icon('refresh', 15)} Change</button>
-                ${sel <= today ? `<button class="btn soft sm ${p.worn ? 'on' : ''}" data-worn>${icon('check', 15)} ${p.worn ? 'Worn' : 'Mark worn'}</button>` : ''}
-                <button class="btn ghost sm danger-text" data-remove>${icon('trash', 15)} Remove</button>
+                <button class="btn primary sm" data-open>${icon('eye', 15)} Abrir</button>
+                <button class="btn soft sm" data-change>${icon('refresh', 15)} Cambiar</button>
+                ${sel <= today ? `<button class="btn soft sm ${p.worn ? 'on' : ''}" data-worn>${icon('check', 15)} ${p.worn ? 'Puesto' : 'Marcar como puesto'}</button>` : ''}
+                <button class="btn ghost sm danger-text" data-remove>${icon('trash', 15)} Quitar</button>
               </div>`
-              : `${empty('calendar', 'Nothing planned', 'Assign a favourite, pick from history or generate a new look.')}
-                 <div class="row gap-s center"><button class="btn primary" data-change>${icon('plus', 16)} Add outfit</button><a class="btn ghost" href="#/planner?week=${startOfWeek(sel)}">Plan this week</a></div>`}
+              : `${empty('calendar', 'Nada planificado', 'Asigna un favorito, elige uno del historial o genera un look nuevo.')}
+                 <div class="row gap-s center"><button class="btn primary" data-change>${icon('plus', 16)} Añadir outfit</button><a class="btn ghost" href="#/planner?week=${startOfWeek(sel)}">Planificar esta semana</a></div>`}
           </aside>
         </div>`;
     };

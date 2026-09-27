@@ -1,7 +1,8 @@
 {
-  "name": "Atelier — AI Stylist",
+  "name": "Atelier · Estilista con IA",
   "short_name": "Atelier",
-  "description": "Your personal AI fashion stylist: digital wardrobe, outfit generator, weekly planner, travel packing and more.",
+  "description": "Tu estilista personal con IA: armario digital, generador de outfits, planificador semanal, maleta de viaje y mucho más.",
+  "lang": "es",
   "id": "./",
   "start_url": "./#/home",
   "scope": "./",
@@ -17,8 +18,8 @@
     { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml" }
   ],
   "shortcuts": [
-    { "name": "Create outfit", "url": "./#/create" },
-    { "name": "Weekly planner", "url": "./#/planner" },
-    { "name": "Wardrobe", "url": "./#/wardrobe" }
+    { "name": "Crear outfit", "url": "./#/create" },
+    { "name": "Planificador semanal", "url": "./#/planner" },
+    { "name": "Mi armario", "url": "./#/wardrobe" }
   ]
 }

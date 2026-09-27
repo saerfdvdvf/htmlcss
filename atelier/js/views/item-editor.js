@@ -1,12 +1,12 @@
 // Add / edit a clothing item (with AI-detected suggestions) + item detail stats.
 import { store, wearCounts, lastWorn } from '../store.js';
-import { CATEGORIES, CAT, STYLES, SEASONS, PATTERNS, FITS, STATUSES } from '../constants.js';
+import { CATEGORIES, CAT, STYLES, SEASONS, PATTERNS, FITS, STATUSES, SEASON_LABEL, PATTERN_LABEL, FIT_LABEL, subLabel } from '../constants.js';
 import { guessStyles, guessFit, guessSeasons, itemWarmth, itemFormality, bestPartners } from '../engine.js';
 import { garmentDataURL } from '../garments.js';
 import { analyzeImage, fileToDataURL } from '../analyzer.js';
-import { nameColor, NAMED_COLORS } from '../color.js';
+import { nameColor, NAMED_COLORS, colorLabel } from '../color.js';
 import { icon } from '../icons.js';
-import { esc, uid, cap, fmtDate } from '../util.js';
+import { esc, uid, fmtDate } from '../util.js';
 import { openSheet, chip, bindChips, chipValues, toast, confirmDialog, swatch } from '../ui.js';
 import { navigate } from '../router.js';
 
@@ -40,57 +40,57 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
   const wc = wearCounts().get(item.id) || 0;
   const lw = lastWorn().get(item.id);
   return openSheet({
-    title: isNew ? 'New item' : 'Edit item',
+    title: isNew ? 'Nueva prenda' : 'Editar prenda',
     wide: true,
     className: 'editor-sheet',
     body: `<form class="editor" novalidate>
       <div class="ed-media">
         <div class="ed-img checker"><img alt="" data-img></div>
         <div class="row gap-s wrap center">
-          <label class="btn soft sm">${icon('image', 15)} Replace photo<input type="file" accept="image/*" hidden data-file></label>
-          <button type="button" class="btn soft sm" data-illustrate>${icon('wand', 15)} Use illustration</button>
+          <label class="btn soft sm">${icon('image', 15)} Cambiar foto<input type="file" accept="image/*" hidden data-file></label>
+          <button type="button" class="btn soft sm" data-illustrate>${icon('wand', 15)} Usar ilustración</button>
         </div>
-        ${draft.analysis ? `<div class="ai-note">${icon('sparkles', 15)} <span>Auto-detected <b>${esc(CAT[draft.category].label)}</b> (${Math.round(draft.analysis.confidence * 100)}% via ${esc(draft.analysis.source)})${draft.analysis.bgRemoved ? ', background removed' : ''}. Check the details below.</span></div>` : ''}
+        ${draft.analysis ? `<div class="ai-note">${icon('sparkles', 15)} <span>Detectado automáticamente: <b>${esc(CAT[draft.category].label)}</b> (${Math.round(draft.analysis.confidence * 100)} % según ${esc(draft.analysis.source)})${draft.analysis.bgRemoved ? ', fondo eliminado' : ''}. Revisa los datos de abajo.</span></div>` : ''}
         ${!isNew ? `<div class="ed-stats">
-          <div><b>${wc}</b><span>times worn</span></div>
-          <div><b>${lw ? fmtDate(lw, { day: 'numeric', month: 'short' }) : '—'}</b><span>last worn</span></div>
+          <div><b>${wc}</b><span>veces puesta</span></div>
+          <div><b>${lw ? fmtDate(lw, { day: 'numeric', month: 'short' }) : '—'}</b><span>última vez</span></div>
           <div><b>${store.all('outfits').filter((o) => Object.values(o.items).flat().includes(item.id)).length}</b><span>outfits</span></div>
         </div>
-        <div class="ed-matches"><div class="eyebrow">Pairs best with</div><div class="match-row" data-matches></div></div>` : ''}
+        <div class="ed-matches"><div class="eyebrow">Combina mejor con</div><div class="match-row" data-matches></div></div>` : ''}
       </div>
       <div class="ed-fields">
-        <label class="field"><span>Name</span><input name="iname" placeholder="e.g. Navy zip hoodie"></label>
-        <div class="field"><span>Category</span><div class="chips" data-cats>${CATEGORIES.map((c) => chip(c.label, { value: c.id, name: 'cat', active: c.id === draft.category })).join('')}</div></div>
+        <label class="field"><span>Nombre</span><input name="iname" placeholder="p. ej. Sudadera azul marino con cremallera"></label>
+        <div class="field"><span>Categoría</span><div class="chips" data-cats>${CATEGORIES.map((c) => chip(c.label, { value: c.id, name: 'cat', active: c.id === draft.category })).join('')}</div></div>
         <div class="grid2">
-          <label class="field"><span>Type</span><select name="subtype"></select></label>
-          <label class="field"><span>Brand</span><input name="brand" placeholder="Optional"></label>
+          <label class="field"><span>Tipo</span><select name="subtype"></select></label>
+          <label class="field"><span>Marca</span><input name="brand" placeholder="Opcional"></label>
         </div>
-        <div class="field"><span>Colours</span><div class="colors-edit" data-colors></div></div>
-        <div class="field"><span>Styles</span><div class="chips">${STYLES.map((s) => chip(s.label, { value: s.id, name: 'styles', active: draft.styles.includes(s.id) })).join('')}</div></div>
-        <div class="field"><span>Seasons</span><div class="chips">${SEASONS.map((s) => chip(cap(s), { value: s, name: 'seasons', active: draft.seasons.includes(s) })).join('')}</div></div>
+        <div class="field"><span>Colores</span><div class="colors-edit" data-colors></div></div>
+        <div class="field"><span>Estilos</span><div class="chips">${STYLES.map((s) => chip(s.label, { value: s.id, name: 'styles', active: draft.styles.includes(s.id) })).join('')}</div></div>
+        <div class="field"><span>Temporadas</span><div class="chips">${SEASONS.map((s) => chip(SEASON_LABEL[s], { value: s, name: 'seasons', active: draft.seasons.includes(s) })).join('')}</div></div>
         <div class="grid2">
-          <label class="field"><span>Fit</span><select name="fit">${FITS.map((f) => `<option value="${f}">${cap(f)}</option>`).join('')}</select></label>
-          <label class="field"><span>Pattern</span><select name="pattern">${PATTERNS.map((f) => `<option value="${f}">${cap(f)}</option>`).join('')}</select></label>
-        </div>
-        <div class="grid2">
-          <label class="field"><span>Warmth <output data-out="warmth"></output></span><input type="range" name="warmth" min="0" max="5" step="0.5"></label>
-          <label class="field"><span>Formality <output data-out="formality"></output></span><input type="range" name="formality" min="1" max="5" step="0.5"></label>
+          <label class="field"><span>Corte</span><select name="fit">${FITS.map((f) => `<option value="${f}">${FIT_LABEL[f]}</option>`).join('')}</select></label>
+          <label class="field"><span>Estampado</span><select name="pattern">${PATTERNS.map((f) => `<option value="${f}">${PATTERN_LABEL[f]}</option>`).join('')}</select></label>
         </div>
         <div class="grid2">
-          <label class="field"><span>Size</span><input name="size" placeholder="Optional"></label>
-          <label class="field"><span>Price</span><input name="price" type="number" min="0" step="0.01" placeholder="Optional"></label>
+          <label class="field"><span>Abrigo <output data-out="warmth"></output></span><input type="range" name="warmth" min="0" max="5" step="0.5"></label>
+          <label class="field"><span>Formalidad <output data-out="formality"></output></span><input type="range" name="formality" min="1" max="5" step="0.5"></label>
         </div>
-        <label class="field"><span>Tags</span><input name="tags" placeholder="comma separated, e.g. vintage, gift"></label>
-        <label class="field"><span>Notes</span><textarea name="notes" rows="2" placeholder="Care notes, where it's from…"></textarea></label>
-        <div class="field"><span>Availability</span><div class="chips">${STATUSES.map((s) => chip(s.label, { value: s.id, name: 'status', active: (draft.status || 'available') === s.id })).join('')}</div></div>
-        <label class="switch-row"><input type="checkbox" name="favorite"><span class="switch"></span><span>Favourite piece</span></label>
+        <div class="grid2">
+          <label class="field"><span>Talla</span><input name="size" placeholder="Opcional"></label>
+          <label class="field"><span>Precio</span><input name="price" type="number" min="0" step="0.01" placeholder="Opcional"></label>
+        </div>
+        <label class="field"><span>Etiquetas</span><input name="tags" placeholder="separadas por comas, p. ej. vintage, regalo"></label>
+        <label class="field"><span>Notas</span><textarea name="notes" rows="2" placeholder="Cuidados, de dónde es…"></textarea></label>
+        <div class="field"><span>Disponibilidad</span><div class="chips">${STATUSES.map((s) => chip(s.label, { value: s.id, name: 'status', active: (draft.status || 'available') === s.id })).join('')}</div></div>
+        <label class="switch-row"><input type="checkbox" name="favorite"><span class="switch"></span><span>Prenda favorita</span></label>
       </div>
       <footer class="ed-foot">
-        ${!isNew ? `<button type="button" class="btn ghost danger-text" data-del>${icon('trash', 16)} Delete</button>
-                    <button type="button" class="btn ghost" data-outfit>${icon('sparkles', 16)} Outfit with this</button>` : ''}
+        ${!isNew ? `<button type="button" class="btn ghost danger-text" data-del>${icon('trash', 16)} Eliminar</button>
+                    <button type="button" class="btn ghost" data-outfit>${icon('sparkles', 16)} Crear outfit con ella</button>` : ''}
         <span class="grow"></span>
         ${queue ? `<span class="muted small">${queue}</span>` : ''}
-        <button type="submit" class="btn primary">${icon('check', 16)} ${isNew ? 'Add to wardrobe' : 'Save'}</button>
+        <button type="submit" class="btn primary">${icon('check', 16)} ${isNew ? 'Añadir al armario' : 'Guardar'}</button>
       </footer>
     </form>`,
     onMount(b, close) {
@@ -115,7 +115,7 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
 
       const fillSub = () => {
         const subs = CAT[draft.category].subtypes;
-        f.subtype.innerHTML = subs.map((s) => `<option value="${s}">${cap(s)}</option>`).join('');
+        f.subtype.innerHTML = subs.map((s) => `<option value="${s}">${subLabel(s)}</option>`).join('');
         f.subtype.value = subs.includes(draft.subtype) ? draft.subtype : subs[0];
         draft.subtype = f.subtype.value;
       };
@@ -148,11 +148,11 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
       const colorsEl = b.querySelector('[data-colors]');
       const drawColors = () => {
         colorsEl.innerHTML = draft.colors.map((c, i) => `
-          <span class="color-pill">${swatch(c.hex, 18)}<span>${esc(c.name)}${i === 0 ? ' <em>main</em>' : ''}</span>
-            ${i > 0 ? `<button type="button" class="mini" data-main="${i}" title="Make main colour">${icon('star', 13)}</button>` : ''}
-            ${draft.colors.length > 1 ? `<button type="button" class="mini" data-rm="${i}" aria-label="Remove colour">${icon('x', 13)}</button>` : ''}</span>`).join('') +
-          `<label class="color-add" title="Add colour">${icon('plus', 15)}<input type="color" value="#888888"></label>
-           <select class="color-named" aria-label="Add a named colour"><option value="">Pick by name…</option>${NAMED_COLORS.map((c) => `<option value="${c.hex}">${c.name}</option>`).join('')}</select>`;
+          <span class="color-pill">${swatch(c.hex, 18)}<span>${esc(colorLabel(c.name))}${i === 0 ? ' <em>principal</em>' : ''}</span>
+            ${i > 0 ? `<button type="button" class="mini" data-main="${i}" title="Hacer color principal">${icon('star', 13)}</button>` : ''}
+            ${draft.colors.length > 1 ? `<button type="button" class="mini" data-rm="${i}" aria-label="Quitar color">${icon('x', 13)}</button>` : ''}</span>`).join('') +
+          `<label class="color-add" title="Añadir color">${icon('plus', 15)}<input type="color" value="#888888"></label>
+           <select class="color-named" aria-label="Añadir un color por nombre"><option value="">Elegir por nombre…</option>${NAMED_COLORS.map((c) => `<option value="${c.hex}">${colorLabel(c.name)}</option>`).join('')}</select>`;
       };
       drawColors();
       const addColor = (hex) => {
@@ -187,7 +187,7 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
           const it = await itemFromFile(file);
           draft = { ...draft, image: it.image, colors: it.colors, illustrated: false, analysis: it.analysis };
           setImg(); drawColors();
-          toast('Photo analysed — colours updated');
+          toast('Foto analizada: colores actualizados');
         } catch (err) { toast(err.message); }
         img.classList.remove('busy');
       };
@@ -200,7 +200,7 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
       const matches = b.querySelector('[data-matches]');
       if (matches) {
         const bp = bestPartners(item, store.all('items'), {}, 4);
-        matches.innerHTML = bp.map((p) => `<a href="#/item/${esc(p.item.id)}" data-open="${esc(p.item.id)}" class="match"><img src="${esc(p.item.image)}" alt=""><span>${esc(p.item.name)}</span></a>`).join('') || '<span class="muted small">Add more items to see matches.</span>';
+        matches.innerHTML = bp.map((p) => `<a href="#/item/${esc(p.item.id)}" data-open="${esc(p.item.id)}" class="match"><img src="${esc(p.item.image)}" alt=""><span>${esc(p.item.name)}</span></a>`).join('') || '<span class="muted small">Añade más prendas para ver combinaciones.</span>';
         matches.addEventListener('click', (e) => {
           const a = e.target.closest('[data-open]');
           if (!a) return;
@@ -211,9 +211,9 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
       }
 
       b.querySelector('[data-del]')?.addEventListener('click', async () => {
-        if (await confirmDialog(`Delete "${draft.name || 'this item'}" from your wardrobe?`, { ok: 'Delete', danger: true })) {
+        if (await confirmDialog(`¿Eliminar «${draft.name || 'esta prenda'}» de tu armario?`, { ok: 'Eliminar', danger: true })) {
           await store.remove('items', draft.id);
-          toast('Item deleted');
+          toast('Prenda eliminada');
           close('deleted');
         }
       });
@@ -225,7 +225,7 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
         const seasons = chipValues(b, 'seasons', true);
         const out = {
           ...draft,
-          name: f.iname.value.trim() || `${draft.colors[0]?.name || ''} ${CAT[draft.category].label.toLowerCase()}`.trim(),
+          name: f.iname.value.trim() || `${CAT[draft.category].label} ${colorLabel(draft.colors[0]?.name).toLowerCase()}`.trim(),
           brand: f.brand.value.trim(),
           category: chipValues(b, 'cat') || draft.category,
           subtype: f.subtype.value,
@@ -241,7 +241,7 @@ export function openItemEditor(item, { isNew = false, queue = null } = {}) {
         };
         delete out.analysis;
         await store.put('items', out);
-        toast(isNew ? 'Added to your wardrobe' : 'Saved');
+        toast(isNew ? 'Añadida a tu armario' : 'Guardado');
         close(out);
       });
     },

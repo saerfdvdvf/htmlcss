@@ -1,60 +1,60 @@
-# Atelier: your personal AI stylist
+# Atelier: tu estilista personal con IA
 
-Atelier is a fashion app that runs as a **website (installable PWA)** and as an **Android APK** from one codebase. Upload your clothes, and Atelier builds complete, colour-matched outfits for today, the whole week or a trip. Every outfit comes with a score and an explanation of why it works.
+Atelier es una app de moda que funciona como **web (PWA instalable)** y como **APK de Android** a partir del mismo código. Sube tu ropa y Atelier crea outfits completos y con los colores bien combinados para hoy, para toda la semana o para un viaje. Cada outfit incluye una puntuación y una explicación de por qué funciona.
 
-## Features
+## Funciones
 
-| Area | What it does |
+| Área | Qué hace |
 | --- | --- |
-| **My Wardrobe** | Hoodies, T-shirts, trousers, sneakers and accessories. You can add, edit, delete, search, filter (colour, style, season, availability, favourites), sort, favourite, bulk-edit and drag-and-drop photos. |
-| **Auto-analysis** | Each photo is processed on the device. It removes plain backgrounds, finds the dominant colours with k-means in Lab space and names them, detects the pattern, and guesses the category from the silhouette. When a network is available it also uses MobileNet. From these it suggests the style, season, fit, warmth and formality. |
-| **Create Outfit** | A four-step flow: *What do you want to do?* (create, weekly, surprise me, use a specific item, preview on me) → **style** → optional **filters** (occasion, weather or season, colours to include or avoid, accessories, layering, least-worn, favourites) → **result**. |
-| **Lock & regenerate** | In the result you can lock any piece, swap a single piece from a ranked list, add or remove a layer, and **Regenerate** only the unlocked parts. A piece you chose to build around stays in every result. |
-| **Outfit score** | A 0–100 score made of five parts: colour harmony, style match, occasion fit, proportions, and weather & season. You also get a plain-language explanation of what works and tips for what to change. |
-| **Colour matching** | Uses colour theory in CIE Lab: neutrals, tonal, analogous, complementary and triadic schemes, a "rule of three" hue limit, light/dark contrast, near-miss detection (for example black next to navy), and your favourite and avoided colours. |
-| **Favourites & history** | Every generated outfit is kept in the history (up to 400). You can favourite or unfavourite outfits and filter by style or occasion. |
-| **Outfit of the Day** | Generated automatically each day from your wardrobe, the weather, your default style and the weekday or weekend occasion. It rotates away from pieces worn in recent days. |
-| **Weekly Planner** | Per day: style, occasion, **Random**, **Must include** an item, lock pieces and regenerate that day. There is also *Generate whole week* and a **No repetition** mode. |
-| **Calendar** | A month view with thumbnails. You can assign a favourite, a history outfit or a new one to any day, change or remove it, and mark it as worn. |
-| **Laundry** | Mark items as Available, In the laundry or Unavailable. Unavailable and laundry items are **excluded from all generation**. There is a one-tap "laundry done", and after *Wear today* you can send the worn pieces straight to the laundry. |
-| **Statistics** | Most- and least-used pieces, colours owned and worn, categories, outfits created, favourites, most frequent combinations, style mix, how much of the wardrobe was worn in the last 30 days, and written insights. |
-| **Travel** | Enter a destination (weather comes from the forecast, or from the same dates last year if the trip is further out, or you set it yourself), the number of days, trip type and occasions, and pieces you want or don't want to take. Atelier picks a **minimal capsule**, plans every day, and builds an **automatic packing list** with essentials. |
-| **Shopping** | A wardrobe-balance check plus gap analysis. It simulates thousands of combinations to find the pieces that would **unlock the most new high-scoring outfits** or give hard-to-match pieces a partner. It skips anything too similar to what you already own. |
-| **Preview on me** | Can be turned on or off. It overlays the outfit's cut-outs on your **unmodified** photo, can place them automatically using pose detection, and lets you drag, resize and rotate each piece. You can compare with the original and export the image. For a photorealistic render, connect the optional AI try-on service described below. |
-| **Sync** | Optional Firebase account (email and password). The APK and the website sign in to the same account and sync wardrobe, outfits, plans, trips and settings in real time. The app stores everything on the device first, so it keeps working offline. |
+| **Mi armario** | Sudaderas, camisetas, pantalones, zapatillas y accesorios. Puedes añadir, editar, eliminar, buscar, filtrar (color, estilo, temporada, disponibilidad, favoritas), ordenar, marcar como favorita, editar en bloque y arrastrar fotos. |
+| **Análisis automático** | Cada foto se procesa en el propio dispositivo: quita fondos lisos, detecta y nombra los colores dominantes (k-means en espacio Lab), reconoce el estampado y deduce la categoría por la silueta. Si hay conexión, también usa MobileNet. A partir de todo esto sugiere estilo, temporada, corte, abrigo y formalidad. |
+| **Crear outfit** | Flujo en cuatro pasos: *¿Qué quieres hacer?* (crear, semana, sorpréndeme, usar una prenda concreta, probártelo) → **estilo** → **filtros** opcionales (ocasión, tiempo o temporada, colores a incluir o evitar, accesorios, capas, menos usadas, favoritas) → **resultado**. |
+| **Bloquear y regenerar** | En el resultado puedes bloquear cualquier prenda, cambiar una sola prenda desde una lista ordenada, añadir o quitar una capa y pulsar **Regenerar** para cambiar solo lo que no está bloqueado. La prenda elegida como base se mantiene en todos los resultados. |
+| **Puntuación del outfit** | Nota de 0 a 100 formada por cinco factores: armonía de color, estilo, ocasión, proporciones, y clima y temporada. Incluye una explicación en lenguaje natural de lo que funciona y consejos de qué cambiar. |
+| **Combinación de colores** | Teoría del color en CIE Lab: neutros, tonos de la misma gama, análogos, complementarios y triádicos; la «regla de tres» colores; contraste claro/oscuro; detección de casi-coincidencias (por ejemplo, negro junto a azul marino); y tus colores favoritos y los que evitas. |
+| **Favoritos e historial** | Todos los outfits generados se guardan en el historial (hasta 400). Puedes marcarlos o desmarcarlos como favoritos y filtrar por estilo u ocasión. |
+| **Outfit del día** | Se genera automáticamente cada día a partir de tu armario, el tiempo, tu estilo por defecto y la ocasión (entre semana o fin de semana). Evita las prendas que te has puesto en los últimos días. |
+| **Planificador semanal** | Para cada día: estilo, ocasión, **Al azar**, **Incluir sí o sí** una prenda, bloquear prendas y regenerar ese día. También hay *Generar toda la semana* y un modo **Sin repetir**. |
+| **Calendario** | Vista mensual con miniaturas. Puedes asignar a cualquier día un favorito, un outfit del historial o uno nuevo, cambiarlo o quitarlo, y marcarlo como puesto. |
+| **Lavandería** | Marca prendas como Disponible, Lavando o No disponible. Las que se están lavando o no están disponibles **se excluyen de toda la generación**. Hay un botón de «colada terminada» y, tras *Me lo pongo hoy*, puedes mandar a lavar las prendas usadas con un toque. |
+| **Estadísticas** | Prendas más y menos usadas, colores que tienes y que más usas, categorías, outfits creados, favoritos, combinaciones más frecuentes, mezcla de estilos, qué parte del armario has usado en los últimos 30 días y consejos escritos. |
+| **Viajes** | Indica el destino (el tiempo sale de la previsión, de las mismas fechas del año pasado si el viaje es más adelante, o lo pones tú), los días, el tipo de viaje y las ocasiones, y las prendas que quieres llevar o dejar en casa. Atelier elige una **selección mínima de prendas**, planifica cada día y crea una **lista de maleta automática** con los imprescindibles. |
+| **Compras** | Revisa el equilibrio del armario y busca huecos. Simula miles de combinaciones para encontrar las prendas que **desbloquearían más outfits nuevos con buena puntuación** o que darían pareja a prendas difíciles de combinar. Descarta todo lo que se parezca demasiado a lo que ya tienes. |
+| **Pruébatelo** | Se puede activar o desactivar. Superpone los recortes de las prendas del outfit sobre tu foto **sin modificarla**, puede colocarlos automáticamente detectando tu postura y te deja arrastrar, redimensionar y girar cada prenda. Puedes comparar con la foto original y exportar la imagen. Para un resultado fotorrealista, conecta el servicio opcional de prueba virtual con IA descrito más abajo. |
+| **Sincronización** | Cuenta opcional de Firebase (correo y contraseña). La APK y la web inician sesión en la misma cuenta y sincronizan armario, outfits, planes, viajes y ajustes en tiempo real. La app guarda primero todo en el dispositivo, así que sigue funcionando sin conexión. |
 
-## Project layout
+## Estructura del proyecto
 
 ```
-atelier/              ← the web app (also the APK's content)
-  index.html          app shell
-  css/app.css         design system (light + dark)
-  js/engine.js        outfit scoring + generation (pure, unit-tested)
-  js/color.js         colour science & harmony
-  js/planning.js      travel capsule, shopping gaps, statistics
-  js/analyzer.js      photo analysis (background removal, colours, category)
-  js/store.js, db.js  local-first IndexedDB store
-  js/sync.js          Firebase Auth + Firestore sync
-  js/views/*          one module per screen
-  sw.js, manifest     offline support + install
-  firestore.rules     security rules for sync
-  server/tryon-worker.js   optional AI try-on backend (Cloudflare Worker)
-  tests/              Node tests for the engine & planners
-mobile/               Capacitor project that packages atelier/ as an APK
-.github/workflows/android-apk.yml   builds the APK on every push
+atelier/              ← la app web (también el contenido de la APK)
+  index.html          estructura de la app
+  css/app.css         sistema de diseño (modo claro y oscuro)
+  js/engine.js        puntuación y generación de outfits (puro, con tests)
+  js/color.js         ciencia del color y armonías
+  js/planning.js      selección de viaje, huecos para compras, estadísticas
+  js/analyzer.js      análisis de fotos (quitar fondo, colores, categoría)
+  js/store.js, db.js  almacenamiento local en IndexedDB
+  js/sync.js          sincronización con Firebase Auth + Firestore
+  js/views/*          un módulo por pantalla
+  sw.js, manifest     funcionamiento sin conexión e instalación
+  firestore.rules     reglas de seguridad para la sincronización
+  server/tryon-worker.js   backend opcional de prueba virtual con IA (Cloudflare Worker)
+  tests/              tests en Node del motor y los planificadores
+mobile/               proyecto de Capacitor que empaqueta atelier/ como APK
+.github/workflows/android-apk.yml   compila la APK en cada push
 ```
 
-There is no build step: the site is plain ES modules.
+No hay paso de compilación: la web son módulos ES normales.
 
-## Run the website locally
+## Ejecutar la web en local
 
 ```bash
 cd atelier
-python3 -m http.server 8080      # or: npx serve .
-# open http://localhost:8080
+python3 -m http.server 8080      # o: npx serve .
+# abre http://localhost:8080
 ```
 
-On first launch you can load a **sample wardrobe** of 34 illustrated pieces to try every feature, or start with your own clothes.
+La primera vez puedes cargar un **armario de ejemplo** con 34 prendas ilustradas para probar todas las funciones, o empezar con tu propia ropa.
 
 Tests:
 
@@ -63,42 +63,42 @@ node atelier/tests/engine.test.mjs
 node atelier/tests/planning.test.mjs
 ```
 
-## Deploy the website
+## Publicar la web
 
-Upload the `atelier/` folder to any static host, such as GitHub Pages, Netlify, Vercel or Cloudflare Pages. If this repository is published with GitHub Pages, the app is served at `/atelier/`. HTTPS is required for installing the app, the camera and location.
+Sube la carpeta `atelier/` a cualquier hosting estático, como GitHub Pages, Netlify, Vercel o Cloudflare Pages. Si este repositorio se publica con GitHub Pages, la app estará en `/atelier/`. Se necesita HTTPS para instalar la app y usar la cámara y la ubicación.
 
-## Build the Android APK
+## Compilar la APK de Android
 
-**Automatically.** Every push that touches `atelier/` or `mobile/` runs **Build Android APK** in GitHub Actions. Download `Atelier.apk` from the run's artifacts. Pushing a tag such as `v1.0.0` also attaches the APK to a GitHub Release.
+**Automáticamente.** Cada push que toque `atelier/` o `mobile/` lanza **Build Android APK** en GitHub Actions. Descarga `Atelier.apk` desde los artefactos de la ejecución. Si subes una etiqueta como `v1.0.0`, la APK también se adjunta a una GitHub Release.
 
-**Locally** (needs Node 20+, JDK 21 and the Android SDK):
+**En local** (necesitas Node 20 o superior, JDK 21 y el SDK de Android):
 
 ```bash
 cd mobile
 npm install
-npm run android:init     # first time: generates android/ and adds camera/location permissions
+npm run android:init     # la primera vez: genera android/ y añade permisos de cámara y ubicación
 npx @capacitor/assets generate --android --iconBackgroundColor '#161513' --splashBackgroundColor '#f6f3ee'
 npm run apk              # → android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The workflow builds a debug APK, which is signed with a debug key and can be installed directly. To publish on Google Play, create a keystore and run `npm run apk:release` with signing configured in `android/app/build.gradle`.
+El workflow compila una APK de depuración, firmada con una clave de depuración, que se puede instalar directamente. Para publicarla en Google Play, crea un keystore y ejecuta `npm run apk:release` con la firma configurada en `android/app/build.gradle`.
 
-## Same account on the app and the website (sync)
+## La misma cuenta en la app y en la web (sincronización)
 
-1. Create a project at <https://console.firebase.google.com> and add a **Web app**.
-2. Turn on **Authentication → Sign-in method → Email/Password**.
-3. Create a **Firestore Database** and publish the rules from `atelier/firestore.rules`.
-4. Either paste the `firebaseConfig` snippet in **Settings → Account & sync**, or put it in `atelier/js/config.js` before deploying or building the APK. Putting it in `config.js` means users only need to sign in.
-5. Sign in with the same email on the phone and on the computer.
+1. Crea un proyecto en <https://console.firebase.google.com> y añade una **app web**.
+2. Activa **Authentication → Método de inicio de sesión → Correo electrónico/contraseña**.
+3. Crea una **base de datos de Firestore** y publica las reglas de `atelier/firestore.rules`.
+4. Pega el fragmento `firebaseConfig` en **Ajustes → Cuenta y sincronización**, o ponlo en `atelier/js/config.js` antes de publicar la web o compilar la APK. Si lo pones en `config.js`, los usuarios solo tienen que iniciar sesión.
+5. Inicia sesión con el mismo correo en el móvil y en el ordenador.
 
-Photos are compressed and resized (typically well under 200 KB each) and stored inside Firestore documents. This means Cloud Storage and a paid plan are not needed. The "Preview on me" photo never leaves the device.
+Las fotos se comprimen y redimensionan (normalmente bastante menos de 200 KB cada una) y se guardan dentro de los documentos de Firestore. Así no hacen falta Cloud Storage ni un plan de pago. La foto de «Pruébatelo» nunca sale del dispositivo.
 
-## Photorealistic "Preview on me" (optional)
+## «Pruébatelo» fotorrealista (opcional)
 
-Out of the box, Preview overlays your clothing cut-outs on your photo without changing the photo. For a photorealistic re-render, deploy `atelier/server/tryon-worker.js` as a Cloudflare Worker. It calls **IDM-VTON** on Replicate and needs your Replicate token. Instructions are at the top of that file. Then enter the worker URL under **Settings → Preview on me**.
+De serie, Pruébatelo superpone los recortes de tu ropa sobre tu foto sin modificarla. Para un resultado fotorrealista, despliega `atelier/server/tryon-worker.js` como Cloudflare Worker. Llama a **IDM-VTON** en Replicate y necesita tu token de Replicate; las instrucciones están al principio de ese archivo. Después, escribe la URL del worker en **Ajustes → Pruébatelo**.
 
-## Privacy
+## Privacidad
 
-- Wardrobe data stays on the device unless you turn on sync. With sync on, it is stored only in your own Firebase project.
-- Photo analysis runs in the browser. If smart recognition is enabled, the MobileNet model is downloaded once from jsDelivr. Your images are never uploaded for analysis.
-- Weather comes from Open-Meteo using only the city or coordinates you choose.
+- Los datos del armario se quedan en el dispositivo salvo que actives la sincronización. Con la sincronización activada, solo se guardan en tu propio proyecto de Firebase.
+- El análisis de fotos se hace en el navegador. Si el reconocimiento inteligente está activado, el modelo MobileNet se descarga una vez desde jsDelivr. Tus imágenes nunca se suben para analizarlas.
+- El tiempo viene de Open-Meteo usando solo la ciudad o las coordenadas que elijas.

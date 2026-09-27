@@ -41,8 +41,8 @@ export default {
   render(el, params) {
     const s = store.settings;
     if (!s.tryOn) {
-      el.innerHTML = `<header class="page-head"><div><div class="eyebrow">Virtual fitting</div><h1 class="display">Preview on Me</h1></div></header>
-        <div class="card">${empty('user', 'Preview is turned off', 'Enable it to see outfits on your own photo. Your photo stays on this device.', `<button class="btn primary" data-enable>${icon('check', 18)} Enable Preview</button>`)}</div>`;
+      el.innerHTML = `<header class="page-head"><div><div class="eyebrow">Probador virtual</div><h1 class="display">Pruébatelo</h1></div></header>
+        <div class="card">${empty('user', 'La vista previa está desactivada', 'Actívala para ver los outfits sobre tu propia foto. Tu foto se queda en este dispositivo.', `<button class="btn primary" data-enable>${icon('check', 18)} Activar vista previa</button>`)}</div>`;
       el.querySelector('[data-enable]').onclick = () => store.setSettings({ tryOn: true }).then(() => navigate('preview', params, { replace: true }));
       return;
     }
@@ -67,22 +67,22 @@ export default {
     const draw = () => {
       const o = outfitId && store.get('outfits', outfitId);
       el.innerHTML = `
-        <header class="page-head"><div><div class="eyebrow">Virtual fitting</div><h1 class="display">Preview on Me</h1>
-          <p class="muted">See how a look works on you. Your original photo is never modified.</p></div>
-          ${photo ? `<div class="row gap-s"><label class="btn ghost">${icon('camera', 16)} New photo<input type="file" accept="image/*" hidden data-photo></label><button class="btn ghost danger-text" data-rmphoto aria-label="Delete photo">${icon('trash', 16)}</button></div>` : ''}
+        <header class="page-head"><div><div class="eyebrow">Probador virtual</div><h1 class="display">Pruébatelo</h1>
+          <p class="muted">Mira cómo te queda un look. Tu foto original nunca se modifica.</p></div>
+          ${photo ? `<div class="row gap-s"><label class="btn ghost">${icon('camera', 16)} Nueva foto<input type="file" accept="image/*" hidden data-photo></label><button class="btn ghost danger-text" data-rmphoto aria-label="Eliminar foto">${icon('trash', 16)}</button></div>` : ''}
         </header>
         ${!photo ? `
           <div class="card photo-drop">
             ${icon('user', 40)}
-            <h3>Add a full-length photo of yourself</h3>
-            <p class="muted">Stand straight, facing the camera, arms slightly away from your body, in good light. It is stored only on this device and never synced.</p>
-            <div class="row gap center wrap"><label class="btn primary">${icon('camera', 18)} Take photo<input type="file" accept="image/*" capture="user" hidden data-photo></label>
-            <label class="btn ghost">${icon('upload', 18)} Upload<input type="file" accept="image/*" hidden data-photo></label></div>
+            <h3>Añade una foto tuya de cuerpo entero</h3>
+            <p class="muted">De pie, mirando a la cámara, con los brazos un poco separados del cuerpo y buena luz. Solo se guarda en este dispositivo y nunca se sincroniza.</p>
+            <div class="row gap center wrap"><label class="btn primary">${icon('camera', 18)} Hacer foto<input type="file" accept="image/*" capture="user" hidden data-photo></label>
+            <label class="btn ghost">${icon('upload', 18)} Subir<input type="file" accept="image/*" hidden data-photo></label></div>
           </div>` : `
         <div class="tryon-layout">
           <div class="card tryon-card">
             <div class="tryon-stage ${showOriginal ? 'original' : ''}" data-stage>
-              <img class="tryon-photo" src="${esc(aiResult || photo)}" alt="Your photo" draggable="false">
+              <img class="tryon-photo" src="${esc(aiResult || photo)}" alt="Tu foto" draggable="false">
               ${aiResult ? '' : layers.filter((l) => !l.hidden).sort((a, b) => a.z - b.z).map((l) => `
                 <div class="layer ${sel === l.id ? 'sel' : ''}" data-layer="${esc(l.id)}" style="left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;opacity:${l.opacity};transform:translateX(-50%) rotate(${l.rot}deg);z-index:${l.z}">
                   <img src="${esc(l.item.image)}" alt="${esc(l.item.name)}" draggable="false">
@@ -90,34 +90,34 @@ export default {
                 </div>`).join('')}
             </div>
             <div class="row gap-s wrap tryon-tools">
-              <button class="btn soft sm" data-hold>${icon('eye', 15)} Hold to compare</button>
-              <button class="btn soft sm" data-autofit>${icon('wand', 15)} Auto-fit to body</button>
-              <button class="btn soft sm" data-reset>${icon('refresh', 15)} Reset</button>
-              <button class="btn soft sm" data-export>${icon('download', 15)} Save image</button>
-              ${aiResult ? `<button class="btn soft sm" data-clear-ai>${icon('layers', 15)} Back to quick preview</button>` : ''}
+              <button class="btn soft sm" data-hold>${icon('eye', 15)} Mantén para comparar</button>
+              <button class="btn soft sm" data-autofit>${icon('wand', 15)} Ajustar al cuerpo</button>
+              <button class="btn soft sm" data-reset>${icon('refresh', 15)} Restablecer</button>
+              <button class="btn soft sm" data-export>${icon('download', 15)} Guardar imagen</button>
+              ${aiResult ? `<button class="btn soft sm" data-clear-ai>${icon('layers', 15)} Volver a la vista rápida</button>` : ''}
             </div>
           </div>
           <aside class="tryon-side">
             <div class="card">
-              <div class="section-head"><h3>Outfit</h3><button class="btn ghost sm" data-choose>${icon('refresh', 14)} Choose</button></div>
+              <div class="section-head"><h3>Outfit</h3><button class="btn ghost sm" data-choose>${icon('refresh', 14)} Elegir</button></div>
               ${o ? `<div class="layer-list">${layers.map((l) => `
                 <div class="ll-row ${sel === l.id ? 'sel' : ''}" data-pick="${esc(l.id)}">
                   <img src="${esc(l.item.image)}" alt=""><span>${esc(l.item.name)}<small class="muted"> ${esc(CAT[l.item.category].label)}</small></span>
-                  <button class="icon-btn" data-toggle="${esc(l.id)}" aria-label="${l.hidden ? 'Show' : 'Hide'}">${icon(l.hidden ? 'plus' : 'eye', 16)}</button>
-                </div>`).join('')}</div>` : `<p class="muted">Choose an outfit to try on.</p><button class="btn primary block" data-choose>${icon('sparkles', 16)} Choose outfit</button>`}
+                  <button class="icon-btn" data-toggle="${esc(l.id)}" aria-label="${l.hidden ? 'Mostrar' : 'Ocultar'}">${icon(l.hidden ? 'plus' : 'eye', 16)}</button>
+                </div>`).join('')}</div>` : `<p class="muted">Elige un outfit para probártelo.</p><button class="btn primary block" data-choose>${icon('sparkles', 16)} Elegir outfit</button>`}
             </div>
             ${sel ? (() => { const l = layers.find((x) => x.id === sel); return `<div class="card layer-ctl">
               <h3>${esc(l.item.name)}</h3>
-              <label class="field"><span>Size</span><input type="range" min="0.03" max="1.2" step="0.005" value="${l.w}" data-ctl="w"></label>
-              <label class="field"><span>Rotation</span><input type="range" min="-30" max="30" step="0.5" value="${l.rot}" data-ctl="rot"></label>
-              <label class="field"><span>Opacity</span><input type="range" min="0.3" max="1" step="0.05" value="${l.opacity}" data-ctl="opacity"></label>
-              <div class="row gap-s"><button class="btn soft sm" data-z="1">Bring forward</button><button class="btn soft sm" data-z="-1">Send back</button></div>
-              <p class="muted small">Drag the piece on the photo to move it; drag the corner handle to resize.</p></div>`; })() : ''}
+              <label class="field"><span>Tamaño</span><input type="range" min="0.03" max="1.2" step="0.005" value="${l.w}" data-ctl="w"></label>
+              <label class="field"><span>Rotación</span><input type="range" min="-30" max="30" step="0.5" value="${l.rot}" data-ctl="rot"></label>
+              <label class="field"><span>Opacidad</span><input type="range" min="0.3" max="1" step="0.05" value="${l.opacity}" data-ctl="opacity"></label>
+              <div class="row gap-s"><button class="btn soft sm" data-z="1">Traer adelante</button><button class="btn soft sm" data-z="-1">Enviar atrás</button></div>
+              <p class="muted small">Arrastra la prenda sobre la foto para moverla; arrastra la esquina para cambiar el tamaño.</p></div>`; })() : ''}
             <div class="card ai-card">
-              <h3>${icon('sparkles', 18)} Photorealistic render</h3>
-              ${store.getMeta('tryonEndpoint') ? `<p class="muted small">Sends your photo and the outfit to your configured AI try-on service, which re-renders the clothes on you while keeping your face, body and background.</p>
-                <button class="btn primary block" data-ai ${o ? '' : 'disabled'}>${icon('wand', 16)} Render with AI</button>`
-              : `<p class="muted small">Connect an AI virtual try-on service (for example an IDM-VTON endpoint) in <a href="#/settings?tab=preview">Settings → Preview</a> for photorealistic results. Quick preview works without it.</p>`}
+              <h3>${icon('sparkles', 18)} Render fotorrealista</h3>
+              ${store.getMeta('tryonEndpoint') ? `<p class="muted small">Envía tu foto y el outfit al servicio de prueba virtual con IA que hayas configurado, que vuelve a dibujar la ropa sobre ti manteniendo tu cara, tu cuerpo y el fondo.</p>
+                <button class="btn primary block" data-ai ${o ? '' : 'disabled'}>${icon('wand', 16)} Generar con IA</button>`
+              : `<p class="muted small">Conecta un servicio de prueba virtual con IA (por ejemplo, un endpoint de IDM-VTON) en <a href="#/settings?tab=preview">Ajustes → Pruébatelo</a> para obtener resultados fotorrealistas. La vista rápida funciona sin él.</p>`}
             </div>
           </aside>
         </div>`}`;
@@ -137,7 +137,7 @@ export default {
       const img = el.querySelector('.tryon-photo');
       if (!img || !layers.length) return;
       try {
-        if (!silent) toast('Detecting your pose…');
+        if (!silent) toast('Detectando tu postura…');
         const det = await Promise.race([loadPose(), new Promise((_, r) => setTimeout(() => r(new Error('timeout')), 15000))]);
         const im = await loadImage(photo);
         const [pose] = await det.estimatePoses(im);
@@ -169,9 +169,9 @@ export default {
           }
         }
         draw();
-        if (!silent) toast('Fitted to your pose — fine-tune by dragging');
+        if (!silent) toast('Ajustado a tu postura: afina arrastrando las prendas');
       } catch {
-        if (!silent) toast('Automatic pose detection is unavailable here — drag pieces to place them.');
+        if (!silent) toast('La detección automática de postura no está disponible aquí: arrastra las prendas para colocarlas.');
       }
     }
 
@@ -193,7 +193,7 @@ export default {
       }
       const url = c.toDataURL('image/jpeg', 0.92);
       const a = document.createElement('a');
-      a.href = url; a.download = `atelier-preview-${todayISO()}.jpg`;
+      a.href = url; a.download = `atelier-pruebatelo-${todayISO()}.jpg`;
       document.body.appendChild(a); a.click(); a.remove();
     }
 
@@ -203,7 +203,7 @@ export default {
       if (!o || !endpoint) return;
       const btn = el.querySelector('[data-ai]');
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner sm"></span> Rendering… this can take a minute';
+      btn.innerHTML = '<span class="spinner sm"></span> Generando… puede tardar un minuto';
       try {
         // Try-on models expect raster images, so illustrated (SVG) pieces are converted to PNG first.
         const toPng = async (src) => {
@@ -222,13 +222,13 @@ export default {
           method: 'POST', headers: { 'Content-Type': 'application/json', ...(store.getMeta('tryonKey') ? { Authorization: `Bearer ${store.getMeta('tryonKey')}` } : {}) },
           body: JSON.stringify({ person: photo, garments }),
         });
-        if (!r.ok) throw new Error(`Service responded ${r.status}`);
+        if (!r.ok) throw new Error(`El servicio ha respondido ${r.status}`);
         const data = await r.json();
-        if (!data.image) throw new Error('No image returned');
+        if (!data.image) throw new Error('No se ha recibido ninguna imagen');
         aiResult = data.image;
         draw();
       } catch (e) {
-        toast('AI render failed: ' + e.message);
+        toast('Ha fallado el render con IA: ' + e.message);
         draw();
       }
     }
@@ -272,16 +272,16 @@ export default {
     el.addEventListener('click', async (e) => {
       const t = e.target;
       if (t.closest('[data-rmphoto]')) {
-        if (!(await confirmDialog('Delete your photo from this device?', { ok: 'Delete', danger: true }))) return;
+        if (!(await confirmDialog('¿Eliminar tu foto de este dispositivo?', { ok: 'Eliminar', danger: true }))) return;
         photo = null; aiResult = null; await store.setMeta('photo', null); return draw();
       }
       if (t.closest('[data-choose]')) {
         const favs = store.all('outfits').filter((o) => o.favorite);
         const rec = store.all('outfits').sort((a, b) => b.createdAt - a.createdAt).slice(0, 12);
         const id = await openSheet({
-          title: 'Choose an outfit', wide: true,
-          body: `<h4 class="sub-h">Favourites</h4><div class="grid outfits-grid sm">${favs.map((o) => outfitCard(o, { showDate: false })).join('') || '<p class="muted small">No favourites yet.</p>'}</div>
-                 <h4 class="sub-h">Recent</h4><div class="grid outfits-grid sm">${rec.map((o) => outfitCard(o)).join('')}</div>`,
+          title: 'Elige un outfit', wide: true,
+          body: `<h4 class="sub-h">Favoritos</h4><div class="grid outfits-grid sm">${favs.map((o) => outfitCard(o, { showDate: false })).join('') || '<p class="muted small">Aún no tienes favoritos.</p>'}</div>
+                 <h4 class="sub-h">Recientes</h4><div class="grid outfits-grid sm">${rec.map((o) => outfitCard(o)).join('')}</div>`,
           onMount: (b, close) => b.addEventListener('click', (ev) => { const c = ev.target.closest('[data-outfit]'); if (c && !ev.target.closest('[data-ofav]')) close(c.dataset.outfit); }),
         }).result;
         if (id) { outfitId = id; aiResult = null; sel = null; setHash('preview', { outfit: id }); buildLayers(); draw(); autofit(true); }

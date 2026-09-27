@@ -166,7 +166,7 @@ export const store = {
     return out;
   },
   async importJSON(data) {
-    if (data?.app !== 'atelier') throw new Error('This file is not an Atelier backup.');
+    if (data?.app !== 'atelier') throw new Error('Este archivo no es una copia de seguridad de Atelier.');
     for (const c of COLLS) if (Array.isArray(data[c])) await store.putMany(c, data[c]);
     if (data.settings) await store.setSettings({ ...data.settings });
   },

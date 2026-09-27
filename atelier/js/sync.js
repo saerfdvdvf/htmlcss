@@ -29,10 +29,10 @@ export function saveConfig(cfg) {
 // Accepts either raw JSON or the JS snippet Firebase shows (const firebaseConfig = {...}).
 export function parseConfig(text) {
   const m = text.match(/\{[\s\S]*\}/);
-  if (!m) throw new Error('Paste the firebaseConfig object.');
+  if (!m) throw new Error('Pega el objeto firebaseConfig.');
   const json = m[0].replace(/([{,]\s*)([A-Za-z_]\w*)\s*:/g, '$1"$2":').replace(/'/g, '"').replace(/,\s*}/g, '}');
   const cfg = JSON.parse(json);
-  if (!cfg.apiKey || !cfg.projectId) throw new Error('The config needs at least apiKey and projectId.');
+  if (!cfg.apiKey || !cfg.projectId) throw new Error('La configuración necesita al menos apiKey y projectId.');
   return cfg;
 }
 
@@ -71,19 +71,19 @@ export async function initSync() {
     });
   } catch (e) {
     console.warn('Sync unavailable', e);
-    set({ status: 'error', error: navigator.onLine === false ? 'You are offline.' : 'Could not reach the sync service.' });
+    set({ status: 'error', error: navigator.onLine === false ? 'No tienes conexión.' : 'No se ha podido conectar con el servicio de sincronización.' });
   }
 }
 
 const friendly = (e) => {
   const c = e?.code || '';
-  if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found')) return 'E-mail or password is incorrect.';
-  if (c.includes('email-already-in-use')) return 'That e-mail already has an account — sign in instead.';
-  if (c.includes('weak-password')) return 'Use a password with at least 6 characters.';
-  if (c.includes('invalid-email')) return 'That e-mail address looks invalid.';
-  if (c.includes('network')) return 'Network error — check your connection.';
-  if (c.includes('operation-not-allowed')) return 'Enable Email/Password sign-in in your Firebase console.';
-  return e?.message || 'Something went wrong.';
+  if (c.includes('invalid-credential') || c.includes('wrong-password') || c.includes('user-not-found')) return 'El correo o la contraseña no son correctos.';
+  if (c.includes('email-already-in-use')) return 'Ese correo ya tiene una cuenta: inicia sesión.';
+  if (c.includes('weak-password')) return 'Usa una contraseña de al menos 6 caracteres.';
+  if (c.includes('invalid-email')) return 'Esa dirección de correo no parece válida.';
+  if (c.includes('network')) return 'Error de red: revisa tu conexión.';
+  if (c.includes('operation-not-allowed')) return 'Activa el inicio de sesión con correo y contraseña en tu consola de Firebase.';
+  return e?.message || 'Algo ha salido mal.';
 };
 
 export async function signUp(email, password) {

@@ -1,5 +1,5 @@
 // Offline support: app shell is precached; same-origin files are served stale-while-revalidate.
-const VERSION = 'atelier-v1';
+const VERSION = 'atelier-v2';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/main.js', './js/config.js', './js/util.js', './js/constants.js', './js/color.js', './js/engine.js', './js/garments.js',

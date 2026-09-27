@@ -1,12 +1,12 @@
-// Build-time configuration shared by the website and the Android app.
-// Paste your Firebase web config here to enable accounts + sync out of the box
-// (users can also paste it at runtime in Settings → Account & sync).
+// Configuración compartida por la web y la app de Android.
+// Pega aquí la configuración web de Firebase para activar cuentas y sincronización de serie
+// (también se puede pegar en la app, en Ajustes → Cuenta y sincronización).
 window.ATELIER_CONFIG = {
   firebase: null,
   // firebase: {
   //   apiKey: '…',
-  //   authDomain: 'your-project.firebaseapp.com',
-  //   projectId: 'your-project',
+  //   authDomain: 'tu-proyecto.firebaseapp.com',
+  //   projectId: 'tu-proyecto',
   //   appId: '…',
   // },
 };

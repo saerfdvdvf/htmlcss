@@ -5,6 +5,7 @@ import { CAT, STYLE } from '../constants.js';
 import { icon } from '../icons.js';
 import { esc, fmtDate } from '../util.js';
 import { empty, swatch } from '../ui.js';
+import { colorLabel } from '../color.js';
 import { openItemEditor } from './item-editor.js';
 
 const barList = (rows, { max, fmt = (v) => v, lead = () => '' } = {}) => {
@@ -23,45 +24,45 @@ export default {
       const items = store.all('items');
       const s = wardrobeStats({ items, outfits: store.all('outfits'), wears: store.all('wears'), plans: store.all('plans') });
       if (!items.length) {
-        el.innerHTML = `<header class="page-head"><div><div class="eyebrow">Insights</div><h1 class="display">Statistics</h1></div></header><div class="card">${empty('chart', 'No data yet', 'Add clothes and log what you wear to see your stats.')}</div>`;
+        el.innerHTML = `<header class="page-head"><div><div class="eyebrow">Tu armario en datos</div><h1 class="display">Estadísticas</h1></div></header><div class="card">${empty('chart', 'Aún no hay datos', 'Añade ropa y registra lo que te pones para ver tus estadísticas.')}</div>`;
         return;
       }
       const t = s.totals;
       const itemRow = (x, label) => `<button class="stat-item" data-item="${esc(x.item.id)}"><img src="${esc(x.item.image)}" alt=""><span><b>${esc(x.item.name)}</b><small>${label(x)}</small></span></button>`;
       el.innerHTML = `
-        <header class="page-head"><div><div class="eyebrow">Insights</div><h1 class="display">Statistics</h1><p class="muted">Understand what you wear — and what you forget.</p></div></header>
+        <header class="page-head"><div><div class="eyebrow">Tu armario en datos</div><h1 class="display">Estadísticas</h1><p class="muted">Entiende qué te pones… y qué tienes olvidado.</p></div></header>
         <div class="tiles">
-          <div class="tile"><span>Pieces</span><b>${t.items}</b></div>
-          <div class="tile"><span>Outfits created</span><b>${t.outfits}</b></div>
-          <div class="tile"><span>Favourite outfits</span><b>${t.favorites}</b></div>
-          <div class="tile"><span>Days logged</span><b>${t.wears}</b></div>
-          <div class="tile"><span>Worn in last 30 days</span><b>${t.utilization}<small>%</small></b></div>
-          <div class="tile"><span>Average outfit score</span><b>${t.avgScore || '—'}</b></div>
+          <div class="tile"><span>Prendas</span><b>${t.items}</b></div>
+          <div class="tile"><span>Outfits creados</span><b>${t.outfits}</b></div>
+          <div class="tile"><span>Outfits favoritos</span><b>${t.favorites}</b></div>
+          <div class="tile"><span>Días registrados</span><b>${t.wears}</b></div>
+          <div class="tile"><span>Usado en los últimos 30 días</span><b>${t.utilization}<small>%</small></b></div>
+          <div class="tile"><span>Puntuación media</span><b>${t.avgScore || '—'}</b></div>
         </div>
         ${s.insights.length ? `<div class="card insights">${s.insights.map((i) => `<p>${icon('bulb', 18)}<span>${esc(i)}</span></p>`).join('')}</div>` : ''}
-        ${s.basis === 'planned' ? `<div class="card note">${icon('info', 18)}<span>Usage below is estimated from your planned and favourite outfits. Tap <b>Wear today</b> on any outfit, or mark planned days as worn, for exact stats.</span></div>` : ''}
+        ${s.basis === 'planned' ? `<div class="card note">${icon('info', 18)}<span>El uso de abajo es una estimación a partir de tus outfits planificados y favoritos. Toca <b>Me lo pongo hoy</b> en cualquier outfit, o marca los días planificados como puestos, para tener estadísticas exactas.</span></div>` : ''}
         <div class="stats-grid">
-          <section class="card"><h3>Most-used pieces</h3>
-            ${s.most.length ? `<div class="stat-items">${s.most.map((x) => itemRow(x, (x) => `${s.basis === 'worn' ? 'Worn' : 'Used'} ${x.count}×`)).join('')}</div>` : '<p class="muted small">Nothing logged yet.</p>'}</section>
-          <section class="card"><h3>Least-used pieces</h3>
-            <div class="stat-items">${s.least.map((x) => itemRow(x, (x) => (x.count ? `${s.basis === 'worn' ? 'Worn' : 'Used'} ${x.count}×${x.last ? ` · last ${fmtDate(x.last, { day: 'numeric', month: 'short' })}` : ''}` : s.basis === 'worn' ? 'Never worn' : 'Not in any planned outfit'))).join('')}</div>
-            <a class="link" href="#/create?item=${esc(s.least[0]?.item.id || '')}">${icon('sparkles', 15)} Style the least-worn piece</a></section>
-          <section class="card"><h3>Colours in your wardrobe</h3>
-            ${barList(s.ownedColors.slice(0, 8).map(([n, v]) => ({ label: n, value: v, hex: s.colorHex.get(n) })), { lead: (r) => swatch(r.hex || '#888', 12) })}</section>
-          <section class="card"><h3>Most-worn colours</h3>
-            ${s.wornColors.length ? barList(s.wornColors.slice(0, 8).map(([n, v]) => ({ label: n, value: v, hex: s.colorHex.get(n) })), { lead: (r) => swatch(r.hex || '#888', 12) }) : '<p class="muted small">Log a few outfits to see this.</p>'}</section>
-          <section class="card"><h3>Categories</h3>
+          <section class="card"><h3>Prendas más usadas</h3>
+            ${s.most.length ? `<div class="stat-items">${s.most.map((x) => itemRow(x, (x) => `${s.basis === 'worn' ? 'Puesta' : 'Usada'} ${x.count} ${x.count === 1 ? 'vez' : 'veces'}`)).join('')}</div>` : '<p class="muted small">Aún no hay nada registrado.</p>'}</section>
+          <section class="card"><h3>Prendas menos usadas</h3>
+            <div class="stat-items">${s.least.map((x) => itemRow(x, (x) => (x.count ? `${s.basis === 'worn' ? 'Puesta' : 'Usada'} ${x.count} ${x.count === 1 ? 'vez' : 'veces'}${x.last ? ` · última: ${fmtDate(x.last, { day: 'numeric', month: 'short' })}` : ''}` : s.basis === 'worn' ? 'Nunca puesta' : 'En ningún outfit planificado'))).join('')}</div>
+            <a class="link" href="#/create?item=${esc(s.least[0]?.item.id || '')}">${icon('sparkles', 15)} Crear un outfit con la menos usada</a></section>
+          <section class="card"><h3>Colores de tu armario</h3>
+            ${barList(s.ownedColors.slice(0, 8).map(([n, v]) => ({ label: colorLabel(n), value: v, hex: s.colorHex.get(n) })), { lead: (r) => swatch(r.hex || '#888', 12) })}</section>
+          <section class="card"><h3>Colores más usados</h3>
+            ${s.wornColors.length ? barList(s.wornColors.slice(0, 8).map(([n, v]) => ({ label: colorLabel(n), value: v, hex: s.colorHex.get(n) })), { lead: (r) => swatch(r.hex || '#888', 12) }) : '<p class="muted small">Registra algunos outfits para ver esto.</p>'}</section>
+          <section class="card"><h3>Categorías</h3>
             ${barList(s.cats.map((c) => ({ label: CAT[c.id].plural, value: c.owned })), {})}
-            <p class="muted small">Balanced mix: ${Object.entries(IDEAL_MIX).map(([k, v]) => `${CAT[k].plural.toLowerCase()} ${Math.round(v * 100)}%`).join(' · ')}</p></section>
-          <section class="card"><h3>Most-worn categories</h3>
-            ${s.cats.some((c) => c.worn) ? barList(s.cats.map((c) => ({ label: CAT[c.id].plural, value: c.worn }))) : '<p class="muted small">Log a few outfits to see this.</p>'}</section>
-          <section class="card wide"><h3>Most frequent combinations</h3>
+            <p class="muted small">Mezcla equilibrada: ${Object.entries(IDEAL_MIX).map(([k, v]) => `${CAT[k].plural.toLowerCase()} ${Math.round(v * 100)} %`).join(' · ')}</p></section>
+          <section class="card"><h3>Categorías más usadas</h3>
+            ${s.cats.some((c) => c.worn) ? barList(s.cats.map((c) => ({ label: CAT[c.id].plural, value: c.worn }))) : '<p class="muted small">Registra algunos outfits para ver esto.</p>'}</section>
+          <section class="card wide"><h3>Combinaciones más frecuentes</h3>
             ${s.topPairs.length ? `<div class="pairs">${s.topPairs.map((p) => {
               const [a, b] = p.ids.map((id) => store.get('items', id));
-              return a && b ? `<div class="pair"><img src="${esc(a.image)}" alt=""><span>+</span><img src="${esc(b.image)}" alt=""><small>${esc(a.name)} with ${esc(b.name)}</small></div>` : '';
-            }).join('')}</div>` : '<p class="muted small">Favourite or wear outfits to discover your signature pairings.</p>'}</section>
-          <section class="card"><h3>Styles you create</h3>
-            ${s.styleShare.length ? barList(s.styleShare.filter(([k]) => k && k !== 'undefined').map(([k, v]) => ({ label: STYLE[k]?.label || k, value: v }))) : '<p class="muted small">Create outfits to see your style mix.</p>'}</section>
+              return a && b ? `<div class="pair"><img src="${esc(a.image)}" alt=""><span>+</span><img src="${esc(b.image)}" alt=""><small>${esc(a.name)} con ${esc(b.name)}</small></div>` : '';
+            }).join('')}</div>` : '<p class="muted small">Guarda como favoritos o ponte outfits para descubrir tus combinaciones estrella.</p>'}</section>
+          <section class="card"><h3>Estilos que creas</h3>
+            ${s.styleShare.length ? barList(s.styleShare.filter(([k]) => k && k !== 'undefined').map(([k, v]) => ({ label: STYLE[k]?.label || k, value: v }))) : '<p class="muted small">Crea outfits para ver tu mezcla de estilos.</p>'}</section>
         </div>`;
     };
     draw();

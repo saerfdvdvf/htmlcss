@@ -1,8 +1,8 @@
-# Atelier for Android
+# Atelier para Android
 
-This folder packages the web app in `../atelier` as a native Android app with [Capacitor](https://capacitorjs.com). The app and the website share one codebase, and one account when sync is configured.
+Esta carpeta empaqueta la app web de `../atelier` como app nativa de Android con [Capacitor](https://capacitorjs.com). La app y la web comparten el mismo código y, si configuras la sincronización, la misma cuenta.
 
-- CI: `.github/workflows/android-apk.yml` builds `Atelier.apk` on every push. Download it from the workflow run's artifacts.
-- Local build: see "Build the Android APK" in `../atelier/README.md`.
+- CI: `.github/workflows/android-apk.yml` compila `Atelier.apk` en cada push. Descárgala desde los artefactos de la ejecución del workflow.
+- Compilación local: consulta «Compilar la APK de Android» en `../atelier/README.md`.
 
-`android/` and `www/` are generated and git-ignored. `scripts/build-web.mjs` copies the web app into `www/`. `scripts/patch-android.mjs` adds the camera and location permissions.
+`android/` y `www/` se generan automáticamente y están en `.gitignore`. `scripts/build-web.mjs` copia la app web en `www/`. `scripts/patch-android.mjs` añade los permisos de cámara y ubicación.

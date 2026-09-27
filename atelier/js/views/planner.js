@@ -2,9 +2,9 @@
 import { store, outfitItemIds } from '../store.js';
 import { generateOutfit } from '../engine.js';
 import { buildCtx, weatherFor, defaultOccasion, defaultStyle, loadWeather, onWeather } from '../context.js';
-import { STYLES, OCCASIONS, STYLE } from '../constants.js';
+import { STYLES, OCCASIONS, STYLE, BAND_LABEL } from '../constants.js';
 import { icon } from '../icons.js';
-import { esc, todayISO, addDays, startOfWeek, fmtDate } from '../util.js';
+import { esc, todayISO, addDays, startOfWeek, fmtDate, cap } from '../util.js';
 import { outfitBoard, scoreRing, pickItem, saveGenerated, toast, confirmDialog, empty, logWear } from '../ui.js';
 import { navigate } from '../router.js';
 
@@ -57,24 +57,24 @@ export default {
       const items = store.all('items');
       el.innerHTML = `
       <header class="page-head">
-        <div><div class="eyebrow">Plan ahead</div><h1 class="display">Weekly Planner</h1>
+        <div><div class="eyebrow">Planifica con antelación</div><h1 class="display">Planificador semanal</h1>
           <p class="muted">${fmtDate(week[0], { day: 'numeric', month: 'short' })} – ${fmtDate(week[6], { day: 'numeric', month: 'short', year: 'numeric' })}</p></div>
         <div class="row gap-s wrap">
-          <a class="icon-btn bordered" href="#/planner?week=${addDays(week0, -7)}" aria-label="Previous week">${icon('left')}</a>
-          <a class="btn ghost sm" href="#/planner">This week</a>
-          <a class="icon-btn bordered" href="#/planner?week=${addDays(week0, 7)}" aria-label="Next week">${icon('right')}</a>
+          <a class="icon-btn bordered" href="#/planner?week=${addDays(week0, -7)}" aria-label="Semana anterior">${icon('left')}</a>
+          <a class="btn ghost sm" href="#/planner">Esta semana</a>
+          <a class="icon-btn bordered" href="#/planner?week=${addDays(week0, 7)}" aria-label="Semana siguiente">${icon('right')}</a>
         </div>
       </header>
       ${items.length ? `
       <div class="card planner-bar">
-        <label class="switch-row"><input type="checkbox" data-norepeat ${store.settings.noRepeat ? 'checked' : ''}><span class="switch"></span><span><b>No repetition</b><small class="muted"> Avoid reusing pieces within the week</small></span></label>
+        <label class="switch-row"><input type="checkbox" data-norepeat ${store.settings.noRepeat ? 'checked' : ''}><span class="switch"></span><span><b>Sin repetir</b><small class="muted"> Evita repetir prendas durante la semana</small></span></label>
         <div class="row gap-s wrap">
-          <button class="btn ghost" data-clear-week>${icon('trash', 16)} Clear week</button>
-          <button class="btn primary" data-gen-week>${icon('sparkles', 18)} Generate whole week</button>
+          <button class="btn ghost" data-clear-week>${icon('trash', 16)} Vaciar semana</button>
+          <button class="btn primary" data-gen-week>${icon('sparkles', 18)} Generar toda la semana</button>
         </div>
       </div>
       <div class="week-grid">${week.map((d) => dayCard(d)).join('')}</div>`
-      : `<div class="card">${empty('hanger', 'Add clothes to start planning', '', '<a class="btn primary" href="#/wardrobe?add=1">Add clothes</a>')}</div>`}`;
+      : `<div class="card">${empty('hanger', 'Añade ropa para empezar a planificar', '', '<a class="btn primary" href="#/wardrobe?add=1">Añadir ropa</a>')}</div>`}`;
     };
 
     const dayCard = (d) => {
@@ -86,28 +86,28 @@ export default {
       const locks = p?.locks || {};
       return `<article class="day-card card ${d === today ? 'today' : ''} ${d < today ? 'past' : ''}" data-day="${d}">
         <header class="day-head">
-          <div><b>${fmtDate(d, { weekday: 'long' })}</b><span class="muted small"> ${fmtDate(d, { day: 'numeric', month: 'short' })}</span></div>
-          <span class="pill" title="${w.assumed ? 'Seasonal estimate' : 'Forecast'}">${icon(w.rain ? 'rain' : w.band === 'hot' || w.band === 'warm' ? 'sun' : w.band === 'cold' ? 'snow' : 'cloud', 13)} ${w.temp != null ? Math.round(w.temp) + '°' : w.band}</span>
+          <div><b>${cap(fmtDate(d, { weekday: 'long' }))}</b><span class="muted small"> ${fmtDate(d, { day: 'numeric', month: 'short' })}</span></div>
+          <span class="pill" title="${w.assumed ? 'Estimación por temporada' : 'Previsión'}">${icon(w.rain ? 'rain' : w.band === 'hot' || w.band === 'warm' ? 'sun' : w.band === 'cold' ? 'snow' : 'cloud', 13)} ${w.temp != null ? Math.round(w.temp) + '°' : BAND_LABEL[w.band]}</span>
         </header>
         <div class="day-controls">
-          <select data-f="style" aria-label="Style" ${cfg.random ? 'disabled' : ''}>${STYLES.map((s) => `<option value="${s.id}" ${cfg.style === s.id ? 'selected' : ''}>${s.label}</option>`).join('')}<option value="any" ${cfg.style === 'any' ? 'selected' : ''}>Any style</option></select>
-          <select data-f="occasion" aria-label="Occasion">${OCCASIONS.map((x) => `<option value="${x.id}" ${cfg.occasion === x.id ? 'selected' : ''}>${x.label}</option>`).join('')}</select>
+          <select data-f="style" aria-label="Estilo" ${cfg.random ? 'disabled' : ''}>${STYLES.map((s) => `<option value="${s.id}" ${cfg.style === s.id ? 'selected' : ''}>${s.label}</option>`).join('')}<option value="any" ${cfg.style === 'any' ? 'selected' : ''}>Cualquier estilo</option></select>
+          <select data-f="occasion" aria-label="Ocasión">${OCCASIONS.map((x) => `<option value="${x.id}" ${cfg.occasion === x.id ? 'selected' : ''}>${x.label}</option>`).join('')}</select>
         </div>
         <div class="day-controls">
-          <button class="chip ${cfg.random ? 'on' : ''}" data-random aria-pressed="${cfg.random}">${icon('shuffle', 14)} Random</button>
-          ${must ? `<span class="chip on must"><img src="${esc(must.image)}" alt="">${esc(must.name)}<button data-unmust aria-label="Remove required item">${icon('x', 12)}</button></span>`
-                 : `<button class="chip" data-must>${icon('plus', 14)} Must include…</button>`}
+          <button class="chip ${cfg.random ? 'on' : ''}" data-random aria-pressed="${cfg.random}">${icon('shuffle', 14)} Al azar</button>
+          ${must ? `<span class="chip on must"><img src="${esc(must.image)}" alt="">${esc(must.name)}<button data-unmust aria-label="Quitar prenda obligatoria">${icon('x', 12)}</button></span>`
+                 : `<button class="chip" data-must>${icon('plus', 14)} Incluir sí o sí…</button>`}
         </div>
         <div class="day-outfit">
           ${o ? `${outfitBoard(o.items, { interactive: true, size: 'sm', locks: { ...locks, accessory: locks.accessory || [] } })}
-            <div class="day-score" title="${esc(STYLE[o.style]?.label || '')} · score ${o.score?.total}">${scoreRing(o.score?.total, 36)}</div>`
-            : `<button class="day-empty" data-gen>${icon('sparkles', 22)}<span>Generate ${fmtDate(d, { weekday: 'short' })}</span></button>`}
+            <div class="day-score" title="${esc(STYLE[o.style]?.label || '')} · puntuación ${o.score?.total}">${scoreRing(o.score?.total, 36)}</div>`
+            : `<button class="day-empty" data-gen>${icon('sparkles', 22)}<span>Generar el ${fmtDate(d, { weekday: 'long' })}</span></button>`}
         </div>
         ${o ? `<footer class="day-foot">
-          <button class="btn soft sm" data-gen>${icon('refresh', 15)} Regenerate</button>
-          <button class="icon-btn" data-open aria-label="Open outfit">${icon('eye', 18)}</button>
-          ${d <= today ? `<button class="icon-btn ${p.worn ? 'on' : ''}" data-worn aria-label="Mark worn" title="Mark as worn">${icon('check', 18)}</button>` : ''}
-          <button class="icon-btn" data-clear aria-label="Clear day">${icon('trash', 18)}</button>
+          <button class="btn soft sm" data-gen>${icon('refresh', 15)} Regenerar</button>
+          <button class="icon-btn" data-open aria-label="Abrir outfit">${icon('eye', 18)}</button>
+          ${d <= today ? `<button class="icon-btn ${p.worn ? 'on' : ''}" data-worn aria-label="Marcar como puesto" title="Marcar como puesto">${icon('check', 18)}</button>` : ''}
+          <button class="icon-btn" data-clear aria-label="Vaciar día">${icon('trash', 18)}</button>
         </footer>` : ''}
       </article>`;
     };
@@ -128,16 +128,16 @@ export default {
       const t = e.target;
       if (t.closest('[data-gen-week]')) {
         const has = week.some((d) => store.get('plans', d)?.outfitId);
-        if (has && !(await confirmDialog('Regenerate every day of this week? Locked pieces are kept.', { ok: 'Generate' }))) return;
+        if (has && !(await confirmDialog('¿Regenerar todos los días de esta semana? Las prendas bloqueadas se mantienen.', { ok: 'Generar' }))) return;
         const usage = new Map();
         for (const d of week) {
           const o = await genDay(d, week, { usage: store.settings.noRepeat ? new Map(usage) : usageExcept(week, d) });
           if (o) for (const id of outfitItemIds(o.items)) usage.set(id, (usage.get(id) || 0) + 1);
         }
-        return toast('Your week is planned');
+        return toast('Tu semana está planificada');
       }
       if (t.closest('[data-clear-week]')) {
-        if (!(await confirmDialog('Remove all outfits planned for this week?', { ok: 'Clear', danger: true }))) return;
+        if (!(await confirmDialog('¿Quitar todos los outfits planificados de esta semana?', { ok: 'Vaciar', danger: true }))) return;
         return store.removeMany('plans', week.filter((d) => store.get('plans', d)));
       }
       const card = t.closest('[data-day]');
@@ -157,7 +157,7 @@ export default {
         return store.put('plans', { ...(p || { id: d, date: d, locks: {} }), config: { ...cfg, random: !cfg.random } });
       }
       if (t.closest('[data-must]')) {
-        const it = await pickItem({ title: `Must include on ${fmtDate(d, { weekday: 'long' })}` });
+        const it = await pickItem({ title: `Incluir sí o sí el ${fmtDate(d, { weekday: 'long' })}` });
         if (!it) return;
         await store.put('plans', { ...(p || { id: d, date: d, locks: {} }), config: { ...dayCfg(p, d), mustInclude: it.id } });
         return genDay(d, week);

@@ -1,9 +1,9 @@
 // Shared UI building blocks.
 import { icon } from './icons.js';
 import { esc, todayISO, fmtDate, uid } from './util.js';
-import { CAT, CATEGORIES, STYLE, OCCASION } from './constants.js';
+import { CAT, CATEGORIES, STYLE, OCCASION, subLabel } from './constants.js';
 import { store, outfitItemIds } from './store.js';
-import { inkOn } from './color.js';
+import { inkOn, colorLabel } from './color.js';
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -32,7 +32,7 @@ export function openSheet({ title = '', body = '', onMount, wide = false, classN
     <div class="sheet-backdrop"></div>
     <section class="sheet ${wide ? 'wide' : ''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
       <div class="sheet-grab"></div>
-      <header class="sheet-head"><h3>${esc(title)}</h3><button class="icon-btn sheet-x" aria-label="Close">${icon('x')}</button></header>
+      <header class="sheet-head"><h3>${esc(title)}</h3><button class="icon-btn sheet-x" aria-label="Cerrar">${icon('x')}</button></header>
       <div class="sheet-body">${body}</div>
     </section>`;
   document.body.appendChild(root);
@@ -58,10 +58,10 @@ export function openSheet({ title = '', body = '', onMount, wide = false, classN
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && sheetStack.length) sheetStack[sheetStack.length - 1](); });
 export const closeAllSheets = () => [...sheetStack].reverse().forEach((c) => c());
 
-export function confirmDialog(message, { ok = 'Confirm', danger = false } = {}) {
+export function confirmDialog(message, { ok = 'Confirmar', danger = false } = {}) {
   return openSheet({
-    title: 'Are you sure?',
-    body: `<p class="muted">${esc(message)}</p><div class="row end gap"><button class="btn ghost" data-v="0">Cancel</button><button class="btn ${danger ? 'danger' : 'primary'}" data-v="1">${esc(ok)}</button></div>`,
+    title: '¿Seguro?',
+    body: `<p class="muted">${esc(message)}</p><div class="row end gap"><button class="btn ghost" data-v="0">Cancelar</button><button class="btn ${danger ? 'danger' : 'primary'}" data-v="1">${esc(ok)}</button></div>`,
     onMount: (b, close) => b.querySelectorAll('[data-v]').forEach((x) => (x.onclick = () => close(x.dataset.v === '1'))),
   }).result.then(Boolean);
 }
@@ -91,18 +91,18 @@ export const empty = (ic, title, text = '', action = '') =>
 
 export const imgOf = (item) => item?.image || '';
 export const statusBadge = (s) =>
-  s && s !== 'available' ? `<span class="badge ${s}">${s === 'laundry' ? 'Laundry' : 'Unavailable'}</span>` : '';
+  s && s !== 'available' ? `<span class="badge ${s}">${s === 'laundry' ? 'Lavando' : 'No disponible'}</span>` : '';
 
 export function itemCard(item, { selectable = false, selected = false, compact = false, meta = '' } = {}) {
   const c = item.colors?.[0];
   return `
   <article class="item-card ${compact ? 'compact' : ''} ${selected ? 'selected' : ''} ${item.status && item.status !== 'available' ? 'dim' : ''}" data-id="${esc(item.id)}" tabindex="0">
     <div class="item-img"><img src="${esc(imgOf(item))}" alt="" loading="lazy" decoding="async">${statusBadge(item.status)}
-      ${selectable ? `<span class="sel-mark">${icon('check', 16)}</span>` : `<button class="fav-btn ${item.favorite ? 'on' : ''}" data-fav="${esc(item.id)}" aria-label="Favourite">${icon('heart', 16)}</button>`}
+      ${selectable ? `<span class="sel-mark">${icon('check', 16)}</span>` : `<button class="fav-btn ${item.favorite ? 'on' : ''}" data-fav="${esc(item.id)}" aria-label="Favorito">${icon('heart', 16)}</button>`}
     </div>
     <div class="item-meta">
       <div class="item-name">${esc(item.name || CAT[item.category]?.label)}</div>
-      <div class="item-sub">${c ? swatch(c.hex, 10, c.name) : ''}<span>${esc(meta || [c?.name, item.brand].filter(Boolean).join(' · '))}</span></div>
+      <div class="item-sub">${c ? swatch(c.hex, 10, colorLabel(c.name)) : ''}<span>${esc(meta || [colorLabel(c?.name), item.brand].filter(Boolean).join(' · '))}</span></div>
     </div>
   </article>`;
 }
@@ -112,12 +112,12 @@ export function scoreRing(total, size = 64, label = true) {
   const r = 15.5, circ = 2 * Math.PI * r;
   const pct = Math.max(0, Math.min(100, total || 0));
   const tone = pct >= 85 ? 'good' : pct >= 68 ? 'ok' : 'low';
-  return `<div class="score-ring ${tone}" style="width:${size}px;height:${size}px" role="img" aria-label="Outfit score ${pct} out of 100">
+  return `<div class="score-ring ${tone}" style="width:${size}px;height:${size}px" role="img" aria-label="Puntuación del outfit: ${pct} sobre 100">
     <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="${r}" class="track"/><circle cx="18" cy="18" r="${r}" class="val" stroke-dasharray="${((pct / 100) * circ).toFixed(1)} ${circ.toFixed(1)}"/></svg>
     <span>${pct}${label ? '' : ''}</span></div>`;
 }
 export function scoreBars(score) {
-  const labels = { color: 'Colour harmony', style: 'Style match', occasion: 'Occasion fit', proportion: 'Proportions', weather: 'Weather & season' };
+  const labels = { color: 'Armonía de color', style: 'Estilo', occasion: 'Ocasión', proportion: 'Proporciones', weather: 'Clima y temporada' };
   return `<div class="bars">${Object.entries(score.breakdown || {})
     .filter(([, v]) => v != null)
     .map(([k, v]) => `<div class="bar-row" title="${labels[k]}: ${Math.round(v)}/100"><span>${labels[k]}</span><div class="bar"><i style="width:${Math.round(v)}%"></i></div><b>${Math.round(v)}</b></div>`)
@@ -132,7 +132,7 @@ export function outfitBoard(ids, { locks = {}, interactive = false, size = '' } 
     const locked = slot === 'accessory' ? (locks.accessory || []).includes(it.id) : locks[slot];
     return `<figure class="piece p-${slot} ${extraCls} ${locked ? 'locked' : ''}" data-slot="${slot}" data-id="${esc(it.id)}">
       <img src="${esc(imgOf(it))}" alt="${esc(it.name || '')}" decoding="async">
-      ${interactive ? `<button class="lock-btn" data-lock="${slot}" data-id="${esc(it.id)}" aria-pressed="${!!locked}" aria-label="${locked ? 'Unlock' : 'Lock'} ${esc(it.name || slot)}">${icon(locked ? 'lock' : 'unlock', 15)}</button>` : ''}
+      ${interactive ? `<button class="lock-btn" data-lock="${slot}" data-id="${esc(it.id)}" aria-pressed="${!!locked}" aria-label="${locked ? 'Desbloquear' : 'Bloquear'} ${esc(it.name || slot)}">${icon(locked ? 'lock' : 'unlock', 15)}</button>` : ''}
     </figure>`;
   };
   const h = get(ids.hoodie), t = get(ids.tshirt);
@@ -156,31 +156,31 @@ export function outfitCard(o, { showDate = true } = {}) {
     <div class="oc-foot">
       <div>
         <div class="oc-title">${esc(o.name || (STYLE[o.style]?.label || 'Outfit'))}${o.occasion ? ` · ${esc(OCCASION[o.occasion]?.label || '')}` : ''}</div>
-        ${showDate ? `<div class="muted small">${fmtDate(todayISO(new Date(o.createdAt)))}${missing ? ' · some items removed' : ''}</div>` : ''}
+        ${showDate ? `<div class="muted small">${fmtDate(todayISO(new Date(o.createdAt)))}${missing ? ' · faltan prendas' : ''}</div>` : ''}
       </div>
-      <div class="row gap-s">${scoreRing(o.score?.total, 34)}<button class="icon-btn fav ${o.favorite ? 'on' : ''}" data-ofav="${esc(o.id)}" aria-label="${o.favorite ? 'Remove from favourites' : 'Save to favourites'}">${icon('heart', 18)}</button></div>
+      <div class="row gap-s">${scoreRing(o.score?.total, 34)}<button class="icon-btn fav ${o.favorite ? 'on' : ''}" data-ofav="${esc(o.id)}" aria-label="${o.favorite ? 'Quitar de favoritos' : 'Guardar en favoritos'}">${icon('heart', 18)}</button></div>
     </div>
   </article>`;
 }
 
 // ---------- Pickers ----------
-export function pickItem({ title = 'Choose an item', category = null, filter = () => true, allowNone = false } = {}) {
+export function pickItem({ title = 'Elige una prenda', category = null, filter = () => true, allowNone = false } = {}) {
   let cat = category || 'all';
   let q = '';
   return openSheet({
     title, wide: true,
     body: `<div class="picker">
-      <div class="search"><span>${icon('search', 18)}</span><input type="search" placeholder="Search your wardrobe" aria-label="Search"></div>
-      ${category ? '' : `<div class="chips scroll">${chip('All', { value: 'all', name: 'pcat', active: true })}${CATEGORIES.map((c) => chip(c.plural, { value: c.id, name: 'pcat' })).join('')}</div>`}
+      <div class="search"><span>${icon('search', 18)}</span><input type="search" placeholder="Busca en tu armario" aria-label="Buscar"></div>
+      ${category ? '' : `<div class="chips scroll">${chip('Todo', { value: 'all', name: 'pcat', active: true })}${CATEGORIES.map((c) => chip(c.plural, { value: c.id, name: 'pcat' })).join('')}</div>`}
       <div class="grid items-grid" data-list></div>
-      ${allowNone ? '<button class="btn ghost block" data-none>Let Atelier choose</button>' : ''}
+      ${allowNone ? '<button class="btn ghost block" data-none>Que elija Atelier</button>' : ''}
     </div>`,
     onMount(b, close) {
       const list = b.querySelector('[data-list]');
       const draw = () => {
         const items = store.all('items').filter((i) => (cat === 'all' || i.category === cat) && filter(i) &&
-          (!q || `${i.name} ${i.brand} ${i.colors?.map((c) => c.name).join(' ')} ${i.subtype}`.toLowerCase().includes(q)));
-        list.innerHTML = items.length ? items.map((i) => itemCard(i, { selectable: true, compact: true })).join('') : empty('hanger', 'Nothing here', 'Try another category or add items to your wardrobe.');
+          (!q || `${i.name} ${i.brand} ${i.colors?.map((c) => c.name + ' ' + colorLabel(c.name)).join(' ')} ${i.subtype} ${subLabel(i.subtype)}`.toLowerCase().includes(q)));
+        list.innerHTML = items.length ? items.map((i) => itemCard(i, { selectable: true, compact: true })).join('') : empty('hanger', 'No hay nada aquí', 'Prueba otra categoría o añade prendas a tu armario.');
       };
       draw();
       b.querySelector('input').oninput = (e) => { q = e.target.value.toLowerCase().trim(); draw(); };
@@ -194,10 +194,10 @@ export function pickItem({ title = 'Choose an item', category = null, filter = (
   }).result;
 }
 
-export function pickDate({ title = 'Pick a date', value = todayISO() } = {}) {
+export function pickDate({ title = 'Elige una fecha', value = todayISO() } = {}) {
   return openSheet({
     title,
-    body: `<label class="field"><span>Date</span><input type="date" value="${value}"></label><div class="row end gap"><button class="btn ghost" data-c>Cancel</button><button class="btn primary" data-ok>Save</button></div>`,
+    body: `<label class="field"><span>Fecha</span><input type="date" value="${value}"></label><div class="row end gap"><button class="btn ghost" data-c>Cancelar</button><button class="btn primary" data-ok>Guardar</button></div>`,
     onMount(b, close) {
       b.querySelector('[data-c]').onclick = () => close(null);
       b.querySelector('[data-ok]').onclick = () => close(b.querySelector('input').value || null);
@@ -220,14 +220,14 @@ export async function logWear(outfit, date = todayISO()) {
   const existing = store.all('wears').find((w) => w.date === date && w.outfitId === outfit.id);
   if (existing) return existing;
   const w = await store.put('wears', { id: uid(), date, outfitId: outfit.id, itemIds });
-  toast('Logged as worn today', {
-    action: 'Send to laundry',
+  toast('Registrado como puesto hoy', {
+    action: 'Mandar a lavar',
     onAction: async () => {
       for (const id of itemIds) {
         const it = store.get('items', id);
         if (it && it.category !== 'accessory') await store.patch('items', id, { status: 'laundry' });
       }
-      toast('Moved to the laundry list');
+      toast('Movido a la lista de lavado');
     },
     timeout: 6000,
   });
@@ -238,13 +238,13 @@ export async function toggleOutfitFav(id) {
   const o = store.get('outfits', id);
   if (!o) return;
   await store.patch('outfits', id, { favorite: !o.favorite });
-  toast(o.favorite ? 'Removed from favourites' : 'Saved to favourites');
+  toast(o.favorite ? 'Quitado de favoritos' : 'Guardado en favoritos');
 }
 
 export async function planOutfit(outfit, date) {
   const cur = store.get('plans', date);
   await store.put('plans', { ...(cur || {}), id: date, date, outfitId: outfit.id, worn: false });
-  toast(`Planned for ${fmtDate(date)}`);
+  toast(`Planificado para el ${fmtDate(date)}`);
 }
 
 export function colorDot(hex) {

@@ -76,6 +76,17 @@ export const NAMED_COLORS = [
 ].map((c) => ({ ...c, lab: hexToLab(c.hex) }));
 export const NAMED = Object.fromEntries(NAMED_COLORS.map((c) => [c.name, c]));
 
+// Nombres en español para mostrar (el nombre interno en inglés se guarda en los datos).
+const ES = {
+  Black: 'Negro', Charcoal: 'Gris marengo', Grey: 'Gris', 'Light grey': 'Gris claro', White: 'Blanco', 'Off-white': 'Blanco roto',
+  Cream: 'Crema', Beige: 'Beis', Sand: 'Arena', Khaki: 'Caqui', Camel: 'Camel', Tan: 'Tostado', Brown: 'Marrón', Chocolate: 'Chocolate',
+  Navy: 'Azul marino', Denim: 'Denim', 'Light denim': 'Denim claro', Olive: 'Verde oliva', Burgundy: 'Burdeos', Red: 'Rojo', Rust: 'Óxido',
+  Terracotta: 'Terracota', Orange: 'Naranja', Mustard: 'Mostaza', Yellow: 'Amarillo', Lime: 'Lima', Green: 'Verde', 'Forest green': 'Verde bosque',
+  Sage: 'Verde salvia', Mint: 'Menta', Teal: 'Verde azulado', 'Sky blue': 'Azul cielo', Blue: 'Azul', Cobalt: 'Azul cobalto', Lavender: 'Lavanda',
+  Purple: 'Morado', Pink: 'Rosa', 'Hot pink': 'Fucsia', Coral: 'Coral',
+};
+export const colorLabel = (name) => ES[name] || name || '';
+
 export function nameColor(hex) {
   const lab = hexToLab(hex);
   let best = NAMED_COLORS[0], bd = Infinity;

@@ -1,11 +1,11 @@
 // Outfit engine: item features, outfit scoring (with explanations) and generation.
 // Pure module: works in the browser and in Node tests.
 import {
-  CAT, STYLE, STYLES, STYLE_AFFINITY, STYLE_FORMALITY, OCCASION, WEATHER_BANDS, bandForTemp,
+  CAT, STYLE, STYLES, BAND_LABEL, STYLE_AFFINITY, STYLE_FORMALITY, OCCASION, WEATHER_BANDS, bandForTemp,
   DEFAULT_WARMTH, SUBTYPE_WARMTH, DEFAULT_FORMALITY, SUBTYPE_FORMALITY,
 } from './constants.js';
-import { colorInfo, paletteScore, pairHarmony, hueDist } from './color.js';
-import { avg, clamp, stdev, softPick, shuffle, cap, round } from './util.js';
+import { colorInfo, paletteScore, pairHarmony, hueDist, colorLabel } from './color.js';
+import { avg, clamp, stdev, softPick, shuffle, round } from './util.js';
 
 // ---------------------------------------------------------------------------
 // Attribute inference (also used by the image analyzer for suggestions)
@@ -97,7 +97,7 @@ export function feat(item) {
     seasons: item.seasons?.length ? item.seasons : null,
     fit: item.fit || guessFit(item.category, item.subtype || ''),
     pattern: item.pattern || 'solid',
-    name: item.name || `${colors[0].name} ${CAT[item.category]?.label.toLowerCase() || 'item'}`,
+    name: item.name || `${CAT[item.category]?.label || 'Prenda'} ${colorLabel(colors[0].name).toLowerCase()}`,
   };
   featCache.set(key, f);
   return f;
@@ -108,7 +108,7 @@ export function feat(item) {
 // ---------------------------------------------------------------------------
 export const WEIGHTS = { color: 0.3, style: 0.25, occasion: 0.15, proportion: 0.15, weather: 0.15 };
 export const FACTOR_LABELS = {
-  color: 'Colour harmony', style: 'Style match', occasion: 'Occasion fit', proportion: 'Proportions', weather: 'Weather & season',
+  color: 'Armonía de color', style: 'Estilo', occasion: 'Ocasión', proportion: 'Proporciones', weather: 'Clima y temporada',
 };
 
 const PROPORTION = {
@@ -236,66 +236,66 @@ export function scoreOutfit(o, ctx = {}, explain = false) {
   if (!explain) return { total, breakdown };
 
   // ---- explanations
-  const cn = (f) => f.primary.name.toLowerCase();
+  const cn = (f) => colorLabel(f.primary.name).toLowerCase();
   const chroma = items.filter((f) => !f.primary.neutral && f.cat !== 'accessory');
   const neutrals = [...new Set(items.filter((f) => f.primary.neutral).map(cn))];
   switch (pal.scheme) {
-    case 'neutral': reasons.push(`A neutral palette (${neutrals.slice(0, 3).join(', ')}) — timeless and effortless to wear.`); break;
-    case 'tonal neutral': reasons.push(`Tonal neutrals (${neutrals.slice(0, 3).join(', ')}) give a quiet, expensive-looking finish.`); break;
-    case 'monochrome': reasons.push(`A monochrome ${cn(chroma[0])} look — cohesive and intentional.`); break;
-    case 'accent': reasons.push(`${cap(cn(chroma[0]))} works as a single pop of colour against a neutral base.`); break;
-    case 'complementary': reasons.push(`${cap(cn(chroma[0]))} and ${cn(chroma[1] || chroma[0])} are complementary — bold contrast kept in check by the neutrals.`); break;
-    case 'analogous': reasons.push(`${cap(cn(chroma[0]))} and ${cn(chroma[1] || chroma[0])} sit side by side on the colour wheel, so they blend smoothly.`); break;
+    case 'neutral': reasons.push(`Paleta neutra (${neutrals.slice(0, 3).join(', ')}): atemporal y fácil de llevar.`); break;
+    case 'tonal neutral': reasons.push(`Neutros en la misma gama (${neutrals.slice(0, 3).join(', ')}): un acabado discreto y con aspecto caro.`); break;
+    case 'monochrome': reasons.push(`Look monocromático en ${cn(chroma[0])}: coherente e intencionado.`); break;
+    case 'accent': reasons.push(`El ${cn(chroma[0])} funciona como único toque de color sobre una base neutra.`); break;
+    case 'complementary': reasons.push(`El ${cn(chroma[0])} y el ${cn(chroma[1] || chroma[0])} son complementarios: un contraste potente que los neutros equilibran.`); break;
+    case 'analogous': reasons.push(`El ${cn(chroma[0])} y el ${cn(chroma[1] || chroma[0])} están juntos en el círculo cromático, así que se funden con suavidad.`); break;
     case 'clashing': {
       const [a, b] = chroma;
-      tips.push(`${cap(cn(a))} and ${cn(b || a)} compete for attention — lock your favourite and regenerate to swap the other for a neutral.`);
+      tips.push(`El ${cn(a)} y el ${cn(b || a)} compiten entre sí: bloquea tu favorito y regenera para cambiar el otro por un neutro.`);
       break;
     }
   }
-  if (pal.notes.includes('too many competing colours')) tips.push('There are a lot of colours at once — try keeping it to one or two plus neutrals.');
-  if (pal.notes.includes('two very similar dark tones sit close together')) tips.push('Two very similar dark shades next to each other can look like a mismatch — more contrast would help.');
-  if (patterned.length > 1) tips.push('Two patterned pieces compete — pair one of them with something solid.');
+  if (pal.notes.includes('too many competing colours')) tips.push('Hay demasiados colores a la vez: intenta quedarte con uno o dos más neutros.');
+  if (pal.notes.includes('two very similar dark tones sit close together')) tips.push('Dos tonos oscuros muy parecidos juntos pueden parecer un error: más contraste ayudaría.');
+  if (patterned.length > 1) tips.push('Dos prendas estampadas compiten: combina una de ellas con algo liso.');
   if (top && o.trousers) {
     const dL = Math.abs(top.primary.L - o.trousers.primary.L);
-    if (dL > 30) reasons.push('Light/dark contrast between the top and trousers gives a crisp silhouette.');
+    if (dL > 30) reasons.push('El contraste claro/oscuro entre la parte de arriba y el pantalón crea una silueta nítida.');
   }
-  const sLabel = STYLE[target]?.label || 'casual';
-  if (style >= 80) reasons.push(`Every piece speaks the same ${sLabel.toLowerCase()} language.`);
+  const sLabel = STYLE[target]?.label || 'Casual';
+  if (style >= 80) reasons.push(`Todas las prendas hablan el mismo lenguaje ${sLabel.toLowerCase()}.`);
   else if (style < 65) {
     let worst = null, wm = 2;
     for (const f of core) {
       const m = Math.max(...f.styles.map((s) => STYLE_AFFINITY[s]?.[target] ?? 0));
       if (m < wm) { wm = m; worst = f; }
     }
-    if (worst) tips.push(`The ${worst.name.toLowerCase()} reads less ${sLabel.toLowerCase()} than the rest — lock the others and regenerate to swap it.`);
+    if (worst) tips.push(`«${worst.name}» es menos ${sLabel.toLowerCase()} que el resto: bloquea las demás prendas y regenera para cambiarla.`);
   }
   if (occ) {
     const [lo, hi] = occ.formality;
-    if (occasion >= 80) reasons.push(`The formality level is right for ${occ.label.toLowerCase()}.`);
-    else if (meanF < lo) tips.push(`A little too relaxed for ${occ.label.toLowerCase()} — dressier trousers or shoes would lift it.`);
-    else if (meanF > hi) tips.push(`A bit dressy for ${occ.label.toLowerCase()} — a more relaxed piece would feel more natural.`);
+    if (occasion >= 80) reasons.push(`El nivel de formalidad es perfecto para ${occ.phrase}.`);
+    else if (meanF < lo) tips.push(`Algo informal para ${occ.phrase}: un pantalón o calzado más arreglado lo elevaría.`);
+    else if (meanF > hi) tips.push(`Algo arreglado para ${occ.phrase}: una prenda más relajada quedaría más natural.`);
   }
   if (top && o.trousers) {
-    if (top.fit === 'oversized' && ['slim', 'regular'].includes(o.trousers.fit)) reasons.push('A roomy top over slimmer trousers keeps the proportions balanced.');
-    else if (['oversized', 'relaxed'].includes(top.fit) && o.trousers.fit === 'wide' && target !== 'streetwear') tips.push('Loose top and wide trousers together can look heavy — a slimmer leg would sharpen it.');
-    if (top.fit === 'cropped' && ['wide', 'relaxed'].includes(o.trousers.fit)) reasons.push('A cropped top with a fuller trouser lengthens the legs.');
+    if (top.fit === 'oversized' && ['slim', 'regular'].includes(o.trousers.fit)) reasons.push('Una parte de arriba amplia con un pantalón más estrecho mantiene las proporciones equilibradas.');
+    else if (['oversized', 'relaxed'].includes(top.fit) && o.trousers.fit === 'wide' && target !== 'streetwear') tips.push('Arriba holgado y pantalón ancho a la vez puede verse pesado: una pierna más estrecha lo afinaría.');
+    if (top.fit === 'cropped' && ['wide', 'relaxed'].includes(o.trousers.fit)) reasons.push('Una prenda corta con un pantalón amplio alarga las piernas.');
   }
   if (w && bandTarget != null) {
     const t = w.temp != null ? ` (${Math.round(w.temp)}°)` : '';
     const diff = warmth - bandTarget;
-    if (Math.abs(diff) <= 1.2) reasons.push(layered ? `Layered sensibly for ${w.band} weather${t}.` : `Right weight for ${w.band} weather${t}.`);
-    else if (diff > 0) tips.push(`Could be too warm for ${w.band} weather${t}${o.hoodie ? ' — the hoodie is optional' : ''}.`);
-    else tips.push(`Might be chilly for ${w.band} weather${t}${o.hoodie ? '' : ' — add a hoodie'}.`);
-    if (w.rain && o.sneakers && o.sneakers.primary.L > 80) tips.push('Rain is expected — darker sneakers are a safer bet.');
+    if (Math.abs(diff) <= 1.2) reasons.push(layered ? `Capas bien pensadas para un tiempo ${BAND_LABEL[w.band]}${t}.` : `Abrigo justo para un tiempo ${BAND_LABEL[w.band]}${t}.`);
+    else if (diff > 0) tips.push(`Puede dar calor con un tiempo ${BAND_LABEL[w.band]}${t}${o.hoodie ? ': la sudadera es opcional' : ''}.`);
+    else tips.push(`Puede quedarse corto con un tiempo ${BAND_LABEL[w.band]}${t}${o.hoodie ? '' : ': añade una sudadera'}.`);
+    if (w.rain && o.sneakers && o.sneakers.primary.L > 80) tips.push('Se espera lluvia: unas zapatillas más oscuras son más seguras.');
   }
-  if (!o.trousers) tips.push('Add trousers to your wardrobe to complete outfits.');
-  if (!o.sneakers) tips.push('Add sneakers to your wardrobe to complete outfits.');
+  if (!o.trousers) tips.push('Añade pantalones a tu armario para completar los outfits.');
+  if (!o.sneakers) tips.push('Añade zapatillas a tu armario para completar los outfits.');
 
   return {
     total, breakdown, reasons: reasons.slice(0, 4), tips: tips.slice(0, 3),
     scheme: pal.scheme, style: target,
     palette: [...new Map(items.map((f) => [f.primary.name, f.primary.hex])).values()],
-    verdict: total >= 88 ? 'Excellent' : total >= 78 ? 'Great' : total >= 68 ? 'Good' : total >= 55 ? 'Fair' : 'Risky',
+    verdict: total >= 88 ? 'Excelente' : total >= 78 ? 'Muy bueno' : total >= 68 ? 'Bueno' : total >= 55 ? 'Aceptable' : 'Arriesgado',
   };
 }
 
@@ -376,7 +376,7 @@ export function generateOutfit(items, ctx = {}, opts = {}) {
   };
   const tees = shortlist('tshirt'), hoods = shortlist('hoodie');
   const trousers = shortlist('trousers'), shoes = shortlist('sneakers');
-  if (!tees.length && !hoods.length) return { error: 'Add at least one hoodie or T-shirt to generate outfits.' };
+  if (!tees.length && !hoods.length) return { error: 'Añade al menos una sudadera o una camiseta para generar outfits.' };
 
   const structures = [];
   const lockT = !!locked.tshirt, lockH = !!locked.hoodie;
