@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# Array con los números del 1 al 10
-numeros=(1 2 3 4 5 6 7 8 9 10)
+# Array vacío donde guardaremos los números
+numeros=()
+
+# Pedimos 10 números al usuario
+for i in 1 2 3 4 5 6 7 8 9 10
+do
+    read -p "Escribe el número $i: " num
+    numeros+=($num)
+done
 
 # Aquí vamos guardando la suma
 suma=0
@@ -9,7 +16,6 @@ suma=0
 # Recorremos el array número a número
 for num in "${numeros[@]}"
 do
-    echo "Número: $num"
     suma=$(( suma + num ))
 done
 
@@ -21,5 +27,6 @@ total=${#numeros[@]}
 entero=$(( suma / total ))
 decimal=$(( suma * 10 / total % 10 ))
 
+echo "Números: ${numeros[@]}"
 echo "Suma: $suma"
 echo "Media: $entero.$decimal"
