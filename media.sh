@@ -1,5 +1,5 @@
 #!/bin/bash
-# Guarda los números del 1 al 10 en un array, los guarda en un array y calcula la media
+# Guarda los números del 1 al 10 en un array y calcula la media
 
 declare -a numeros
 suma=0
