@@ -10,9 +10,10 @@ for (( i=0; i<10; i++ )); do
 done
 
 total=${#numeros[@]}
-media=$(echo "scale=2; $suma / $total" | bc)
+entero=$(( suma / total ))
+decimal=$(( suma * 10 / total % 10 ))
 
 echo "Números: ${numeros[@]}"
 echo "Cantidad: $total"
 echo "Suma: $suma"
-echo "Media: $media"
+echo "Media: $entero.$decimal"
